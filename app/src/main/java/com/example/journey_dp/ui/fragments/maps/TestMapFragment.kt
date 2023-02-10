@@ -123,8 +123,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 result.data?.let {
-                    placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     isPlaceSet.postValue(true)
+                    placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
                 }
             }
@@ -226,7 +226,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val searchIntent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
 
         binding.apply {
+            clickableInputs(myLocationInput, searchIntent)
             clickableInputs(inputStop, searchIntent)
+
         }
 
 
@@ -245,17 +247,21 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         input.setOnClickListener {
             resultLauncher.launch(intent)
-        }
 
-        isPlaceSet.observe(viewLifecycleOwner) {
-            if (this::placeFromSearch.isInitialized) {
-                if (input.text.toString().isNotBlank()) {
-                    input.text?.clear()
+
+            isPlaceSet.observe(viewLifecycleOwner) {
+                if (this::placeFromSearch.isInitialized) {
+                    if (input.text.toString().isNotBlank()) {
+                        input.text?.clear()
+                    }
+                    val placeName = placeFromSearch.name
+                    isPlaceSet.postValue(false)
+                    input.append(placeName)
                 }
-                input.append(placeFromSearch.name)
                 isPlaceSet.postValue(false)
             }
         }
+
 
     }
 
