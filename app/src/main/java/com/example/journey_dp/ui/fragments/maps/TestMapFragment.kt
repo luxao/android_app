@@ -12,6 +12,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +49,9 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+
 import java.util.*
 
 
@@ -111,6 +115,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private lateinit var placeFromSearch: Place
     private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
 
+    private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
     private lateinit var status: Status
 
 
@@ -127,6 +132,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 // TODO: Handle the error.
                 result.data?.let {
                     status = Autocomplete.getStatusFromIntent(result.data!!)
+                    isStatusSet.postValue(true)
                     Log.i("TEST", status.statusMessage ?: "")
                 }
             }
@@ -219,22 +225,37 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         val searchIntent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
 
+        binding.apply {
+            clickableInputs(inputStop, searchIntent)
+        }
 
 
-        binding.inputStop.setOnClickListener {
-            resultLauncher.launch(searchIntent)
+        isStatusSet.observe(viewLifecycleOwner) {
+            if (this::status.isInitialized) {
+                Toast.makeText(context, "Please, Try Again. Something went wrong", Toast.LENGTH_SHORT).show()
+                isStatusSet.postValue(false)
+            }
+        }
+
+
+    }
+
+
+    private fun clickableInputs(input: TextInputEditText, intent: Intent) {
+
+        input.setOnClickListener {
+            resultLauncher.launch(intent)
         }
 
         isPlaceSet.observe(viewLifecycleOwner) {
             if (this::placeFromSearch.isInitialized) {
-                if (binding.inputStop.text.toString().isNotBlank()) {
-                    binding.inputStop.text?.clear()
+                if (input.text.toString().isNotBlank()) {
+                    input.text?.clear()
                 }
-                binding.inputStop.append(placeFromSearch.name)
+                input.append(placeFromSearch.name)
                 isPlaceSet.postValue(false)
             }
         }
-
 
     }
 
