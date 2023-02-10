@@ -4,12 +4,15 @@ package com.example.journey_dp.ui.fragments.maps
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +20,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -31,7 +36,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PointOfInterest
 import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.util.*
 
@@ -50,17 +61,9 @@ import java.util.*
 // 10. Implementacia Loginu z FIREBASE a INTEGRACIA appky s FIREBASE
 // 11. A LOT OF WORK TO END :(
 // 12....
-// .....................
-// FRAGMENTY:
-// 1. LOGIN/REGISTRATION
-// 2. HOME FRAGMENT WITH BOTTOM NAVIGATION TO PREVIEW ALL PLANS, PLAN JOURNEY, PROFILE OR SOMETHING LIKE THAT
 // """
 
 
-//TODO: """
-//  NAVRH DESIGN PLANOVANIA :
-//  ....
-// """
 
 //TODO: """ Tento Tyzden
 // 1. Implementacia SQL LOKAL DB ????
@@ -68,9 +71,13 @@ import java.util.*
 // 3. UPDATE designu celeho Planovania - navrhnutie ---> Hlavna priorita
 // 4. REST API pre získavanie trasy - zaciatok len pre štart a ciel a zobrazenie na mape ---> Hlavna priorita
 // 5. RecyclerView nastudovanie a implementovanie pridavania do Listu a zobrazovanie v realnom čase.
-//
-//
+// 10.2.2022 Task for the day
+// Autocomplete search set on intent to click listener on every input
+// Pass values from place autocomplete to input where was clicked
 // """
+
+
+
 class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
     // Declaration of binding fragment
@@ -84,14 +91,43 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Declaration of Places Client
     private lateinit var places: PlacesClient
 
-    // Set default Location : If user not granted permission
-    private val defaultLocation = LatLng( 48.148598, 17.107748)
-    private val defaultLocationName = "Bratislava"
-
     // Declaration of fusedLocationProvider
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    // Search Fragment late initialization
+    private lateinit var searchView: AutocompleteSupportFragment
+
+    // Set default Location : If user not granted permission
+    private val defaultLocation = LatLng( 48.148598, 17.107748)
+
+    private val defaultLocationName = "Bratislava"
+
     private var permissionStateDenied = false
+
+
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
+                result.data?.let {
+                    val place = Autocomplete.getPlaceFromIntent(result.data!!)
+                    Log.i("TEST", "Place: ${place.name}, ${place.id}")
+                }
+            }
+            AutocompleteActivity.RESULT_ERROR -> {
+                // TODO: Handle the error.
+                result.data?.let {
+                    val status = Autocomplete.getStatusFromIntent(result.data!!)
+                    Log.i("TEST", status.statusMessage ?: "")
+                }
+            }
+            Activity.RESULT_CANCELED -> {
+                // The user canceled the operation.
+            }
+        }
+
+    }
+
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -135,6 +171,14 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val mapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
+        val search = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+        search.setPlaceFields(listFields)
+
+        searchView = search
+
+        searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
 
         // get places client
         places = activity?.applicationContext?.let { Places.createClient(it) }!!
@@ -146,8 +190,29 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
+        searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                Log.i("Place", "Place: ${place.name}, ${place.id}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
+
+
+            }
+
+            override fun onError(status: Status) {
+                Log.i("Place", "An error occurred: $status")
+                Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT ).show()
+            }
+
+        })
+
+        val searchIntent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
+
+        binding.myLocationInput.setOnClickListener {
+            resultLauncher.launch(searchIntent)
+        }
 
     }
+
+
 
     override fun onMapReady(mapG: GoogleMap) {
         googleMap = mapG

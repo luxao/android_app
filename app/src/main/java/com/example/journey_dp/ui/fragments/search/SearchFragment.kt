@@ -82,16 +82,16 @@ class SearchFragment : Fragment() {
         })
 
 
-        binding.backToMap.setOnClickListener {
-                findNavController().navigate(
-                    SearchFragmentDirections.actionSearchFragmentToMapFragment(
-                        location = "Bratislava",
-                        latitude = "48.15",
-                        longitude = "17.5645"
-                    )
-                )
-
-        }
+//        binding.backToMap.setOnClickListener {
+//                findNavController().navigate(
+//                    SearchFragmentDirections.actionSearchFragmentToMapFragment(
+//                        location = "Bratislava",
+//                        latitude = "48.15",
+//                        longitude = "17.5645"
+//                    )
+//                )
+//
+//        }
 
 
     }

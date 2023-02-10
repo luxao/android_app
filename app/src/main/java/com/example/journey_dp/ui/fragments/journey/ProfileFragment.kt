@@ -28,11 +28,6 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-
-        binding.backHome.setOnClickListener {
-            val action = ProfileFragmentDirections.actionProfileFragmentToPlaneJourneyFragment()
-            view.findNavController().navigate(action)
-        }
     }
 
 }

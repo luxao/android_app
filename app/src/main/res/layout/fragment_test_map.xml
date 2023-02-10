@@ -9,6 +9,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_large"
+            android:layout_marginRight="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_large"
+            app:cardCornerRadius="3dp"
+            app:cardElevation="3dp"
+            android:clipToPadding="false"
+            app:cardUseCompatPadding="false"
+            app:layout_collapseMode="parallax"
+            android:visibility="visible"
+            >
+
+            <fragment
+                android:id="@+id/autocomplete_fragment"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                android:src="@color/places_autocomplete_search_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="5dp"
+                app:iconifiedByDefault="true"
+
+                app:queryHint="Search Here" />
+
+        </androidx.cardview.widget.CardView>
+
+
 
         <fragment
             android:id="@+id/google_map"
@@ -55,35 +85,6 @@
                     android:layout_marginTop="@dimen/spacing_large"
                     android:src="@drawable/ic_baseline_my_location_24"
                     />
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="200dp"
-                    android:layout_height="50dp"
-                    app:cardBackgroundColor="@color/white"
-                    android:layout_marginBottom="@dimen/spacing_middle"
-
-                    android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_large"
-                    app:cardCornerRadius="3dp"
-                    app:cardElevation="3dp"
-                    android:clipToPadding="false"
-                    app:cardUseCompatPadding="false"
-                    app:layout_collapseMode="parallax"
-                    android:visibility="gone"
-                    >
-
-                    <fragment
-                        android:id="@+id/autocomplete_fragment"
-                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                        android:src="@color/places_autocomplete_search_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="5dp"
-
-                        app:iconifiedByDefault="true"
-                        app:queryHint="Search Here" />
-
-                </androidx.cardview.widget.CardView>
 
 
 

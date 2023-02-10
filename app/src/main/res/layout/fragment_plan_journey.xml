@@ -11,13 +11,13 @@
        android:layout_height="match_parent">
 
 
-       <TextView
-           android:id="@+id/infoText"
+       <Button
+           android:id="@+id/start_plan"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:fontFamily="monospace"
            android:text="@string/plane_your"
-           android:textColor="@color/black"
+           android:textColor="@color/white"
            android:textFontWeight="@integer/material_motion_duration_long_1"
            android:textSize="38sp"
            app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,7 @@
            app:layout_constraintBottom_toBottomOf="parent"
            app:layout_constraintDimensionRatio="1:1"
            app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintTop_toTopOf="@id/infoText"
+           app:layout_constraintTop_toTopOf="@id/start_plan"
            app:layout_constraintVertical_bias="1.0"
            app:lottie_autoPlay="true"
            app:lottie_loop="true"

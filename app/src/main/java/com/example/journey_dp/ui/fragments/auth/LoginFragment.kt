@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentLoginBinding
-import com.example.journey_dp.databinding.FragmentRegistrationBinding
 
 
 class LoginFragment : Fragment() {
@@ -29,13 +27,8 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        binding.registerBtn.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToRegistrationFragment()
-            view.findNavController().navigate(action)
-        }
-
         binding.loginBtn.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToPlaneJourneyFragment()
+            val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
             view.findNavController().navigate(action)
         }
     }

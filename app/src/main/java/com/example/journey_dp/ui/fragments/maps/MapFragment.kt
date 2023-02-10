@@ -26,7 +26,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 
 class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
-    private val navigationArgs: MapFragmentArgs by navArgs()
+   // private val navigationArgs: MapFragmentArgs by navArgs()
     private var _binding : FragmentMapBinding? = null
     private val binding get() = _binding!!
 
@@ -69,30 +69,30 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener 
         googleMap.uiSettings.isCompassEnabled = true
         googleMap.uiSettings.isMapToolbarEnabled = false
 
-        if (navigationArgs.location!!.isNotBlank() && navigationArgs.latitude!!.isNotBlank() && navigationArgs.longitude!!.isNotBlank()) {
-            Log.i("Search Data", navigationArgs.location.toString())
-            Log.i("Search Data", navigationArgs.latitude.toString())
-            Log.i("Search Data", navigationArgs.longitude.toString())
+//        if (navigationArgs.location!!.isNotBlank() && navigationArgs.latitude!!.isNotBlank() && navigationArgs.longitude!!.isNotBlank()) {
+//            Log.i("Search Data", navigationArgs.location.toString())
+//            Log.i("Search Data", navigationArgs.latitude.toString())
+//            Log.i("Search Data", navigationArgs.longitude.toString())
+//
+//            googleMap.addMarker(
+//                MarkerOptions()
+//                    .position(LatLng( navigationArgs.latitude!!.toDouble(), navigationArgs.longitude!!.toDouble()))
+//                    .title(navigationArgs.location)
+//                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+//            )
+//
+//
+//            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng( navigationArgs.latitude!!.toDouble(), navigationArgs.longitude!!.toDouble()),
+//                15F
+//            ))
+//
+//        }
 
-            googleMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng( navigationArgs.latitude!!.toDouble(), navigationArgs.longitude!!.toDouble()))
-                    .title(navigationArgs.location)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-            )
-
-
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng( navigationArgs.latitude!!.toDouble(), navigationArgs.longitude!!.toDouble()),
-                15F
-            ))
-
-        }
-
-        binding.searchBtn.setOnClickListener {
-            findNavController().navigate(
-                MapFragmentDirections.actionMapFragmentToSearchFragment()
-            )
-        }
+//        binding.searchBtn.setOnClickListener {
+//            findNavController().navigate(
+//                MapFragmentDirections.actionMapFragmentToSearchFragment()
+//            )
+//        }
 
     }
 

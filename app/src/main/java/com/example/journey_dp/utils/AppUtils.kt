@@ -66,7 +66,7 @@ fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {
             setPositiveButton("OK",
                 DialogInterface.OnClickListener { dialog, id ->
                     view.findNavController().navigate(
-                        PlanJourneyFragmentDirections.actionPlaneJourneyFragmentToLoginFragment()
+                        PlanJourneyFragmentDirections.actionPlanJourneyFragmentToLoginFragment()
                     )
                 })
             setNegativeButton("Cancel",
