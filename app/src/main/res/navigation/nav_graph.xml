@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    android:label="Plane journey"
+    app:startDestination="@id/testMapFragment">
+
+    <fragment
+        android:id="@+id/planeJourneyFragment"
+        android:name="com.example.journey_dp.ui.fragments.journey.PlanJourneyFragment"
+        android:label="@string/journey"
+        tools:layout="@layout/fragment_plan_journey" >
+        <action
+            android:id="@+id/action_planeJourneyFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_planeJourneyFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_planeJourneyFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.journey_dp.ui.fragments.maps.MapFragment"
+        android:label="@string/show_map"
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_planeJourneyFragment"
+            app:destination="@id/planeJourneyFragment"
+            app:popUpTo="@id/planeJourneyFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="location"
+            app:argType="string"
+            android:defaultValue=""
+            app:nullable="true" />
+        <argument
+            android:name="latitude"
+            app:argType="string"
+            android:defaultValue=""
+            app:nullable="true" />
+        <argument
+            android:name="longitude"
+            app:argType="string"
+            android:defaultValue=""
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_mapFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.journey_dp.ui.fragments.search.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/action_searchFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:popUpTo="@id/mapFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_searchFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.journey_dp.ui.fragments.auth.RegistrationFragment"
+        android:label="@string/registration"
+        tools:layout="@layout/fragment_registration">
+        <action
+            android:id="@+id/action_registrationFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.journey_dp.ui.fragments.auth.LoginFragment"
+        android:label="@string/login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_registrationFragment"
+            app:destination="@id/registrationFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_planeJourneyFragment"
+            app:destination="@id/planeJourneyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.journey_dp.ui.fragments.journey.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_planeJourneyFragment"
+            app:destination="@id/planeJourneyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/testMapFragment"
+        android:name="com.example.journey_dp.ui.fragments.maps.TestMapFragment"
+        android:label="fragment_test_map"
+        tools:layout="@layout/fragment_test_map" />
+</navigation>

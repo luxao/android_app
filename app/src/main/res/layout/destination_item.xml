@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+        <variable
+            name="destination"
+            type="com.example.journey_dp.database.model.DestinationItem" />
+
+        <variable
+            name="destinationEventListener"
+            type="com.example.journey_dp.ui.adapter.events.DestinationEventListener" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/layout_for_add_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="@dimen/spacing_mlarge"
+        android:layout_marginLeft="@dimen/spacing_mlarge"
+        android:layout_marginRight="@dimen/spacing_mlarge"
+        android:orientation="horizontal"
+
+        >
+
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_middle"
+            android:layout_marginRight="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:src="@drawable/ic_baseline_mode_of_travel_24"
+            />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="-35dp"
+            android:background="@drawable/ic_baseline_more_vert_24"
+            android:visibility="visible"
+            />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/label_stop"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+
+            android:hint="@string/destination"
+            android:textAlignment="center"
+            app:startIconContentDescription="@string/destination"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_stop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:textColorHint="#757575"
+
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_middle"
+            android:layout_marginRight="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/ic_baseline_menu_24"
+            />
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_middle"
+            android:layout_marginRight="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/ic_baseline_delete_24"
+            android:visibility="visible"
+            />
+
+    </LinearLayout>
+
+
+</layout>
