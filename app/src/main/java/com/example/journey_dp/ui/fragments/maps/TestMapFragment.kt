@@ -21,6 +21,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.liveData
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
@@ -104,20 +108,25 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private var permissionStateDenied = false
 
+    private lateinit var placeFromSearch: Place
+    private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    private lateinit var status: Status
 
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 result.data?.let {
-                    val place = Autocomplete.getPlaceFromIntent(result.data!!)
-                    Log.i("TEST", "Place: ${place.name}, ${place.id}")
+                    placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
+                    isPlaceSet.postValue(true)
+                    Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
                 // TODO: Handle the error.
                 result.data?.let {
-                    val status = Autocomplete.getStatusFromIntent(result.data!!)
+                    status = Autocomplete.getStatusFromIntent(result.data!!)
                     Log.i("TEST", status.statusMessage ?: "")
                 }
             }
@@ -194,6 +203,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             override fun onPlaceSelected(place: Place) {
                 Log.i("Place", "Place: ${place.name}, ${place.id}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
 
+                if (binding.myLocationInput.text.toString().isNotBlank()) {
+                    binding.myLocationInput.text!!.clear()
+                    binding.myLocationInput.append(place.name)
+                }
 
             }
 
@@ -206,11 +219,26 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         val searchIntent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
 
-        binding.myLocationInput.setOnClickListener {
+
+
+        binding.inputStop.setOnClickListener {
             resultLauncher.launch(searchIntent)
         }
 
+        isPlaceSet.observe(viewLifecycleOwner) {
+            if (this::placeFromSearch.isInitialized) {
+                if (binding.inputStop.text.toString().isNotBlank()) {
+                    binding.inputStop.text?.clear()
+                }
+                binding.inputStop.append(placeFromSearch.name)
+                isPlaceSet.postValue(false)
+            }
+        }
+
+
     }
+
+
 
 
 
