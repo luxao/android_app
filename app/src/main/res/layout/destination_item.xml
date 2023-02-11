@@ -6,9 +6,6 @@
     >
 
     <data>
-        <variable
-            name="destination"
-            type="com.example.journey_dp.database.model.DestinationItem" />
 
         <variable
             name="destinationEventListener"
@@ -67,9 +64,8 @@
                 android:id="@+id/input_stop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:textColorHint="#757575"
-
+                android:onClick="@{() -> destinationEventListener.onClick()}"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 

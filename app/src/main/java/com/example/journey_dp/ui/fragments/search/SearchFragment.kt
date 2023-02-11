@@ -8,13 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
-import com.example.journey_dp.database.model.DestinationItem
-import com.example.journey_dp.database.model.JourneyItem
 import com.example.journey_dp.databinding.FragmentSearchBinding
-import com.example.journey_dp.ui.adapter.SearchListAdapter
 import com.example.journey_dp.ui.viewmodel.SearchViewModel
 import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status

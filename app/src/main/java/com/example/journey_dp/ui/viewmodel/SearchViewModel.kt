@@ -1,16 +1,26 @@
 package com.example.journey_dp.ui.viewmodel
 
 
+import android.app.Activity
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.*
 
 import com.example.journey_dp.data.repository.AppRepository
 import com.example.journey_dp.database.model.DestinationItem
 import com.example.journey_dp.database.model.JourneyItem
 import com.example.journey_dp.database.model.relations.JourneyWithDestinations
+import com.google.android.gms.common.api.Status
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import kotlinx.coroutines.launch
 
 
 class SearchViewModel(private val repository: AppRepository): ViewModel() {
+
+
 
     private var _loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val loading: MutableLiveData<Boolean> get() = _loading

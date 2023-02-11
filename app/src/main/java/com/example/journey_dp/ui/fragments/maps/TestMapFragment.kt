@@ -226,7 +226,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val searchIntent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
 
         binding.apply {
-            clickableInputs(myLocationInput, searchIntent)
             clickableInputs(inputStop, searchIntent)
 
         }
@@ -245,22 +244,25 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private fun clickableInputs(input: TextInputEditText, intent: Intent) {
 
-        input.setOnClickListener {
-            resultLauncher.launch(intent)
+
+            input.setOnClickListener {
+                resultLauncher.launch(intent)
 
 
-            isPlaceSet.observe(viewLifecycleOwner) {
-                if (this::placeFromSearch.isInitialized) {
-                    if (input.text.toString().isNotBlank()) {
-                        input.text?.clear()
+                isPlaceSet.observe(viewLifecycleOwner) {
+                    if (this::placeFromSearch.isInitialized) {
+                        if (input.text.toString().isNotBlank()) {
+                            input.text?.clear()
+                        }
+                        val placeName = placeFromSearch.name
+                        isPlaceSet.postValue(false)
+                        input.append(placeName)
                     }
-                    val placeName = placeFromSearch.name
                     isPlaceSet.postValue(false)
-                    input.append(placeName)
                 }
-                isPlaceSet.postValue(false)
             }
-        }
+
+
 
 
     }
