@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.FragmentActivity
@@ -23,6 +24,8 @@ import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.lang.System.exit
 
 
 fun setLogOut(
@@ -79,6 +82,24 @@ fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {
     }
     alertDialog.show()
 }
+
+
+/*
+* Creates and shows an AlertDialog with the final score.
+*/
+//private fun showFinalScoreDialog() {
+//    MaterialAlertDialogBuilder(requireContext())
+//        .setTitle(getString(R.string.congratulations))
+//        .setMessage(getString(R.string.you_scored, viewModel.score))
+//        .setCancelable(false)
+//        .setNegativeButton(getString(R.string.exit)) { _, _ ->
+//            exitGame()
+//        }
+//        .setPositiveButton(getString(R.string.play_again)) { _, _ ->
+//            restartGame()
+//        }
+//        .show()
+//}
 
 
 // Odlozeny kod

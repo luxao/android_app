@@ -19,22 +19,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.motion.widget.Debug.getLocation
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.liveData
+import androidx.lifecycle.ViewModelProvider
+
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
+import com.example.journey_dp.ui.viewmodel.MapViewModel
+import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -51,8 +54,9 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-
 import java.util.*
+
+
 
 
 //TODO: """
@@ -92,6 +96,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private var _binding : FragmentTestMapBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var viewModel: MapViewModel
+
     // Declaration of binding google map
     private lateinit var googleMap: GoogleMap
     // Declaration of standard bottom sheet
@@ -112,8 +118,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private var permissionStateDenied = false
 
-    private lateinit var placeFromSearch: Place
-    private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
+//    private lateinit var placeFromSearch: Place
+//    private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
 
     private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
     private lateinit var status: Status
@@ -123,9 +129,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 result.data?.let {
-                    isPlaceSet.postValue(true)
-                    placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
-                    Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
+
+                    viewModel.setIsPlaceSet(Autocomplete.getPlaceFromIntent(result.data!!))
+                    Log.i("TEST", "Place: ${viewModel.placeFromSearch.value!!.name}, ${viewModel.placeFromSearch.value!!.id}")
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
@@ -165,11 +171,19 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         //Initialize Places Client
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
+
+        viewModel = ViewModelProvider(
+            this,
+            Injection.provideViewModelFactory(requireContext())
+        )[MapViewModel::class.java]
+
         // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         getLocation(requireContext())
+
     }
 
     override fun onCreateView(
@@ -197,6 +211,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         // get places client
         places = activity?.applicationContext?.let { Places.createClient(it) }!!
+
+        binding.lifecycleOwner = this@TestMapFragment.viewLifecycleOwner
 
         // initialized bottom sheet
         standardBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetBehavior)
@@ -243,27 +259,29 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
     private fun clickableInputs(input: TextInputEditText, intent: Intent) {
-
-
             input.setOnClickListener {
                 resultLauncher.launch(intent)
-
-
-                isPlaceSet.observe(viewLifecycleOwner) {
-                    if (this::placeFromSearch.isInitialized) {
-                        if (input.text.toString().isNotBlank()) {
-                            input.text?.clear()
-                        }
-                        val placeName = placeFromSearch.name
-                        isPlaceSet.postValue(false)
-                        input.append(placeName)
+                viewModel.isPlaceSet.observe(this@TestMapFragment.viewLifecycleOwner) {
+                    if (input.text.toString().isNotBlank()) {
+                        input.text?.clear()
                     }
-                    isPlaceSet.postValue(false)
+                    val placeName = viewModel.placeFromSearch.value.toString()
+                    input.append(placeName)
+
                 }
             }
 
-
-
+        //                viewModel.placeSet.observe(viewLifecycleOwner) {
+//                    if (this::placeFromSearch.isInitialized) {
+//                        if (input.text.toString().isNotBlank()) {
+//                            input.text?.clear()
+//                        }
+//                        val placeName = placeFromSearch.name
+//                        isPlaceSet.postValue(false)
+//                        input.append(placeName)
+//                    }
+//                    isPlaceSet.postValue(false)
+//                }
 
     }
 
