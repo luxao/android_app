@@ -118,8 +118,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private var permissionStateDenied = false
 
-//    private lateinit var placeFromSearch: Place
-//    private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
+    private lateinit var placeFromSearch: Place
+    private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
 
     private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
     private lateinit var status: Status
@@ -129,9 +129,11 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 result.data?.let {
-
-                    viewModel.setIsPlaceSet(Autocomplete.getPlaceFromIntent(result.data!!))
-                    Log.i("TEST", "Place: ${viewModel.placeFromSearch.value!!.name}, ${viewModel.placeFromSearch.value!!.id}")
+                    isPlaceSet.postValue(true)
+                    placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
+                    Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
+//                    viewModel.setIsPlaceSet(Autocomplete.getPlaceFromIntent(result.data!!))
+//                    Log.i("TEST", "Place: ${viewModel.placeFromSearch.value!!.name}, ${viewModel.placeFromSearch.value!!.id}")
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
@@ -259,29 +261,34 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
     private fun clickableInputs(input: TextInputEditText, intent: Intent) {
-            input.setOnClickListener {
-                resultLauncher.launch(intent)
-                viewModel.isPlaceSet.observe(this@TestMapFragment.viewLifecycleOwner) {
+//            input.setOnClickListener {
+//                resultLauncher.launch(intent)
+//                viewModel.isPlaceSet.observe(this@TestMapFragment.viewLifecycleOwner) {
+//                    if (input.text.toString().isNotBlank()) {
+//                        input.text?.clear()
+//                    }
+//                    val placeName = viewModel.placeFromSearch.value.toString()
+//                    input.append(placeName)
+//
+//                }
+//            }
+
+        input.setOnClickListener {
+            resultLauncher.launch(intent)
+
+
+            isPlaceSet.observe(viewLifecycleOwner) {
+                if (this::placeFromSearch.isInitialized) {
                     if (input.text.toString().isNotBlank()) {
                         input.text?.clear()
                     }
-                    val placeName = viewModel.placeFromSearch.value.toString()
+                    val placeName = placeFromSearch.name
+                    isPlaceSet.postValue(false)
                     input.append(placeName)
-
                 }
+                isPlaceSet.postValue(false)
             }
-
-        //                viewModel.placeSet.observe(viewLifecycleOwner) {
-//                    if (this::placeFromSearch.isInitialized) {
-//                        if (input.text.toString().isNotBlank()) {
-//                            input.text?.clear()
-//                        }
-//                        val placeName = placeFromSearch.name
-//                        isPlaceSet.postValue(false)
-//                        input.append(placeName)
-//                    }
-//                    isPlaceSet.postValue(false)
-//                }
+        }
 
     }
 
