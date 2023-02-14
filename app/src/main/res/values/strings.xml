@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">journey_dp</string>
+    <string name="welcome">Welcome there will be login</string>
+    <string name="info_text">Plan your journey</string>
+    <string name="plane_your">Plan your</string>
+    <string name="start">start</string>
+    <string name="back_to_home">go back</string>
+    <string name="home">Home</string>
+    <string name="journey">Plan your Journey</string>
+    <string name="show_map">Map</string>
+    <string name="location">location</string>
+    <string name="latitude">latitude</string>
+    <string name="longitude">longitude</string>
+    <string name="show_on_map">show on map</string>
+    <string name="registration">Registration</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="login_user">Login</string>
+    <string name="register_user">Register</string>
+    <string name="login">Login</string>
+    <string name="map">Map</string>
+    <string name="profile">Profile</string>
+    <string name="log_out">log out</string>
+    <string name="lat">0.0</string>
+    <string name="lon">0.0</string>
+    <string name="default_location">Bratislava</string>
+    <string name="default_lat">48.148598</string>
+    <string name="default_lon">17.107748</string>
+    <string name="place_name">Place Name</string>
+    <string name="please_write_journey_title">Please write Journey Title</string>
+    <string name="journey_title">Journey Title</string>
+    <string name="info">First add your Start destination</string>
+    <string name="my_location">My Location</string>
+    <string name="destination">Destination</string>
+</resources>
