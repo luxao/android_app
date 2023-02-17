@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asFlow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
@@ -37,14 +39,14 @@ class TestFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
     private lateinit var inputAdapter: InputAdapter
+
     private lateinit var inputViewModel: InputViewModel
     private lateinit var placeFromSearch: Place
-    private lateinit var layout: LinearLayout
-    private lateinit var places: PlacesClient
+
     private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
     private lateinit var status: Status
     private val inputs = mutableListOf<LinearLayout>()
-    val counter: Int = 0
+
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
@@ -52,6 +54,9 @@ class TestFragment : Fragment() {
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     inputViewModel.setPlaceName(placeFromSearch.name!!)
+
+                    Log.i("TEST", "MODEL: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
+                    inputAdapter.setName(placeFromSearch.name!!)
                     Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
                 }
             }
@@ -92,8 +97,9 @@ class TestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter(inputs,resultLauncher)
+        inputAdapter = InputAdapter("",inputs,resultLauncher)
         recyclerView.adapter = inputAdapter
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
@@ -101,9 +107,17 @@ class TestFragment : Fragment() {
         binding.testButton.setOnClickListener {
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
+            inputViewModel.setValue(false)
         }
-    }
 
+//        Log.i("TEST", "Place: ${inputViewModel.placeName}, ${inputViewModel.isPlaceSet}")
+
+        inputViewModel.isPlaceSet.observe(viewLifecycleOwner) {
+
+            Log.i("TEST", "MODEL: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
+        }
+
+    }
 
 
 }

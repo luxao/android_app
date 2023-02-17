@@ -70,20 +70,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="#757575"
-                android:text='@{model.placeName == "" ? "" : model.placeName }'
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginBottom="@dimen/spacing_middle"
-            android:layout_marginLeft="@dimen/spacing_middle"
-            android:layout_marginRight="@dimen/spacing_middle"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:background="@drawable/ic_baseline_menu_24"
-            />
+
 
         <ImageView
             android:id="@+id/delete_input"
