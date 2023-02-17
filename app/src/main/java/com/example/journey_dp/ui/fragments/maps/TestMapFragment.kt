@@ -213,7 +213,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     binding.myLocationInput.text!!.clear()
                     binding.myLocationInput.append(place.name)
                 }
-
             }
 
             override fun onError(status: Status) {
@@ -227,7 +226,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         binding.apply {
             clickableInputs(inputStop, searchIntent)
-
         }
 
 
@@ -238,16 +236,13 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             }
         }
 
-
     }
 
 
     private fun clickableInputs(input: TextInputEditText, intent: Intent) {
 
-
             input.setOnClickListener {
                 resultLauncher.launch(intent)
-
 
                 isPlaceSet.observe(viewLifecycleOwner) {
                     if (this::placeFromSearch.isInitialized) {
@@ -261,10 +256,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     isPlaceSet.postValue(false)
                 }
             }
-
-
-
-
     }
 
 

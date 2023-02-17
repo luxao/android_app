@@ -33,5 +33,7 @@
     <string name="journey_title">Journey Title</string>
     <string name="info">First add your Start destination</string>
     <string name="my_location">My Location</string>
+    <string name="add_input">Add</string>
     <string name="destination">Destination</string>
+
 </resources>
