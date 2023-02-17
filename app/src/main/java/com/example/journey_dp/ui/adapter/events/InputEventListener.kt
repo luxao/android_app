@@ -7,11 +7,10 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
-class InputEventListener(private val result: ActivityResultLauncher<Intent>, view: View){
-    private val v = view
-    fun onClick() {
+class InputEventListener(private val result: ActivityResultLauncher<Intent>) : View.OnClickListener {
+    override fun onClick(v: View?) {
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(v.context)
+        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(v!!.context)
         result.launch(intent)
     }
 }

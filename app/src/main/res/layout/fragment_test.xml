@@ -10,26 +10,31 @@
 
 
 
-        <ScrollView
-            android:id="@+id/scrollview"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            android:scrollbars="none"
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
-            <LinearLayout
-                android:id="@+id/container"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/inputs_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/destination_item" />
 
-
-        </ScrollView>
+        </androidx.cardview.widget.CardView>
 
 
         <Button
@@ -43,40 +48,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollview"
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
             app:layout_constraintVertical_bias="0.0"
             android:layout_marginTop="40dp"
             />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-<!--<androidx.recyclerview.widget.RecyclerView-->
-<!--android:id="@+id/inputs_list"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="match_parent"-->
-<!--app:layoutManager="LinearLayoutManager"-->
-<!--app:layout_constraintBottom_toBottomOf="parent"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toTopOf="parent"-->
-<!--tools:listitem="@layout/destination_item" />-->
-
-<!--<androidx.cardview.widget.CardView-->
-<!--android:id="@+id/cardView"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="400dp"-->
-<!--android:layout_margin="4dp"-->
-<!--android:padding="4dp"-->
-<!--app:cardCornerRadius="6dp"-->
-<!--app:cardElevation="4dp"-->
-<!--app:layout_constraintBottom_toBottomOf="parent"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toTopOf="parent">-->
-
-
-
-
-<!--</androidx.cardview.widget.CardView>-->
