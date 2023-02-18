@@ -1,36 +1,22 @@
 package com.example.journey_dp.ui.adapter.adapters
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.view.get
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
 
-import com.example.journey_dp.ui.adapter.events.InputEventListener
-import com.example.journey_dp.ui.adapter.events.OnPlaceSelectedListener
-import com.example.journey_dp.ui.fragments.maps.TestFragment
-import com.example.journey_dp.ui.viewmodel.InputViewModel
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.textfield.TextInputEditText
-
 
 
 class InputAdapter(private var name: String, private val inputs: MutableList<LinearLayout>, private val result: ActivityResultLauncher<Intent>) :
@@ -64,11 +50,8 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
             Log.i("TEST", "FOCUSED POSITION: ${holder.adapterPosition}, $position, ${holder.inputText.id},${holder.inputText.tag}")
-            holder.inputText.setText(name)
-        }
 
-        holder.inputText.isActivated.and(name.isNotBlank()).apply {
-            Log.i("TEST", "ACTIVATED POSITION: ${holder.adapterPosition}, $position, ${holder.inputText.id},${holder.inputText.tag}")
+            holder.inputText.setText(name)
         }
 
         holder.deleteButton.setOnClickListener{
@@ -96,7 +79,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val inputText: EditText = itemView.findViewById(R.id.input_destination)
+        val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)
         val deleteButton: ImageView = itemView.findViewById(R.id.delete_input)
     }
 }

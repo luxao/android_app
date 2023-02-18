@@ -6,31 +6,32 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.get
+
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asFlow
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestBinding
+
+
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
-import com.example.journey_dp.ui.adapter.events.InputEventListener
+
 import com.example.journey_dp.ui.viewmodel.InputViewModel
 import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
+
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.android.material.textfield.TextInputEditText
+
 
 
 class TestFragment : Fragment() {
@@ -65,8 +66,6 @@ class TestFragment : Fragment() {
                     if (position != -1) {
                         inputAdapter.onPlaceSelected(placeFromSearch, position)
                     }
-
-
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {

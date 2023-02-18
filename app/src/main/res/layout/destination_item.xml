@@ -13,9 +13,6 @@
             name="inputData"
             type="com.example.journey_dp.domain.InputData" />
 
-        <variable
-            name="clickListener"
-            type="com.example.journey_dp.ui.adapter.events.InputEventListener" />
 
         <import type="android.view.View" />
     </data>
@@ -25,45 +22,54 @@
         android:id="@+id/layout_for_add_stop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="@dimen/spacing_mlarge"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_medium"
         android:layout_marginLeft="@dimen/spacing_mlarge"
         android:layout_marginRight="@dimen/spacing_mlarge"
         android:orientation="horizontal"
 
         >
 
-
         <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginBottom="@dimen/spacing_middle"
             android:layout_marginLeft="@dimen/spacing_middle"
             android:layout_marginRight="@dimen/spacing_middle"
-            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_medium"
             android:src="@drawable/ic_baseline_mode_of_travel_24"
             />
 
         <ImageView
             android:layout_width="20dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="50dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="25dp"
             android:layout_marginRight="20dp"
-            android:layout_marginLeft="-35dp"
+            android:layout_marginLeft="-33dp"
             android:background="@drawable/ic_baseline_more_vert_24"
             android:visibility="visible"
             />
 
-        <EditText
-            android:id="@+id/input_destination"
-            android:layout_marginTop="10dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/label_stop"
             android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:hint="@string/destination"
+            android:layout_height="wrap_content"
+            app:hintAnimationEnabled="false"
+            app:hintEnabled="false"
             android:textAlignment="center"
-            android:textColorHint="#757575"
+            app:startIconContentDescription="@string/destination"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            >
 
-            app:startIconContentDescription="@string/destination" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_destination"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="#757575"
+                android:hint="@string/destination"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
             android:id="@+id/delete_input"
@@ -72,7 +78,7 @@
             android:layout_marginBottom="@dimen/spacing_middle"
             android:layout_marginLeft="@dimen/spacing_middle"
             android:layout_marginRight="@dimen/spacing_middle"
-            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/ic_baseline_delete_24"
             android:visibility="visible"
             />
@@ -82,21 +88,3 @@
 
 </layout>
 
-<!--<com.google.android.material.textfield.TextInputLayout-->
-<!--android:id="@+id/label_stop"-->
-<!--android:layout_width="200dp"-->
-<!--android:layout_height="60dp"-->
-<!--android:hint="@string/destination"-->
-<!--android:textAlignment="center"-->
-<!--app:startIconContentDescription="@string/destination"-->
-<!--style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-<!--    >-->
-
-<!--<com.google.android.material.textfield.TextInputEditText-->
-<!--    android:id="@+id/input_destination"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:textColorHint="#757575"-->
-<!--    />-->
-
-<!--</com.google.android.material.textfield.TextInputLayout>-->

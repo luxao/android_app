@@ -8,8 +8,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context=".ui.fragments.maps.TestFragment">
 
-
-
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="match_parent"
@@ -33,7 +31,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/destination_item" />
-
         </androidx.cardview.widget.CardView>
 
 
