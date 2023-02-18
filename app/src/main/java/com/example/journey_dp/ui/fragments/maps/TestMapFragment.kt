@@ -17,18 +17,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
+import com.example.journey_dp.ui.adapter.adapters.InputAdapter
+import com.example.journey_dp.ui.viewmodel.InputViewModel
+import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -76,12 +80,7 @@ import java.util.*
 //TODO: """ Tento Tyzden
 // 1. Implementacia SQL LOKAL DB ????
 // 2. ViewModel pre Map Fragment ???
-// 3. UPDATE designu celeho Planovania - navrhnutie ---> Hlavna priorita
 // 4. REST API pre získavanie trasy - zaciatok len pre štart a ciel a zobrazenie na mape ---> Hlavna priorita
-// 5. RecyclerView nastudovanie a implementovanie pridavania do Listu a zobrazovanie v realnom čase.
-// 10.2.2022 Task for the day
-// Autocomplete search set on intent to click listener on every input
-// Pass values from place autocomplete to input where was clicked
 // """
 
 
@@ -91,6 +90,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Declaration of binding fragment
     private var _binding : FragmentTestMapBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var inputAdapter: InputAdapter
+    private lateinit var inputViewModel: InputViewModel
 
     // Declaration of binding google map
     private lateinit var googleMap: GoogleMap
@@ -113,19 +116,29 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private var permissionStateDenied = false
 
     private lateinit var placeFromSearch: Place
-    private var isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
 
     private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
     private lateinit var status: Status
 
+    private val inputs = mutableListOf<LinearLayout>()
 
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
                 result.data?.let {
-                    isPlaceSet.postValue(true)
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
-                    Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
+                    inputViewModel.setPlaceName(placeFromSearch.name!!)
+                    Log.i("TEST", "PLACE VALUES: ${placeFromSearch.name}, ${placeFromSearch.id}")
+
+                    Log.i("TEST", "MODEL VALUES: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
+                    inputAdapter.setName(placeFromSearch.name!!)
+                    val position = inputAdapter.getID()
+
+                    Log.i("TEST", "MODEL POSITION: $position")
+                    if (position != -1) {
+                        inputAdapter.onPlaceSelected(placeFromSearch, position)
+                    }
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
@@ -167,6 +180,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         super.onCreate(savedInstanceState)
         //Initialize Places Client
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
+
+        inputViewModel = ViewModelProvider(
+            this,
+            Injection.provideViewModelFactory(requireContext())
+        )[InputViewModel::class.java]
+
         // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         getLocation(requireContext())
@@ -178,6 +197,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     ): View {
         // setup fragment view
         _binding = FragmentTestMapBinding.inflate(inflater, container, false)
+        recyclerView = binding.inputsList
         return binding.root
     }
 
@@ -222,43 +242,22 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         })
 
-        val searchIntent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
 
-        binding.apply {
-            clickableInputs(inputStop, searchIntent)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        inputAdapter = InputAdapter("",inputs,resultLauncher)
+        recyclerView.adapter = inputAdapter
+        val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
+        val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
+
+        binding.testButton.setOnClickListener {
+            inputAdapter.setName("")
+            inputs.add(layout)
+            inputAdapter.notifyItemInserted(inputs.size)
+            inputViewModel.setValue(false)
         }
 
 
-        isStatusSet.observe(viewLifecycleOwner) {
-            if (this::status.isInitialized) {
-                Toast.makeText(context, "Please, Try Again. Something went wrong", Toast.LENGTH_SHORT).show()
-                isStatusSet.postValue(false)
-            }
-        }
-
     }
-
-
-    private fun clickableInputs(input: TextInputEditText, intent: Intent) {
-
-            input.setOnClickListener {
-                resultLauncher.launch(intent)
-
-                isPlaceSet.observe(viewLifecycleOwner) {
-                    if (this::placeFromSearch.isInitialized) {
-                        if (input.text.toString().isNotBlank()) {
-                            input.text?.clear()
-                        }
-                        val placeName = placeFromSearch.name
-                        isPlaceSet.postValue(false)
-                        input.append(placeName)
-                    }
-                    isPlaceSet.postValue(false)
-                }
-            }
-    }
-
-
 
 
 

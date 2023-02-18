@@ -41,6 +41,14 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         idPosition = holder.adapterPosition
 
+        //TODO: FOR FUTURE , MUST BE TEST ON REAL MOBILE
+        /*holder.inputText.onFocusChangeListener.apply {
+            idPosition = holder.adapterPosition
+            val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
+            result.launch(intent)
+        }*/
+
         holder.inputText.setOnClickListener {
             idPosition = holder.adapterPosition
             val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
@@ -50,7 +58,6 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
             Log.i("TEST", "FOCUSED POSITION: ${holder.adapterPosition}, $position, ${holder.inputText.id},${holder.inputText.tag}")
-
             holder.inputText.setText(name)
         }
 

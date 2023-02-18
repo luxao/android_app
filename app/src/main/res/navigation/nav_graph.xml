@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     android:label="Plane journey"
-    app:startDestination="@id/testFragment">
+    app:startDestination="@id/planJourneyFragment">
 
     <fragment
         android:id="@+id/testMapFragment"
@@ -43,9 +43,4 @@
             android:id="@+id/action_planJourneyFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/testFragment"
-        android:name="com.example.journey_dp.ui.fragments.maps.TestFragment"
-        android:label="fragment_test"
-        tools:layout="@layout/fragment_test" />
 </navigation>

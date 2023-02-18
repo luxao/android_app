@@ -51,7 +51,7 @@
         <FrameLayout
             android:id="@+id/bottom_sheet_behavior"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="wrap_content"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             android:background="@drawable/rounded"
             >
@@ -77,52 +77,58 @@
                 >
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_marginBottom="@dimen/spacing_middle"
                     android:layout_marginLeft="@dimen/spacing_middle"
                     android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_large"
+                    android:layout_marginTop="@dimen/spacing_medium"
                     android:src="@drawable/ic_baseline_my_location_24"
                     />
 
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="-33dp"
+                    android:background="@drawable/ic_baseline_more_vert_24" />
 
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/my_location_label"
                     android:layout_width="200dp"
                     android:layout_height="60dp"
-                    android:hint="@string/my_location"
                     android:textAlignment="center"
-                    app:startIconContentDescription="@string/my_location"
+                    app:hintAnimationEnabled="false"
+                    app:hintEnabled="false"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:visibility="visible"
                     >
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/my_location_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColorHint="#757575"
-
+                        android:hint="@string/destination"
 
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginBottom="@dimen/spacing_middle"
                     android:layout_marginLeft="@dimen/spacing_middle"
                     android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:layout_marginTop="@dimen/spacing_medium"
                     android:background="@drawable/ic_baseline_menu_24"
                     android:visibility="invisible"
                     />
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginBottom="@dimen/spacing_middle"
                     android:layout_marginLeft="@dimen/spacing_middle"
                     android:layout_marginRight="@dimen/spacing_middle"
@@ -132,91 +138,53 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="20dp"
-                android:layout_height="30dp"
-                android:layout_marginBottom="35dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginTop="80dp"
-                android:background="@drawable/ic_baseline_more_vert_24" />
 
 
-            <LinearLayout
-                android:id="@+id/layout_for_add_stop"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="100dp"
-                android:layout_marginBottom="@dimen/spacing_mlarge"
-                android:layout_marginLeft="@dimen/spacing_mlarge"
-                android:layout_marginRight="@dimen/spacing_mlarge"
-                android:orientation="horizontal"
+                android:layout_marginTop="30dp"
+                tools:context=".ui.fragments.maps.TestFragment">
 
-                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/inputs_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/destination_item"
+                    />
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginBottom="@dimen/spacing_middle"
-                    android:layout_marginLeft="@dimen/spacing_middle"
-                    android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_large"
-                    android:src="@drawable/ic_baseline_mode_of_travel_24"
+                <Button
+                    android:id="@+id/test_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/inputs_list"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/ic_baseline_add_circle_24"
                     />
 
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/label_stop"
-                    android:layout_width="200dp"
-                    android:layout_height="60dp"
-
-                    android:hint="@string/destination"
-                    android:textAlignment="center"
-                    app:startIconContentDescription="@string/destination"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/input_stop"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:textColorHint="#757575"
-
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="@dimen/spacing_middle"
-                    android:layout_marginLeft="@dimen/spacing_middle"
-                    android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_middle"
-                    android:background="@drawable/ic_baseline_menu_24"
-                    />
-
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="20dp"
-                android:layout_height="30dp"
-                android:layout_marginBottom="35dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginTop="150dp"
-                android:background="@drawable/ic_baseline_more_vert_24" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
-                android:layout_marginBottom="30dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="500dp"
+                app:dividerInsetEnd="16dp"
                 app:dividerInsetStart="16dp"
-                app:dividerInsetEnd="16dp"/>
+                />
 
 
         </FrameLayout>
@@ -228,3 +196,98 @@
 
 
 </layout>
+
+
+<!--<LinearLayout-->
+<!--android:id="@+id/layout_for_add_stop"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:layout_marginTop="100dp"-->
+<!--android:layout_marginBottom="@dimen/spacing_mlarge"-->
+<!--android:layout_marginLeft="@dimen/spacing_mlarge"-->
+<!--android:layout_marginRight="@dimen/spacing_mlarge"-->
+<!--android:orientation="horizontal"-->
+
+<!--    >-->
+
+<!--<ImageView-->
+<!--    android:layout_width="30dp"-->
+<!--    android:layout_height="30dp"-->
+<!--    android:layout_marginBottom="@dimen/spacing_middle"-->
+<!--    android:layout_marginLeft="@dimen/spacing_middle"-->
+<!--    android:layout_marginRight="@dimen/spacing_middle"-->
+<!--    android:layout_marginTop="@dimen/spacing_large"-->
+<!--    android:src="@drawable/ic_baseline_mode_of_travel_24"-->
+<!--    />-->
+
+
+<!--<com.google.android.material.textfield.TextInputLayout-->
+<!--    android:id="@+id/label_stop"-->
+<!--    android:layout_width="200dp"-->
+<!--    android:layout_height="60dp"-->
+
+<!--    android:hint="@string/destination"-->
+<!--    android:textAlignment="center"-->
+<!--    app:startIconContentDescription="@string/destination"-->
+<!--    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+<!--    >-->
+
+<!--    <com.google.android.material.textfield.TextInputEditText-->
+<!--        android:id="@+id/input_stop"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+
+<!--        android:textColorHint="#757575"-->
+
+<!--        />-->
+<!--</com.google.android.material.textfield.TextInputLayout>-->
+
+<!--<ImageView-->
+<!--    android:layout_width="40dp"-->
+<!--    android:layout_height="40dp"-->
+<!--    android:layout_marginBottom="@dimen/spacing_middle"-->
+<!--    android:layout_marginLeft="@dimen/spacing_middle"-->
+<!--    android:layout_marginRight="@dimen/spacing_middle"-->
+<!--    android:layout_marginTop="@dimen/spacing_middle"-->
+<!--    android:background="@drawable/ic_baseline_menu_24"-->
+<!--    />-->
+
+
+<!--</LinearLayout>-->
+
+<!--<View-->
+<!--android:layout_width="20dp"-->
+<!--android:layout_height="30dp"-->
+<!--android:layout_marginBottom="35dp"-->
+<!--android:layout_marginLeft="35dp"-->
+<!--android:layout_marginTop="150dp"-->
+<!--android:background="@drawable/ic_baseline_more_vert_24" />-->
+
+
+
+<!--<androidx.cardview.widget.CardView-->
+<!--android:id="@+id/cardView"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="300dp"-->
+<!--android:layout_margin="4dp"-->
+<!--android:padding="4dp"-->
+<!--app:cardCornerRadius="6dp"-->
+<!--app:cardElevation="4dp"-->
+<!--app:layout_constraintBottom_toBottomOf="parent"-->
+<!--app:layout_constraintEnd_toEndOf="parent"-->
+<!--app:layout_constraintStart_toStartOf="parent"-->
+<!--app:layout_constraintTop_toTopOf="parent"-->
+<!--    >-->
+<!--<androidx.recyclerview.widget.RecyclerView-->
+<!--    android:id="@+id/inputs_list"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    app:layoutManager="LinearLayoutManager"-->
+<!--    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--    app:layout_constraintEnd_toEndOf="parent"-->
+<!--    app:layout_constraintStart_toStartOf="parent"-->
+<!--    app:layout_constraintTop_toTopOf="parent"-->
+<!--    tools:itemCount="3"-->
+<!--    tools:listitem="@layout/destination_item"-->
+<!--    />-->
+<!--</androidx.cardview.widget.CardView>-->
