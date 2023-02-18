@@ -50,21 +50,30 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.inputText.id = position
+        holder.inputText.tag = "input_$position"
 
-        Log.i("TEST", "MODEL POSITION FROM ADAPTER: $position")
-        holder.inputText.setOnClickListener(
-            InputEventListener(result)
-        ).apply {
+        idPosition = holder.adapterPosition
+
+        holder.inputText.setOnClickListener {
             idPosition = holder.adapterPosition
-
+            val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
+            result.launch(intent)
         }
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
-            holder.inputText.append(name)
+            Log.i("TEST", "FOCUSED POSITION: ${holder.adapterPosition}, $position, ${holder.inputText.id},${holder.inputText.tag}")
+            holder.inputText.setText(name)
+        }
+
+        holder.inputText.isActivated.and(name.isNotBlank()).apply {
+            Log.i("TEST", "ACTIVATED POSITION: ${holder.adapterPosition}, $position, ${holder.inputText.id},${holder.inputText.tag}")
         }
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition - 1
+            holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
         }
@@ -76,16 +85,8 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
     }
 
     fun onPlaceSelected(place: Place, position: Int) {
-        // Use the position to find the corresponding input view
-        val inputView = inputs[position]
-
-        // Set the place name on the input view
         Log.i("TEST", "ADAPTER POSITION FROM onPlaceSelected: ${position}, ${place.name}")
-
-//        inputView.findViewById<EditText>(R.id.input_destination).append(place.name)
-        Log.i("TEST", "INPUT !: ${inputView.findViewById<EditText>(R.id.input_destination).text}")
         notifyItemChanged(position)
-
     }
 
 

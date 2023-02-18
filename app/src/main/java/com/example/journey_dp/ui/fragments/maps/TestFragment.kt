@@ -55,20 +55,18 @@ class TestFragment : Fragment() {
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     inputViewModel.setPlaceName(placeFromSearch.name!!)
+                    Log.i("TEST", "PLACE VALUES: ${placeFromSearch.name}, ${placeFromSearch.id}")
 
-                    Log.i("TEST", "MODEL: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
+                    Log.i("TEST", "MODEL VALUES: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
                     inputAdapter.setName(placeFromSearch.name!!)
                     val position = inputAdapter.getID()
+
                     Log.i("TEST", "MODEL POSITION: $position")
                     if (position != -1) {
-                        //TODO:
-                        Log.i("TEST", "MODEL POSITION IF: $position")
-
                         inputAdapter.onPlaceSelected(placeFromSearch, position)
                     }
 
 
-                    Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
@@ -124,7 +122,6 @@ class TestFragment : Fragment() {
 
 
         inputViewModel.isPlaceSet.observe(viewLifecycleOwner) {
-
             Log.i("TEST", "MODEL: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
         }
 
