@@ -54,27 +54,16 @@
             android:visibility="visible"
             />
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/label_stop"
+        <EditText
+            android:id="@+id/input_destination"
+            android:layout_marginTop="10dp"
             android:layout_width="200dp"
             android:layout_height="60dp"
             android:hint="@string/destination"
             android:textAlignment="center"
-            app:startIconContentDescription="@string/destination"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            >
+            android:textColorHint="#757575"
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_destination"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColorHint="#757575"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
+            app:startIconContentDescription="@string/destination" />
 
         <ImageView
             android:id="@+id/delete_input"
@@ -92,3 +81,22 @@
 
 
 </layout>
+
+<!--<com.google.android.material.textfield.TextInputLayout-->
+<!--android:id="@+id/label_stop"-->
+<!--android:layout_width="200dp"-->
+<!--android:layout_height="60dp"-->
+<!--android:hint="@string/destination"-->
+<!--android:textAlignment="center"-->
+<!--app:startIconContentDescription="@string/destination"-->
+<!--style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+<!--    >-->
+
+<!--<com.google.android.material.textfield.TextInputEditText-->
+<!--    android:id="@+id/input_destination"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:textColorHint="#757575"-->
+<!--    />-->
+
+<!--</com.google.android.material.textfield.TextInputLayout>-->

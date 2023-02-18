@@ -10,11 +10,6 @@ import com.google.android.material.textfield.TextInputEditText
 
 class InputViewModel : ViewModel() {
 
-    //TODO:
-    // Spravit menitelnu premenu, ktorej sa nastavi Place Name
-    // Spravit funkciu ktora nastavi novu hodnotu premenej s Place Name
-    // Ziskanie hodnoty premenej na nastevenie hodnoty do inputu
-
     private var _isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
     val isPlaceSet: LiveData<Boolean> get() = _isPlaceSet
 

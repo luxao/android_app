@@ -20,6 +20,7 @@ import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestBinding
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
+import com.example.journey_dp.ui.adapter.events.InputEventListener
 import com.example.journey_dp.ui.viewmodel.InputViewModel
 import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status
@@ -57,6 +58,16 @@ class TestFragment : Fragment() {
 
                     Log.i("TEST", "MODEL: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
                     inputAdapter.setName(placeFromSearch.name!!)
+                    val position = inputAdapter.getID()
+                    Log.i("TEST", "MODEL POSITION: $position")
+                    if (position != -1) {
+                        //TODO:
+                        Log.i("TEST", "MODEL POSITION IF: $position")
+
+                        inputAdapter.onPlaceSelected(placeFromSearch, position)
+                    }
+
+
                     Log.i("TEST", "Place: ${placeFromSearch.name}, ${placeFromSearch.id}")
                 }
             }
@@ -105,12 +116,12 @@ class TestFragment : Fragment() {
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
         binding.testButton.setOnClickListener {
+            inputAdapter.setName("")
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
             inputViewModel.setValue(false)
         }
 
-//        Log.i("TEST", "Place: ${inputViewModel.placeName}, ${inputViewModel.isPlaceSet}")
 
         inputViewModel.isPlaceSet.observe(viewLifecycleOwner) {
 
