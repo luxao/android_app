@@ -41,6 +41,11 @@
     <string name="walk_directions_time">1 d</string>
     <string name="bicycle_directions_time">5 h</string>
     <string name="bus_directions_time">2.5 h</string>
+    <string name="walk">walk</string>
+    <string name="bus">bus</string>
+    <string name="bike">bike</string>
+    <string name="train">train</string>
+    <string name="car">car</string>
 
 
 </resources>

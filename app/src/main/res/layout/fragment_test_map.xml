@@ -204,7 +204,10 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="@dimen/spacing_small"
+                    android:contextClickable="true"
+                    android:contentDescription="@string/car"
                     android:src="@drawable/ic_baseline_directions_car_24"
+                    android:clickable="true"
                     />
 
                 <TextView
@@ -221,6 +224,9 @@
                     android:id="@+id/train_directions_icon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:clickable="true"
+                    android:contextClickable="true"
+                    android:contentDescription="@string/train"
                     android:src="@drawable/ic_baseline_directions_transit_filled_24"
                     />
 
@@ -238,7 +244,9 @@
                     android:id="@+id/bike_directions_icon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-
+                    android:clickable="true"
+                    android:contextClickable="true"
+                    android:contentDescription="@string/bike"
                     android:src="@drawable/ic_baseline_directions_bike_24"
                     />
 
@@ -256,6 +264,9 @@
                     android:id="@+id/bus_directions_icon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:clickable="true"
+                    android:contentDescription="@string/bus"
+                    android:contextClickable="true"
                     android:src="@drawable/ic_baseline_directions_bus_24"
                     />
 
@@ -274,8 +285,10 @@
                     android:id="@+id/walk_directions_icon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:clickable="true"
+                    android:contextClickable="true"
                     android:src="@drawable/ic_baseline_directions_walk_24"
-                    />
+                    android:contentDescription="@string/walk" />
 
                 <TextView
                     android:id="@+id/walk_directions_time"

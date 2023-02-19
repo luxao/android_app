@@ -267,7 +267,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             mapViewModel.setValueOfPlace(false)
         }
 
-
         binding.myLocationInput.setOnClickListener {
             changeUserLocation = true
             resultLauncher.launch(intent)
