@@ -26,12 +26,11 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.textfield.TextInputEditText
 
 
-class InputAdapter(private var name: String, private val inputs: MutableList<LinearLayout>, private val result: ActivityResultLauncher<Intent>) :
+class InputAdapter(private var name: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val result: ActivityResultLauncher<Intent>) :
     RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
 
     private var idPosition: Int = 0
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.destination_item, parent, false)
@@ -65,14 +64,15 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition - 1
+            val marker = markers.getOrNull(holder.adapterPosition)
+            marker?.remove()
+            markers.removeAt(holder.adapterPosition)
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
-
         }
 
     }
-
 
     fun getID(): Int {
         return this.idPosition

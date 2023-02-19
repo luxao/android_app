@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -115,6 +116,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private lateinit var status: Status
 
     private val inputs = mutableListOf<LinearLayout>()
+    private var markers = mutableListOf<Marker>()
 
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -247,7 +249,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter("",inputs,resultLauncher)
+        inputAdapter = InputAdapter("",inputs,markers,resultLauncher)
         recyclerView.adapter = inputAdapter
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
@@ -267,14 +269,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     }
 
-    fun removeMarker(placeName: String, placeLatLng: LatLng) {
-        //todo: implements
-    }
 
     private fun showMarkerOnChoosePlace(locationName: String, coordinates: LatLng) {
-        googleMap.addMarker(MarkerOptions().position(coordinates).title(locationName).icon(
+        val marker = googleMap.addMarker(MarkerOptions().position(coordinates).title(locationName).icon(
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
+        markers.add(marker!!)
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 coordinates,
@@ -307,6 +307,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             marker.remove()
             true
         }
+
     }
 
     
