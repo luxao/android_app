@@ -22,14 +22,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
+import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
+import com.example.journey_dp.utils.setMapMenu
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -53,10 +56,6 @@ import java.util.*
 
 //TODO: """
 // VO FEBRUARI SPRAVIT LOGIKU PLANOVANIA A ZOBRAZOVANIA TRASY
-// 1.Nadesignovat a implementovat bottom sheet  -> UPDATE: Implementácia DONE, DESIGN NOT YET //
-// 2. Doimplementovať vyhladavanie  -> UPDATE: Implementacia vyhladavanie pripravena na použitie in future
-// 3. Doimplementovať získanie polohy usera a nastavenie ako zač. poloha --> UPDATE : Viacmenej pripravene
-// 4. Implementovanie pridavania do listu alebo implementovanie zobrazovania trasy pre dve miesta od A do B
 // 5. Implementovanie nadpájania trás roznymi dopravnymi prostriedkami
 // 6. Zrozumitelne zobrazovanie napr. informácii o ceste autobusom
 // 7. Fetchovanie obrázkov,popisov, url odkazov a inych informácii o Places a pridanie ich do mapy alebo bottom sheetu po kliknuti na place
@@ -194,12 +193,19 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         getLocation(requireContext())
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // setup fragment view
         _binding = FragmentTestMapBinding.inflate(inflater, container, false)
+        setMapMenu(
+            activity = requireActivity() ,
+            lifecycleOwner = viewLifecycleOwner,
+            view = binding.root
+        )
         recyclerView = binding.inputsList
         return binding.root
     }
@@ -233,12 +239,27 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             override fun onPlaceSelected(place: Place) {
                 Log.i("Place", "Place: ${place.name}, ${place.id}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
 
-                if (binding.myLocationInput.text.toString().isNotBlank()) {
-                    binding.myLocationInput.setText(place.name)
+                googleMap.apply {
+                    addMarker(MarkerOptions().position(place.latLng!!).title(place.name!!).icon(
+                        BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
+                    ))
+                    animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            place.latLng!!,
+                            15F
+                        )
+                    )
                 }
-                else {
-                    binding.myLocationInput.setText(place.name)
+
+                binding.apply {
+                    if (myLocationInput.text.toString().isNotBlank()) {
+                        myLocationInput.setText(place.name)
+                    }
+                    else {
+                        myLocationInput.setText(place.name)
+                    }
                 }
+
             }
 
             override fun onError(status: Status) {
@@ -266,6 +287,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             changeUserLocation = true
             resultLauncher.launch(intent)
         }
+
+
 
     }
 
@@ -318,10 +341,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 .title(poi.name).icon(BitmapDescriptorFactory.defaultMarker(
                     Random().nextInt(360).toFloat()))
         )
-        Toast.makeText(context, """Clicked: ${poi.name}
-            Latitude:${poi.latLng.latitude} Longitude:${poi.latLng.longitude}""",
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
     // Check if location is enabled or not and return boolean

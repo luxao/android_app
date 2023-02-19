@@ -21,6 +21,9 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_testMapFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -42,5 +45,14 @@
         <action
             android:id="@+id/action_planJourneyFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment2"
+        android:name="com.example.journey_dp.ui.fragments.journey.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment2_to_planJourneyFragment"
+            app:destination="@id/planJourneyFragment" />
     </fragment>
 </navigation>

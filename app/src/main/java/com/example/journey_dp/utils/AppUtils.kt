@@ -20,6 +20,7 @@ import androidx.navigation.findNavController
 import com.example.journey_dp.R
 import com.example.journey_dp.domain.LocationCoordinates
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
+import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -56,6 +57,48 @@ fun setLogOut(
         }
     }, lifecycleOwner, Lifecycle.State.RESUMED)
 }
+
+fun setMapMenu(
+    activity: FragmentActivity,
+    lifecycleOwner: LifecycleOwner,
+    view: View
+) {
+    // The usage of an interface lets you inject your own implementation
+    val menuHost: MenuHost = activity
+
+    // Add menu items without using the Fragment Menu APIs
+    // Note how we can tie the MenuProvider to the viewLifecycleOwner
+    // and an optional Lifecycle.State (here, RESUMED) to indicate when
+    // the menu should be visible
+    menuHost.addMenuProvider(object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            // Add menu items here
+            menuInflater.inflate(R.menu.top_map_menu, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            // Handle the menu selection
+            return when (menuItem.itemId) {
+                R.id.home -> {
+                    val action = TestMapFragmentDirections.actionTestMapFragmentToPlanJourneyFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                R.id.profile -> {
+                    val action = TestMapFragmentDirections.actionTestMapFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                else -> false
+            }
+
+
+        }
+    }, lifecycleOwner, Lifecycle.State.RESUMED)
+}
+
+
+
 
 fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {
     val alertDialog: AlertDialog = activity.let {

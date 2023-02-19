@@ -27,7 +27,12 @@ class ProfileFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        binding.backHome.setOnClickListener {
+            val action = ProfileFragmentDirections.actionProfileFragment2ToPlanJourneyFragment()
+            view.findNavController().navigate(action)
+        }
     }
 
 }
