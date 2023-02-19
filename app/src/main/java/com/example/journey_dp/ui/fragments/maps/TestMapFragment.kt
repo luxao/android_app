@@ -110,6 +110,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private var permissionStateDenied = false
 
+    private var changeUserLocation = false
+
     private lateinit var placeFromSearch: Place
 
     private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -124,20 +126,23 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     mapViewModel.setPlaceName(placeFromSearch.name!!)
-                    Log.i("TEST", "PLACE VALUES: ${placeFromSearch.name}, ${placeFromSearch.id}")
-
-                    Log.i("TEST", "MODEL VALUES: ${mapViewModel.placeName.value}, ${mapViewModel.isPlaceSet.value}")
+//                    Log.i("TEST", "PLACE VALUES: ${placeFromSearch.name}, ${placeFromSearch.id}")
+//
+//                    Log.i("TEST", "MODEL VALUES: ${mapViewModel.placeName.value}, ${mapViewModel.isPlaceSet.value}")
                     inputAdapter.setName(placeFromSearch.name!!)
 
-
+                    if (changeUserLocation) {
+                        binding.myLocationInput.setText(placeFromSearch.name!!)
+                    }
 
                     val position = inputAdapter.getID()
 
-                    Log.i("TEST", "MODEL POSITION: $position")
+//                    Log.i("TEST", "MODEL POSITION: $position")
                     if (position != -1) {
                         inputAdapter.onPlaceSelected(placeFromSearch, position)
                     }
                     binding.directionsLayout.visibility = View.VISIBLE
+                    changeUserLocation = false
 
                 }
             }
@@ -207,6 +212,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         mapFragment.getMapAsync(this)
 
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
+
 
         val search = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         search.setPlaceFields(listFields)
@@ -226,14 +233,15 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         }
 
 
-
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 Log.i("Place", "Place: ${place.name}, ${place.id}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
 
                 if (binding.myLocationInput.text.toString().isNotBlank()) {
-                    binding.myLocationInput.text!!.clear()
-                    binding.myLocationInput.append(place.name)
+                    binding.myLocationInput.setText(place.name)
+                }
+                else {
+                    binding.myLocationInput.setText(place.name)
                 }
             }
 
@@ -257,6 +265,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
             mapViewModel.setValueOfPlace(false)
+        }
+
+
+        binding.myLocationInput.setOnClickListener {
+            changeUserLocation = true
+            resultLauncher.launch(intent)
         }
 
     }
@@ -283,6 +297,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             ))
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnPoiClickListener(this)
+        binding.myLocationInput.setText(defaultLocationName)
     }
 
     
@@ -344,7 +359,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     LatLng(it.latitude, it.longitude),
                                     15F
                                 ))
-                            binding.myLocationInput.append(cityName)
+                            binding.myLocationInput.setText(cityName)
                         }
                     }
                 }

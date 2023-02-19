@@ -38,6 +38,8 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.inputText.id = position
         holder.inputText.tag = "input_$position"
+        val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
 
         idPosition = holder.adapterPosition
 
@@ -51,7 +53,6 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         holder.inputText.setOnClickListener {
             idPosition = holder.adapterPosition
-            val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
             result.launch(intent)
         }
