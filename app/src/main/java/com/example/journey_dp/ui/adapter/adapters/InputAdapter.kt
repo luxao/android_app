@@ -1,10 +1,12 @@
 package com.example.journey_dp.ui.adapter.adapters
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,6 +14,11 @@ import androidx.activity.result.ActivityResultLauncher
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
+import com.example.journey_dp.ui.fragments.maps.TestMapFragment
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -38,18 +45,12 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.inputText.id = position
         holder.inputText.tag = "input_$position"
-        val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
+        val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
         idPosition = holder.adapterPosition
 
-        //TODO: FOR FUTURE , MUST BE TEST ON REAL MOBILE
-        /*holder.inputText.onFocusChangeListener.apply {
-            idPosition = holder.adapterPosition
-            val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
-            result.launch(intent)
-        }*/
+        holder.inputText.focusable = View.NOT_FOCUSABLE
 
         holder.inputText.setOnClickListener {
             idPosition = holder.adapterPosition
@@ -67,9 +68,11 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
+
         }
 
     }
+
 
     fun getID(): Int {
         return this.idPosition
@@ -80,11 +83,9 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         notifyItemChanged(position)
     }
 
-
     fun setName(name: String) {
         this.name = name
     }
-
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)

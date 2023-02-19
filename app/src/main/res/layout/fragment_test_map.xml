@@ -310,8 +310,6 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
-
-
 </layout>
 
-<!--    android:visibility="@{model.isPlaceSet ? View.VISIBLE : View.GONE}"-->
+

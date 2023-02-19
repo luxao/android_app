@@ -37,9 +37,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PointOfInterest
+import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -49,7 +47,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-
 import java.util.*
 
 
@@ -126,20 +123,19 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     mapViewModel.setPlaceName(placeFromSearch.name!!)
-//                    Log.i("TEST", "PLACE VALUES: ${placeFromSearch.name}, ${placeFromSearch.id}")
-//
-//                    Log.i("TEST", "MODEL VALUES: ${mapViewModel.placeName.value}, ${mapViewModel.isPlaceSet.value}")
                     inputAdapter.setName(placeFromSearch.name!!)
+
 
                     if (changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
+                        showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!)
                     }
 
                     val position = inputAdapter.getID()
 
-//                    Log.i("TEST", "MODEL POSITION: $position")
                     if (position != -1) {
                         inputAdapter.onPlaceSelected(placeFromSearch, position)
+                        showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!)
                     }
                     binding.directionsLayout.visibility = View.VISIBLE
                     changeUserLocation = false
@@ -208,18 +204,16 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
-
-
         val search = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         search.setPlaceFields(listFields)
 
         searchView = search
-
         searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
 
         // get places client
@@ -249,7 +243,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 Log.i("Place", "An error occurred: $status")
                 Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT ).show()
             }
-
         })
 
 
@@ -274,8 +267,20 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     }
 
-    private fun showMarkerOnChoosePlace() {
-        //TODO: Implements
+    fun removeMarker(placeName: String, placeLatLng: LatLng) {
+        //todo: implements
+    }
+
+    private fun showMarkerOnChoosePlace(locationName: String, coordinates: LatLng) {
+        googleMap.addMarker(MarkerOptions().position(coordinates).title(locationName).icon(
+            BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
+        ))
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                coordinates,
+                15F
+            )
+        )
     }
 
 
@@ -297,10 +302,21 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnPoiClickListener(this)
         binding.myLocationInput.setText(defaultLocationName)
+
+        googleMap.setOnMarkerClickListener { marker ->
+            marker.remove()
+            true
+        }
     }
 
     
     override fun onPoiClick(poi: PointOfInterest) {
+        googleMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(poi.latLng.latitude, poi.latLng.longitude))
+                .title(poi.name).icon(BitmapDescriptorFactory.defaultMarker(
+                    Random().nextInt(360).toFloat()))
+        )
         Toast.makeText(context, """Clicked: ${poi.name}
             Latitude:${poi.latLng.latitude} Longitude:${poi.latLng.longitude}""",
             Toast.LENGTH_SHORT
