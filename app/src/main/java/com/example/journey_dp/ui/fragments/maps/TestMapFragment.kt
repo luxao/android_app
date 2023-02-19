@@ -6,13 +6,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +19,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +27,7 @@ import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
-import com.example.journey_dp.ui.viewmodel.InputViewModel
+import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.CurrentLocationRequest
@@ -53,8 +49,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 
 import java.util.*
 
@@ -81,6 +75,7 @@ import java.util.*
 // 1. Implementacia SQL LOKAL DB ????
 // 2. ViewModel pre Map Fragment ???
 // 4. REST API pre získavanie trasy - zaciatok len pre štart a ciel a zobrazenie na mape ---> Hlavna priorita
+// 5. Osetrit ak nie je internet
 // """
 
 
@@ -93,7 +88,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var inputAdapter: InputAdapter
-    private lateinit var inputViewModel: InputViewModel
+    private lateinit var mapViewModel: MapViewModel
 
     // Declaration of binding google map
     private lateinit var googleMap: GoogleMap
@@ -128,17 +123,22 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             Activity.RESULT_OK -> {
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
-                    inputViewModel.setPlaceName(placeFromSearch.name!!)
+                    mapViewModel.setPlaceName(placeFromSearch.name!!)
                     Log.i("TEST", "PLACE VALUES: ${placeFromSearch.name}, ${placeFromSearch.id}")
 
-                    Log.i("TEST", "MODEL VALUES: ${inputViewModel.placeName.value}, ${inputViewModel.isPlaceSet.value}")
+                    Log.i("TEST", "MODEL VALUES: ${mapViewModel.placeName.value}, ${mapViewModel.isPlaceSet.value}")
                     inputAdapter.setName(placeFromSearch.name!!)
+
+
+
                     val position = inputAdapter.getID()
 
                     Log.i("TEST", "MODEL POSITION: $position")
                     if (position != -1) {
                         inputAdapter.onPlaceSelected(placeFromSearch, position)
                     }
+                    binding.directionsLayout.visibility = View.VISIBLE
+
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
@@ -181,10 +181,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         //Initialize Places Client
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
 
-        inputViewModel = ViewModelProvider(
+        mapViewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext())
-        )[InputViewModel::class.java]
+        )[MapViewModel::class.java]
 
         // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -225,6 +225,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
+
+
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 Log.i("Place", "Place: ${place.name}, ${place.id}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
@@ -251,14 +253,17 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         binding.testButton.setOnClickListener {
             inputAdapter.setName("")
+            binding.directionsLayout.visibility = View.GONE
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
-            inputViewModel.setValue(false)
+            mapViewModel.setValueOfPlace(false)
         }
-
 
     }
 
+    private fun showMarkerOnChoosePlace() {
+        //TODO: Implements
+    }
 
 
     override fun onMapReady(mapG: GoogleMap) {

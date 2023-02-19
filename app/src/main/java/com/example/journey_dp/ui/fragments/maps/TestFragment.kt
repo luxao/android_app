@@ -23,7 +23,7 @@ import com.example.journey_dp.databinding.FragmentTestBinding
 
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 
-import com.example.journey_dp.ui.viewmodel.InputViewModel
+import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
@@ -42,7 +42,7 @@ class TestFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var inputAdapter: InputAdapter
 
-    private lateinit var inputViewModel: InputViewModel
+    private lateinit var inputViewModel: MapViewModel
     private lateinit var placeFromSearch: Place
 
     private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -90,7 +90,7 @@ class TestFragment : Fragment() {
         inputViewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext())
-        )[InputViewModel::class.java]
+        )[MapViewModel::class.java]
     }
 
 
@@ -116,7 +116,7 @@ class TestFragment : Fragment() {
             inputAdapter.setName("")
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
-            inputViewModel.setValue(false)
+            inputViewModel.setValueOfPlace(false)
         }
 
 

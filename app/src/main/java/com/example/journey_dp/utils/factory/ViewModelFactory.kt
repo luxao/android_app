@@ -3,7 +3,7 @@ package com.example.journey_dp.utils.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.journey_dp.data.repository.AppRepository
-import com.example.journey_dp.ui.viewmodel.InputViewModel
+import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.SearchViewModel
 
 class ViewModelFactory(private val repository: AppRepository) : ViewModelProvider.Factory {
@@ -13,9 +13,9 @@ class ViewModelFactory(private val repository: AppRepository) : ViewModelProvide
             return SearchViewModel(repository) as T
         }
 
-        if (modelClass.isAssignableFrom(InputViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return InputViewModel() as T
+            return MapViewModel() as T
         }
 
 

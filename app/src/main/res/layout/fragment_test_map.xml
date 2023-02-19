@@ -5,6 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.maps.TestMapFragment">
 
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.journey_dp.ui.viewmodel.MapViewModel" />
+
+        <import type="android.view.View"/>
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -62,7 +71,7 @@
                 android:src="@drawable/ic_baseline_remove_24"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center|top"
-                />
+                 />
 
             <LinearLayout
                 android:id="@+id/layout_for_add_station"
@@ -115,26 +124,16 @@
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginBottom="@dimen/spacing_middle"
-                    android:layout_marginLeft="@dimen/spacing_middle"
-                    android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_medium"
-                    android:background="@drawable/ic_baseline_menu_24"
-                    android:visibility="invisible"
-                    />
 
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginBottom="@dimen/spacing_middle"
-                    android:layout_marginLeft="@dimen/spacing_middle"
+                <Button
+                    android:id="@+id/test_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="@dimen/spacing_xmedium"
                     android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginTop="@dimen/spacing_middle"
-                    android:background="@drawable/ic_person_24"
-                    />
+                    android:layout_marginBottom="@dimen/spacing_middle"
+                    android:background="@drawable/ic_baseline_add_circle_24"
+                    android:contentDescription="@string/add_input" />
 
             </LinearLayout>
 
@@ -143,48 +142,153 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="65dp"
                 tools:context=".ui.fragments.maps.TestFragment">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/inputs_list"
+                <ScrollView
+                    android:id="@+id/scrollView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="LinearLayoutManager"
+                    android:layout_height="300dp"
+                    android:scrollbarFadeDuration="@integer/material_motion_duration_medium_1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/destination_item"
-                    />
+                    >
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/inputs_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layoutManager="LinearLayoutManager"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/destination_item"
+                        />
+                </ScrollView>
 
-                <Button
-                    android:id="@+id/test_button"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/material_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="@dimen/spacing_smlarge"
+                    app:dividerInsetEnd="16dp"
+                    app:dividerInsetStart="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/inputs_list"
+                    app:layout_constraintTop_toBottomOf="@+id/scrollView"
                     app:layout_constraintVertical_bias="0.0"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/ic_baseline_add_circle_24"
                     />
+
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-            <com.google.android.material.divider.MaterialDivider
+            <LinearLayout
+                android:id="@+id/directions_layout"
                 android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:layout_marginTop="500dp"
-                app:dividerInsetEnd="16dp"
-                app:dividerInsetStart="16dp"
-                />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="420dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/material_divider"
+                android:visibility="gone"
+                >
+
+                <ImageView
+                    android:id="@+id/car_directions_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="@dimen/spacing_small"
+                    android:src="@drawable/ic_baseline_directions_car_24"
+                    />
+
+                <TextView
+                    android:id="@+id/car_directions_time"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="@string/car_directions_time"
+                    android:textFontWeight="800"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/train_directions_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_baseline_directions_transit_filled_24"
+                    />
+
+                <TextView
+                    android:id="@+id/train_directions_time"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="@string/train_directions_time"
+                    android:textFontWeight="800"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/bike_directions_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+
+                    android:src="@drawable/ic_baseline_directions_bike_24"
+                    />
+
+                <TextView
+                    android:id="@+id/bicycle_directions_time"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="@string/bicycle_directions_time"
+                    android:textFontWeight="800"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/bus_directions_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_baseline_directions_bus_24"
+                    />
+
+                <TextView
+                    android:id="@+id/bus_directions_time"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="@string/bus_directions_time"
+                    android:textFontWeight="800"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+                <ImageView
+                    android:id="@+id/walk_directions_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_baseline_directions_walk_24"
+                    />
+
+                <TextView
+                    android:id="@+id/walk_directions_time"
+                    android:layout_width="50dp"
+                    android:layout_height="30dp"
+                    android:text="@string/walk_directions_time"
+                    android:textFontWeight="800"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
 
 
         </FrameLayout>
@@ -197,97 +301,4 @@
 
 </layout>
 
-
-<!--<LinearLayout-->
-<!--android:id="@+id/layout_for_add_stop"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:layout_marginTop="100dp"-->
-<!--android:layout_marginBottom="@dimen/spacing_mlarge"-->
-<!--android:layout_marginLeft="@dimen/spacing_mlarge"-->
-<!--android:layout_marginRight="@dimen/spacing_mlarge"-->
-<!--android:orientation="horizontal"-->
-
-<!--    >-->
-
-<!--<ImageView-->
-<!--    android:layout_width="30dp"-->
-<!--    android:layout_height="30dp"-->
-<!--    android:layout_marginBottom="@dimen/spacing_middle"-->
-<!--    android:layout_marginLeft="@dimen/spacing_middle"-->
-<!--    android:layout_marginRight="@dimen/spacing_middle"-->
-<!--    android:layout_marginTop="@dimen/spacing_large"-->
-<!--    android:src="@drawable/ic_baseline_mode_of_travel_24"-->
-<!--    />-->
-
-
-<!--<com.google.android.material.textfield.TextInputLayout-->
-<!--    android:id="@+id/label_stop"-->
-<!--    android:layout_width="200dp"-->
-<!--    android:layout_height="60dp"-->
-
-<!--    android:hint="@string/destination"-->
-<!--    android:textAlignment="center"-->
-<!--    app:startIconContentDescription="@string/destination"-->
-<!--    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-<!--    >-->
-
-<!--    <com.google.android.material.textfield.TextInputEditText-->
-<!--        android:id="@+id/input_stop"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-
-<!--        android:textColorHint="#757575"-->
-
-<!--        />-->
-<!--</com.google.android.material.textfield.TextInputLayout>-->
-
-<!--<ImageView-->
-<!--    android:layout_width="40dp"-->
-<!--    android:layout_height="40dp"-->
-<!--    android:layout_marginBottom="@dimen/spacing_middle"-->
-<!--    android:layout_marginLeft="@dimen/spacing_middle"-->
-<!--    android:layout_marginRight="@dimen/spacing_middle"-->
-<!--    android:layout_marginTop="@dimen/spacing_middle"-->
-<!--    android:background="@drawable/ic_baseline_menu_24"-->
-<!--    />-->
-
-
-<!--</LinearLayout>-->
-
-<!--<View-->
-<!--android:layout_width="20dp"-->
-<!--android:layout_height="30dp"-->
-<!--android:layout_marginBottom="35dp"-->
-<!--android:layout_marginLeft="35dp"-->
-<!--android:layout_marginTop="150dp"-->
-<!--android:background="@drawable/ic_baseline_more_vert_24" />-->
-
-
-
-<!--<androidx.cardview.widget.CardView-->
-<!--android:id="@+id/cardView"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="300dp"-->
-<!--android:layout_margin="4dp"-->
-<!--android:padding="4dp"-->
-<!--app:cardCornerRadius="6dp"-->
-<!--app:cardElevation="4dp"-->
-<!--app:layout_constraintBottom_toBottomOf="parent"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toTopOf="parent"-->
-<!--    >-->
-<!--<androidx.recyclerview.widget.RecyclerView-->
-<!--    android:id="@+id/inputs_list"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    app:layoutManager="LinearLayoutManager"-->
-<!--    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--    app:layout_constraintEnd_toEndOf="parent"-->
-<!--    app:layout_constraintStart_toStartOf="parent"-->
-<!--    app:layout_constraintTop_toTopOf="parent"-->
-<!--    tools:itemCount="3"-->
-<!--    tools:listitem="@layout/destination_item"-->
-<!--    />-->
-<!--</androidx.cardview.widget.CardView>-->
+<!--    android:visibility="@{model.isPlaceSet ? View.VISIBLE : View.GONE}"-->

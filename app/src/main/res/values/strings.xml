@@ -36,4 +36,11 @@
     <string name="add_input">Add</string>
     <string name="destination">Destination</string>
 
+    <string name="car_directions_time">50 m</string>
+    <string name="train_directions_time">1 h</string>
+    <string name="walk_directions_time">1 d</string>
+    <string name="bicycle_directions_time">5 h</string>
+    <string name="bus_directions_time">2.5 h</string>
+
+
 </resources>
