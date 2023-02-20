@@ -360,24 +360,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap.setOnPoiClickListener(this)
         binding.myLocationInput.setText(defaultLocationName)
 
-        //TODO: WE DONT WANT TO REMOVE MARKERS ON CLICK, THIS WILL BE DELETED
-//        googleMap.setOnMarkerClickListener { marker ->
-//            marker.remove()
-//            true
-//        }
-
     }
 
     
     override fun onPoiClick(poi: PointOfInterest) {
         //TODO: THIS FUNCTION WILL BE GETTING INFORMATION ABOUT PLACE ON CLICK, NOT TO SET MARKERS
         //TODO: MAX MARKERS WILL BE DIFFERENT FROM PLANNING MARKERS , OR THERE WILL BE INFO WINDOW ON CLICK,WITH SOME TEXT AND IMAGE ABOUT PLACE
-//        googleMap.addMarker(
-//            MarkerOptions()
-//                .position(LatLng(poi.latLng.latitude, poi.latLng.longitude))
-//                .title(poi.name).icon(BitmapDescriptorFactory.defaultMarker(
-//                    Random().nextInt(360).toFloat()))
-//        )
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
