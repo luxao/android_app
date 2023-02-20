@@ -52,6 +52,13 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         holder.inputText.focusable = View.NOT_FOCUSABLE
 
         holder.inputText.setOnClickListener {
+            if (holder.inputText.text.toString().isNotBlank()) {
+                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT NOT BLANK BEFORE DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
+                val marker = markers.getOrNull(holder.adapterPosition.plus(1))
+                marker?.remove()
+                markers.removeAt(holder.adapterPosition.plus(1))
+                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT NOT BLANK AFTER DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
+            }
             idPosition = holder.adapterPosition
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
             result.launch(intent)
@@ -64,12 +71,17 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition - 1
-            val marker = markers.getOrNull(holder.adapterPosition)
-            marker?.remove()
-            markers.removeAt(holder.adapterPosition)
+            if (holder.inputText.text.toString().isNotBlank()) {
+                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT BEFORE DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
+                val marker = markers.getOrNull(holder.adapterPosition.plus(1))
+                marker?.remove()
+                markers.removeAt(holder.adapterPosition.plus(1))
+                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT AFTER DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
+            }
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
             notifyItemRemoved(holder.adapterPosition)
+
         }
 
     }
