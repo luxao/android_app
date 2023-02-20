@@ -9,10 +9,6 @@
             name="model"
             type="com.example.journey_dp.ui.viewmodel.MapViewModel" />
 
-        <variable
-            name="inputData"
-            type="com.example.journey_dp.domain.InputData" />
-
 
         <import type="android.view.View" />
     </data>
@@ -31,6 +27,7 @@
         >
 
         <ImageView
+            android:id="@+id/mode_of_travel"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginBottom="@dimen/spacing_middle"

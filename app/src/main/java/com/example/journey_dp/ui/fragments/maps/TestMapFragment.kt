@@ -118,6 +118,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private var markers = mutableListOf<Marker>()
 
 
+
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
@@ -132,9 +133,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         val marker = googleMap.addMarker(MarkerOptions().position(placeFromSearch.latLng!!).title(placeFromSearch.name!!).icon(
                             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
                         ))
-                        Log.i("DEBUG MARKERS", "MARKERS ON CHANGE USER LOCATION INPUT BEFORE: ${placeFromSearch.name!!}, ${markers.size}")
                         markers.add(0,marker!!)
-                        Log.i("DEBUG MARKERS", "MARKERS ON CHANGE USER LOCATION INPUT AFTER: ${placeFromSearch.name!!}, ${markers.size}")
                         googleMap.animateCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 placeFromSearch.latLng!!,
@@ -145,11 +144,11 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                     val position = inputAdapter.getID()
 
-
                     if ((!changeUserLocation).and(position != -1)) {
-                        inputAdapter.onPlaceSelected(placeFromSearch, position)
+                        inputAdapter.setPosition(position)
                         showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
                     }
+
                     binding.directionsLayout.visibility = View.VISIBLE
                     changeUserLocation = false
 
@@ -251,22 +250,17 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
-                Log.i("Place", "Place: ${place.name}, ${place.id}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
 
                 if (binding.myLocationInput.text.toString().isNotBlank()) {
-                    Log.i("DEBUG MARKERS", "MARKERS ON PLACE SELECTED REMOVE FIRST BEFORE: ${place.name}, ${markers.size}")
                     val marker = markers.getOrNull(0)
                     marker?.remove()
                     markers.removeAt(0)
-                    Log.i("DEBUG MARKERS", "MARKERS ON PLACE SELECTED REMOVE FIRST AFTER: ${place.name}, ${markers.size}")
                 }
                 googleMap.apply {
                     val marker = addMarker(MarkerOptions().position(place.latLng!!).title(place.name!!).icon(
                         BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
                     ))
-                    Log.i("DEBUG MARKERS", "MARKERS ON PLACE SELECTED ADD BEFORE: ${place.name}, ${markers.size}")
                     markers.add(0,marker!!)
-                    Log.i("DEBUG MARKERS", "MARKERS ON PLACE SELECTED ADD AFTER: ${place.name}, ${markers.size}")
                     animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             place.latLng!!,
@@ -309,11 +303,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         binding.myLocationInput.setOnClickListener {
             if (binding.myLocationInput.text.toString().isNotBlank()) {
-                Log.i("DEBUG MARKERS", "MARKERS ON MY LOCATION IS NOT EMPTY BEFORE: ${binding.myLocationInput.text}, ${markers.size}")
                 val marker = markers.getOrNull(0)
                 marker?.remove()
                 markers.removeAt(0)
-                Log.i("DEBUG MARKERS", "MARKERS ON MY LOCATION IS NOT EMPTY AFTER: ${binding.myLocationInput.text}, ${markers.size}")
             }
             changeUserLocation = true
             resultLauncher.launch(intent)
@@ -327,9 +319,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val marker = googleMap.addMarker(MarkerOptions().position(coordinates).title(locationName).icon(
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
-        Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT BEFORE: ${locationName}, ${markers.size}")
         markers.add(position,marker!!)
-        Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT AFTER: ${locationName}, ${markers.size}")
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 coordinates,
@@ -348,9 +338,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 .position(defaultLocation)
                 .title(defaultLocationName)
         )
-        Log.i("DEBUG MARKERS", "MARKERS ON MAP READY BEFORE: ${defaultLocationName}, ${markers.size}")
         markers.add(0,marker!!)
-        Log.i("DEBUG MARKERS", "MARKERS ON MAP READY AFTER: ${defaultLocationName}, ${markers.size}")
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 defaultLocation,
@@ -409,6 +397,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             val cityName: String = addresses!![0].getAddressLine(0)
                             // Vycistenie google mapy od default nastaveni
                             googleMap.clear()
+                            markers.removeAt(0)
                             val marker = googleMap.addMarker(
                                 MarkerOptions()
                                     .position(LatLng(it.latitude, it.longitude))
@@ -416,7 +405,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             )
 
                             markers.add(0,marker!!)
-                            Log.i("DEBUG MARKERS", "MARKERS ON LOCATION ALLOW: ${cityName}, ${markers.size}")
                             googleMap.animateCamera(
                                 CameraUpdateFactory.newLatLngZoom(
                                     LatLng(it.latitude, it.longitude),

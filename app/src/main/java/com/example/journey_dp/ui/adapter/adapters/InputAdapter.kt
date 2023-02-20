@@ -53,11 +53,9 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         holder.inputText.setOnClickListener {
             if (holder.inputText.text.toString().isNotBlank()) {
-                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT NOT BLANK BEFORE DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
-                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT NOT BLANK AFTER DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
             }
             idPosition = holder.adapterPosition
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
@@ -65,18 +63,15 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         }
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
-            Log.i("TEST", "FOCUSED POSITION: ${holder.adapterPosition}, $position, ${holder.inputText.id},${holder.inputText.tag}")
             holder.inputText.setText(name)
         }
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition - 1
             if (holder.inputText.text.toString().isNotBlank()) {
-                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT BEFORE DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
-                Log.i("DEBUG MARKERS", "MARKERS ON DYNAMIC INPUT AFTER DELETE: ${holder.inputText.text.toString()}, ${markers.size}, ${holder.adapterPosition.plus(1)}")
             }
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
@@ -90,8 +85,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         return this.idPosition
     }
 
-    fun onPlaceSelected(place: Place, position: Int) {
-        Log.i("TEST", "ADAPTER POSITION FROM onPlaceSelected: ${position}, ${place.name}")
+    fun setPosition(position: Int) {
         notifyItemChanged(position)
     }
 
@@ -102,6 +96,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)
         val deleteButton: ImageView = itemView.findViewById(R.id.delete_input)
+        val imageOfDirection: ImageView = itemView.findViewById(R.id.mode_of_travel)
     }
 }
 
