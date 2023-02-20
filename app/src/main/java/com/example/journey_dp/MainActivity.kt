@@ -1,20 +1,12 @@
 package com.example.journey_dp
 
-import android.content.pm.ActivityInfo
-import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import androidx.core.content.ContextCompat
+
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
+
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.onNavDestinationSelected
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.journey_dp.data.repository.AppRepository
+
 import com.example.journey_dp.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers

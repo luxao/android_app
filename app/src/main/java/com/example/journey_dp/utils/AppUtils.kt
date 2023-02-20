@@ -18,7 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
-import com.example.journey_dp.domain.LocationCoordinates
+
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 
