@@ -194,7 +194,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         //Initialize Places Client
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
 
-        mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
+        mapViewModel = ViewModelProvider(
+            this,
+            Injection.provideViewModelFactory()
+        )[MapViewModel::class.java]
 
         // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())

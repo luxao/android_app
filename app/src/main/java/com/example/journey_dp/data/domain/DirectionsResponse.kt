@@ -1,5 +1,6 @@
 package com.example.journey_dp.data.domain
 
+//TODO: FIX DATA CLASSES !!!!
 
 data class DirectionsResponse(
     val routes: List<Route>

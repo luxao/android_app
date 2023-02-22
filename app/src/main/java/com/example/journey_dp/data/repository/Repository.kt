@@ -24,6 +24,7 @@ class Repository private constructor(
             if (resp.isSuccessful) {
                 resp.body()?.let { data ->
                     //TODO: not yet implement
+
                     directions = data
                     Log.i("Directions", "Data: $data")
                 }?: onError("Failed to load directions")
