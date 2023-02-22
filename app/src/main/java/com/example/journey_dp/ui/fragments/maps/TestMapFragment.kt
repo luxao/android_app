@@ -245,6 +245,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         }
 
 
+
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
 
@@ -317,6 +318,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
         markers.add(position,marker!!)
+
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 coordinates,

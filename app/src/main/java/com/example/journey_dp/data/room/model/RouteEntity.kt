@@ -1,7 +1,10 @@
 package com.example.journey_dp.data.room.model
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "routes")
-class RouteEntity {
-}
+class RouteEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int
+)

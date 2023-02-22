@@ -9,13 +9,16 @@ import retrofit2.http.*
 interface ApiService {
 
     //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=train|subway&key=YOUR_API_KEY
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&alternatives=true&key=YOUR_API_KEY
+    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=&key=YOUR_API_KEY
+    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=driving&transit_mode=bus|train&key=YOUR_API_KEY
+
 
     @GET("directions/json")
     suspend fun getDirections(
         @Query("origin") origin: String,
         @Query("destination") destination: String,
-        @Query("alternatives") alternatives: Boolean,
+        @Query("mode") mode: String,
+        @Query("transit") transit: String?,
         @Query("key") apiKey: String
     ): DirectionsResponse
 
