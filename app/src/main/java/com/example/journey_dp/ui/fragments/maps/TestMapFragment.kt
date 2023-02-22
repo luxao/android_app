@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
@@ -193,6 +195,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -208,10 +211,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             else -> {
             // No location access granted.
                 permissionStateDenied = true
+
             }
         }
     }
 
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Initialize Places Client
@@ -382,6 +387,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
+
     // Check if location is enabled or not and return boolean
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -400,6 +406,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestPermissions() {
         locationPermissionRequest.launch(arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -407,6 +414,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("MissingPermission")
     fun getLocation(context: Context){
         if (checkPermissions(context)) {
@@ -417,10 +425,15 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     ).addOnSuccessListener {
                         it?.let {
                             val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                            //TODO: getFromLocation je deprecated pre Android API level 33, treba od novsej verzie pouzit novu funkciu
+                            //TODO: Code prepared for API LEVEL 33
+//                            var cityName = ""
+//                            geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
+//                                cityName = addresses[0].getAddressLine(0)
+//                            }
+                            // DEPRECATED FOR TIRAMISU VERSION
                             val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
                             val cityName: String = addresses!![0].getAddressLine(0)
-                            // Vycistenie google mapy od default nastaveni
+
                             googleMap.clear()
                             markers.removeAt(0)
                             val marker = googleMap.addMarker(

@@ -15,7 +15,7 @@ object Injection {
 //        return LocalCache(database.dao())
 //    }
 
-    fun provideDataRepository(): Repository {
+    private fun provideDataRepository(): Repository {
         return Repository.getInstance(ApiService.create())
     }
 
