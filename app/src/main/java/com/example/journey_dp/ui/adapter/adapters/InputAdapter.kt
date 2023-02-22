@@ -86,7 +86,11 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
     }
 
     fun getNewOrigin(position: Int): String {
+        if ((position == -1).or(position > newOrigin.size)) {
+            throw Exception("List index out of range")
+        }
         return this.newOrigin[position]
+
     }
 
     fun getID(): Int {

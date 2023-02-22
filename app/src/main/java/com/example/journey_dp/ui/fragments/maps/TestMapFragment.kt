@@ -172,11 +172,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     }
 
 
-
-
-
-
-
                     binding.directionsLayout.visibility = View.VISIBLE
                     changeUserLocation = false
 
