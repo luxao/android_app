@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -128,6 +129,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     inputAdapter.setName(placeFromSearch.name!!)
 
 
+
                     if (changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
                         val marker = googleMap.addMarker(MarkerOptions().position(placeFromSearch.latLng!!).title(placeFromSearch.name!!).icon(
@@ -141,6 +143,19 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             )
                         )
                     }
+
+                    val origin = binding.myLocationInput.text.toString()
+                    val destination = placeFromSearch.name!!
+                    //TODO: dynamically set mode
+                    val mode = "driving"
+                    //TODO: dynamically set transit
+                    val transit = ""
+                    val key = BuildConfig.GOOGLE_MAPS_API_KEY
+
+//                    mapViewModel.getDirections(origin, destination, mode, transit, key)
+//                    mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
+//                        //TODO: result!!.routes[0].legs[0].distance
+//                    })
 
                     val position = inputAdapter.getID()
 
@@ -394,7 +409,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     ).addOnSuccessListener {
                         it?.let {
                             val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                            //TODO: getFromLocation je deprecated pre Android 11, treba od novsej verzie pouzit novu funkciu
+                            //TODO: getFromLocation je deprecated pre Android API level 33, treba od novsej verzie pouzit novu funkciu
                             val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
                             val cityName: String = addresses!![0].getAddressLine(0)
                             // Vycistenie google mapy od default nastaveni
