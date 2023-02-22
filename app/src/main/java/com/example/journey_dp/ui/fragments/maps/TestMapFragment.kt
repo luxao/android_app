@@ -144,26 +144,38 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             )
                         )
                     }
+                    val position = inputAdapter.getID()
 
-                    val origin = binding.myLocationInput.text.toString()
-                    val destination = placeFromSearch.name!!
-                    //TODO: dynamically set mode
-                    val mode = "driving"
-                    //TODO: dynamically set transit
-                    val transit = ""
-                    val key = BuildConfig.GOOGLE_MAPS_API_KEY
+                    Log.i("TEST","Position of inputs from adapter $position and ${markers.size} and $changeUserLocation")
+
+                    if ((!changeUserLocation).and(position >= 0)) {
+                        inputAdapter.setPosition(position)
+                        showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
+//                        var origin = ""
+//                        origin = if (position == 0) {
+//                            binding.myLocationInput.text.toString()
+//                        } else {
+//                            inputAdapter.getNewOrigin(position.minus(1))
+//                        }
+//                    val destination = placeFromSearch.name!!
+//                    //TODO: dynamically set mode
+//                    val mode = "driving"
+//                    //TODO: dynamically set transit
+//                    val transit = ""
+//                    val key = BuildConfig.GOOGLE_MAPS_API_KEY
 
 //                    mapViewModel.getDirections(origin, destination, mode, transit, key)
 //                    mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
 //                        //TODO: result!!.routes[0].legs[0].distance
 //                    })
 
-                    val position = inputAdapter.getID()
-
-                    if ((!changeUserLocation).and(position != -1)) {
-                        inputAdapter.setPosition(position)
-                        showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
                     }
+
+
+
+
+
+
 
                     binding.directionsLayout.visibility = View.VISIBLE
                     changeUserLocation = false

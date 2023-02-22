@@ -31,6 +31,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
 
     private var idPosition: Int = 0
+    private var newOrigin = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.destination_item, parent, false)
@@ -56,6 +57,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
+                newOrigin.removeAt(holder.adapterPosition)
             }
             idPosition = holder.adapterPosition
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
@@ -63,6 +65,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         }
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
+            newOrigin.add(holder.adapterPosition,name)
             holder.inputText.setText(name)
         }
 
@@ -72,6 +75,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
+                newOrigin.removeAt(holder.adapterPosition)
             }
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
@@ -79,6 +83,10 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
 
         }
 
+    }
+
+    fun getNewOrigin(position: Int): String {
+        return this.newOrigin[position]
     }
 
     fun getID(): Int {
