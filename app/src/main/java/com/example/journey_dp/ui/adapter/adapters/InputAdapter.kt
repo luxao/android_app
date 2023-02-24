@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputEditText
 
 
@@ -109,6 +110,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)
         val deleteButton: ImageView = itemView.findViewById(R.id.delete_input)
         val imageOfDirection: ImageView = itemView.findViewById(R.id.mode_of_travel)
+
     }
 }
 

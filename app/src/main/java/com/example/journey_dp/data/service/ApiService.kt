@@ -9,9 +9,10 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=train|subway&key=YOUR_API_KEY
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=&key=YOUR_API_KEY
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=driving&transit_mode=bus|train&key=YOUR_API_KEY
+
+    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=driving&key=YOUR_API_KEY
+    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=walking&key=YOUR_API_KEY
+    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=bus|train|subway&key=YOUR_API_KEY
 
 
     @GET("directions/json")

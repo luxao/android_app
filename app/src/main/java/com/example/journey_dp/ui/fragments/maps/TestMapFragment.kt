@@ -55,6 +55,8 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.maps.android.PolyUtil
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -277,6 +279,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
 
+
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
 
@@ -349,6 +352,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
         markers.add(position,marker!!)
+
+        standardBottomSheetBehavior.peekHeight = 400
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -425,14 +431,16 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     ).addOnSuccessListener {
                         it?.let {
                             val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                            //TODO: Code prepared for API LEVEL 33
-//                            var cityName = ""
-//                            geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
-//                                cityName = addresses[0].getAddressLine(0)
-//                            }
+
+
                             // DEPRECATED FOR TIRAMISU VERSION
                             val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
                             val cityName: String = addresses!![0].getAddressLine(0)
+//                            lifecycleScope.launch {
+//                                geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
+//                                    cityName = addresses[0].getAddressLine(0)
+//                                }
+//                            }
 
                             googleMap.clear()
                             markers.removeAt(0)

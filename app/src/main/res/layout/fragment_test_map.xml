@@ -35,7 +35,7 @@
             android:visibility="visible"
             >
 
-            <fragment
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/autocomplete_fragment"
                 android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                 android:src="@color/places_autocomplete_search_text"
@@ -50,7 +50,7 @@
 
 
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/google_map"
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
