@@ -175,7 +175,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                     }
 
-
+//                    git push origin --delete push
                     binding.directionsLayout.visibility = View.VISIBLE
                     changeUserLocation = false
 
