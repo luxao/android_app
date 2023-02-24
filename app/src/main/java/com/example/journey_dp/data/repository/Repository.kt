@@ -26,7 +26,7 @@ class Repository private constructor(
                     //TODO: not yet implement
 
                     directions = data
-                    Log.i("Directions", "Data: $data")
+                    Log.i("TEST", "Data: $data")
                 }?: onError("Failed to load directions")
             }
             else {

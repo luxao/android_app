@@ -2,37 +2,28 @@ package com.example.journey_dp.ui.fragments.maps
 
 
 
-import android.Manifest
-import android.annotation.SuppressLint
+
 import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
-import android.location.LocationManager
-import android.os.Build
+import android.graphics.Color
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
-import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.setMapMenu
@@ -55,8 +46,6 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.maps.android.PolyUtil
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -107,7 +96,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private lateinit var searchView: AutocompleteSupportFragment
 
     // Set default Location : If user not granted permission
-    private val defaultLocation = LatLng( 48.148598, 17.107748)
+    private val defaultLocation = LatLng( 48.14838109999999, 17.1080601)
 
     private val defaultLocationName = "Bratislava"
 
@@ -155,23 +144,29 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     if ((!changeUserLocation).and(position >= 0)) {
                         inputAdapter.setPosition(position)
                         showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
-//                        var origin = ""
-//                        origin = if (position == 0) {
-//                            binding.myLocationInput.text.toString()
-//                        } else {
-//                            inputAdapter.getNewOrigin(position.minus(1))
-//                        }
-//                    val destination = placeFromSearch.name!!
-//                    //TODO: dynamically set mode
-//                    val mode = "driving"
-//                    //TODO: dynamically set transit
-//                    val transit = ""
-//                    val key = BuildConfig.GOOGLE_MAPS_API_KEY
 
-//                    mapViewModel.getDirections(origin, destination, mode, transit, key)
-//                    mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
-//                        //TODO: result!!.routes[0].legs[0].distance
-//                    })
+                        var origin = ""
+                        origin = if (position == 0) {
+                            binding.myLocationInput.text.toString()
+                        } else {
+                            inputAdapter.getNewOrigin(position.minus(1))
+                        }
+
+
+
+                    val destination = placeFromSearch.name!!
+                    //TODO: dynamically set mode
+                    val mode = "driving"
+                    //TODO: dynamically set transit
+                    val transit = ""
+                    val key = BuildConfig.GOOGLE_MAPS_API_KEY
+
+                    mapViewModel.getDirections(origin, destination, mode, transit, key)
+                    mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
+                        //TODO: result!!.routes[0].legs[0].distance
+                        Log.i("TEST", "POINTS : ${result?.routes?.get(0)?.overviewPolyline!!.points}")
+                        showRouteOnMap(result.routes[0].overviewPolyline.points)
+                    })
 
                     }
 
@@ -197,26 +192,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                // Precise location access granted.
-                getLocation(requireContext())
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                // Only approximate location access granted.
-                getLocation(requireContext())
-            }
-            else -> {
-            // No location access granted.
-                permissionStateDenied = true
-
-            }
-        }
-    }
 
 //    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -231,7 +206,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        getLocation(requireContext())
+//        getLocation(requireContext())
     }
 
 
@@ -353,8 +328,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         ))
         markers.add(position,marker!!)
 
-        standardBottomSheetBehavior.peekHeight = 400
-        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+//        standardBottomSheetBehavior.peekHeight = 400
+//        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -393,83 +368,22 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
+    private fun showRouteOnMap(line: String) {
+        val polyline: List<LatLng> = PolyUtil.decode(line)
+        val options = PolylineOptions()
+        options.width(5F)
+        options.color(Color.BLACK)
+        options.addAll(polyline)
+        googleMap.addPolyline(options)
 
-    // Check if location is enabled or not and return boolean
-    private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
+
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                placeFromSearch.latLng!!,
+                10F
+            )
         )
     }
-
-    private fun checkPermissions(context: Context): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun requestPermissions() {
-        locationPermissionRequest.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION))
-    }
-
-
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @SuppressLint("MissingPermission")
-    fun getLocation(context: Context){
-        if (checkPermissions(context)) {
-                if (isLocationEnabled()) {
-                    fusedLocationProviderClient.getCurrentLocation(
-                        CurrentLocationRequest.Builder().setDurationMillis(30000)
-                            .setMaxUpdateAgeMillis(60000).build(), null
-                    ).addOnSuccessListener {
-                        it?.let {
-                            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-
-
-                            // DEPRECATED FOR TIRAMISU VERSION
-                            val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
-                            val cityName: String = addresses!![0].getAddressLine(0)
-//                            lifecycleScope.launch {
-//                                geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
-//                                    cityName = addresses[0].getAddressLine(0)
-//                                }
-//                            }
-
-                            googleMap.clear()
-                            markers.removeAt(0)
-                            val marker = googleMap.addMarker(
-                                MarkerOptions()
-                                    .position(LatLng(it.latitude, it.longitude))
-                                    .title(cityName)
-                            )
-
-                            markers.add(0,marker!!)
-                            googleMap.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(it.latitude, it.longitude),
-                                    15F
-                                ))
-                            binding.myLocationInput.setText(cityName)
-                        }
-                    }
-                }
-            else {
-                Toast.makeText(context,"Please turn on location", Toast.LENGTH_SHORT).show()
-            }
-        }
-        else {
-            requestPermissions()
-        }
-    }
-
-
 
 
     override fun onDestroyView() {
