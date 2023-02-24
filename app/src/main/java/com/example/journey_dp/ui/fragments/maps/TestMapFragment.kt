@@ -5,7 +5,6 @@ package com.example.journey_dp.ui.fragments.maps
 
 import android.app.Activity
 import android.graphics.Color
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,10 +13,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
@@ -28,7 +27,6 @@ import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.setMapMenu
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -111,7 +109,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private val inputs = mutableListOf<LinearLayout>()
     private var markers = mutableListOf<Marker>()
-
+    private var polylines = mutableListOf<Polyline>()
+    private var checkLine: String = ""
 
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -120,12 +119,14 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
                     mapViewModel.setPlaceName(placeFromSearch.name!!)
-                    inputAdapter.setName(placeFromSearch.name!!)
+                    val destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
+                    inputAdapter.setName(placeFromSearch.name!!, destination)
 
 
 
                     if (changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
+                        mapViewModel.setLocation(placeFromSearch.latLng!!)
                         val marker = googleMap.addMarker(MarkerOptions().position(placeFromSearch.latLng!!).title(placeFromSearch.name!!).icon(
                             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
                         ))
@@ -147,26 +148,30 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                         var origin = ""
                         origin = if (position == 0) {
-                            binding.myLocationInput.text.toString()
+                            mapViewModel.location.value!!.latitude.toString() + "," + mapViewModel.location.value!!.longitude.toString()
                         } else {
                             inputAdapter.getNewOrigin(position.minus(1))
                         }
 
 
+                        //TODO: dynamically set mode
+                        val mode = "driving"
+                        //TODO: dynamically set transit
+                        val transit = ""
+                        val key = BuildConfig.GOOGLE_MAPS_API_KEY
 
-                    val destination = placeFromSearch.name!!
-                    //TODO: dynamically set mode
-                    val mode = "driving"
-                    //TODO: dynamically set transit
-                    val transit = ""
-                    val key = BuildConfig.GOOGLE_MAPS_API_KEY
+                        Log.i("TEST", "ORIGIN AND DESTINATION:  $origin and $destination")
 
-                    mapViewModel.getDirections(origin, destination, mode, transit, key)
-                    mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
-                        //TODO: result!!.routes[0].legs[0].distance
-                        Log.i("TEST", "POINTS : ${result?.routes?.get(0)?.overviewPolyline!!.points}")
-                        showRouteOnMap(result.routes[0].overviewPolyline.points)
-                    })
+                        mapViewModel.getDirections(origin, destination, mode, transit, key)
+
+
+                        mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
+                            //TODO: result!!.routes[0].legs[0].distance
+                            if (checkLine != result?.routes?.get(0)?.overviewPolyline!!.points) {
+                                showRouteOnMap(result?.routes?.get(0)?.overviewPolyline!!.points)
+                            }
+
+                        })
 
                     }
 
@@ -295,13 +300,13 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter("",inputs,markers,resultLauncher)
+        inputAdapter = InputAdapter("","",inputs,markers,polylines,resultLauncher)
         recyclerView.adapter = inputAdapter
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
         binding.testButton.setOnClickListener {
-            inputAdapter.setName("")
+            inputAdapter.setName("","")
             binding.directionsLayout.visibility = View.GONE
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
@@ -344,6 +349,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap = mapG
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
+        mapViewModel.setLocation(defaultLocation)
+
         val marker = googleMap.addMarker(
             MarkerOptions()
                 .position(defaultLocation)
@@ -369,20 +376,28 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
     private fun showRouteOnMap(line: String) {
-        val polyline: List<LatLng> = PolyUtil.decode(line)
-        val options = PolylineOptions()
-        options.width(5F)
-        options.color(Color.BLACK)
-        options.addAll(polyline)
-        googleMap.addPolyline(options)
+        val rnd = Random()
+        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        checkLine = line
+        if (line.isNotBlank()) {
+            val polyline: List<LatLng> = PolyUtil.decode(line)
+            val options = PolylineOptions()
+            options.width(8F)
+            options.color(Color.BLACK)
+            options.addAll(polyline)
+            val addedPolyline = googleMap.addPolyline(options)
 
+            polylines.add(addedPolyline)
 
-        googleMap.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                placeFromSearch.latLng!!,
-                10F
+            Log.i("TEST", "AFTER ADDED POLYLINE : $polylines")
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    placeFromSearch.latLng!!,
+                    10F
+                )
             )
-        )
+        }
+
     }
 
 

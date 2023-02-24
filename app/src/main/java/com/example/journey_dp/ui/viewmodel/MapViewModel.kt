@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.repository.Repository
 import com.example.journey_dp.utils.Errors
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 
 
@@ -25,6 +26,12 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     private val _directions =  MutableLiveData<DirectionsResponse?>()
     val directions: LiveData<DirectionsResponse?> get() = _directions
+
+
+
+    private val _location: MutableLiveData<LatLng> = MutableLiveData()
+    val location: LiveData<LatLng> get() = _location
+
 
     fun setPlaceName(nameOfPlace: String) {
         _isPlaceSet.value = true
@@ -49,6 +56,12 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
             _directions.value = result
             _loading.postValue(false)
         }
+    }
+
+
+
+    fun setLocation(coordinates: LatLng) {
+        _location.value = coordinates
     }
 
     fun show(msg: String){ _message.postValue(Errors(msg))}

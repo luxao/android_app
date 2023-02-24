@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
 
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -27,7 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputEditText
 
 
-class InputAdapter(private var name: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val result: ActivityResultLauncher<Intent>) :
+class InputAdapter(private var name: String,private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val polylines: MutableList<Polyline>,private val result: ActivityResultLauncher<Intent>) :
     RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
 
@@ -58,6 +59,14 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
+                var counter = 0
+                for (line in polylines) {
+                    if (counter == holder.adapterPosition) {
+                        line.remove()
+                    }
+                    counter+=1
+                }
+                polylines.removeAt(holder.adapterPosition)
                 newOrigin.removeAt(holder.adapterPosition)
             }
             idPosition = holder.adapterPosition
@@ -66,7 +75,7 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         }
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
-            newOrigin.add(holder.adapterPosition,name)
+            newOrigin.add(holder.adapterPosition,destination)
             holder.inputText.setText(name)
         }
 
@@ -76,7 +85,18 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
+                Log.i("TEST", "ALL POLYLINE before removed: $polylines")
+                var counter = 0
+                for (line in polylines) {
+                    if (counter == holder.adapterPosition) {
+                        line.remove()
+                    }
+                    counter+=1
+                }
+                polylines.removeAt(holder.adapterPosition)
                 newOrigin.removeAt(holder.adapterPosition)
+                Log.i("TEST", "ALL POLYLINE after removed: $polylines")
+
             }
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
@@ -102,8 +122,9 @@ class InputAdapter(private var name: String, private val inputs: MutableList<Lin
         notifyItemChanged(position)
     }
 
-    fun setName(name: String) {
+    fun setName(name: String, destination: String) {
         this.name = name
+        this.destination = destination
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
