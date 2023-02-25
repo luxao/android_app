@@ -59,14 +59,17 @@ class InputAdapter(private var name: String,private var destination: String, pri
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
-                var counter = 0
-                for (line in polylines) {
-                    if (counter == holder.adapterPosition) {
-                        line.remove()
+                if (polylines.isNotEmpty()) {
+                    var counter = 0
+                    for (line in polylines) {
+                        if (counter == holder.adapterPosition) {
+                            line.remove()
+                        }
+                        counter+=1
                     }
-                    counter+=1
+                    polylines.removeAt(holder.adapterPosition)
                 }
-                polylines.removeAt(holder.adapterPosition)
+
                 newOrigin.removeAt(holder.adapterPosition)
             }
             idPosition = holder.adapterPosition
@@ -86,14 +89,17 @@ class InputAdapter(private var name: String,private var destination: String, pri
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
                 Log.i("TEST", "ALL POLYLINE before removed: $polylines")
-                var counter = 0
-                for (line in polylines) {
-                    if (counter == holder.adapterPosition) {
-                        line.remove()
+                if (polylines.isNotEmpty()) {
+                    var counter = 0
+                    for (line in polylines) {
+                        if (counter == holder.adapterPosition) {
+                            line.remove()
+                        }
+                        counter+=1
                     }
-                    counter+=1
+                    polylines.removeAt(holder.adapterPosition)
                 }
-                polylines.removeAt(holder.adapterPosition)
+
                 newOrigin.removeAt(holder.adapterPosition)
                 Log.i("TEST", "ALL POLYLINE after removed: $polylines")
 
@@ -126,6 +132,8 @@ class InputAdapter(private var name: String,private var destination: String, pri
         this.name = name
         this.destination = destination
     }
+
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)

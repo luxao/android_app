@@ -27,7 +27,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     private val _directions =  MutableLiveData<DirectionsResponse?>()
     val directions: LiveData<DirectionsResponse?> get() = _directions
 
-
+    private val _iconType = MutableLiveData("driving")
+    val iconType: LiveData<String> get() = _iconType
 
     private val _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
@@ -45,7 +46,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
 
     fun getDirections(origin: String, destination: String,
-    mode: String, transit: String?, key: String){
+    mode: String, transit: String, key: String){
         viewModelScope.launch {
             _loading.postValue(true)
             val result = repository.getDirections(origin, destination, mode, transit, key) {
@@ -58,6 +59,9 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
+    fun setIconType(iconType: String) {
+        _iconType.value = iconType
+    }
 
 
     fun setLocation(coordinates: LatLng) {

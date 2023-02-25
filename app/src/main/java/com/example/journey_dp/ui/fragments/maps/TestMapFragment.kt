@@ -4,6 +4,8 @@ package com.example.journey_dp.ui.fragments.maps
 
 
 import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -13,11 +15,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
@@ -45,7 +47,6 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.maps.android.PolyUtil
 import java.util.*
 
@@ -157,9 +158,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         }
 
 
-                        //TODO: dynamically set mode
                         var mode = "driving"
-                        //TODO: dynamically set transit
                         var transit = ""
                         val key = BuildConfig.GOOGLE_MAPS_API_KEY
 
@@ -170,8 +169,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                         mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
                             if (result != null) {
-                                if (checkLine != result?.routes?.get(0)?.overviewPolyline!!.points) {
-                                    showRouteOnMap(result?.routes[0].overviewPolyline.points)
+                                if (checkLine != result.routes?.get(0)?.overviewPolyline!!.points) {
+                                    val points = result.routes[0].overviewPolyline.points
+                                    val distance = result.routes[0].legs[0].distance.text
+                                    val duration = result.routes[0].legs[0].duration.text
+                                    val iconType = mapViewModel.iconType.value
+                                    showRouteOnMap(points, distance, duration, iconType!!)
                                 }
                             }
                         })
@@ -180,6 +183,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             checkedIds.map {
                                 val chip: Chip? = group.findViewById(it)
                                 mode = chip?.tag.toString()
+                                mapViewModel.setIconType(mode)
                                 if ((mode == "bus").or(mode == "train")) {
                                     mode = "transit"
                                     transit = chip?.tag.toString()
@@ -201,15 +205,14 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 }
                                 Log.i("TEST", "ALL POLYLINE after removed: $polylines")
                                 Log.i("TEST", "QUERY ?origin=$origin&destination=$destination&mode=$mode&transit_mode=$transit&key=${BuildConfig.GOOGLE_MAPS_API_KEY}")
-                                mapViewModel.getDirections(origin, destination, mode, transit, BuildConfig.GOOGLE_MAPS_API_KEY)
+                                mapViewModel.getDirections(origin, destination, mode, transit, key)
+
                             }
                         }
 
                     }
 
-                    mapViewModel.message.observe(viewLifecycleOwner) {
-                        Log.i("TEST", "ERROR: ${mapViewModel.show(it.toString())}")
-                    }
+
 
                     binding.chipGroupDirections.visibility = View.VISIBLE
                     changeUserLocation = false
@@ -222,6 +225,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     status = Autocomplete.getStatusFromIntent(result.data!!)
                     isStatusSet.postValue(true)
                     Log.i("TEST", status.statusMessage ?: "")
+                    Toast.makeText(context,"Error: ${status.statusMessage}", Toast.LENGTH_SHORT).show()
                 }
             }
             Activity.RESULT_CANCELED -> {
@@ -308,6 +312,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
                     ))
                     markers.add(0,marker!!)
+                    mapViewModel.setLocation(place.latLng!!)
                     animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             place.latLng!!,
@@ -342,6 +347,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         binding.testButton.setOnClickListener {
             inputAdapter.setName("","")
+            mapViewModel.setIconType("driving")
             binding.carDirectionsIcon.isChecked = true
             binding.chipGroupDirections.visibility = View.GONE
             inputs.add(layout)
@@ -359,7 +365,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             resultLauncher.launch(intent)
         }
 
-
     }
 
 
@@ -369,8 +374,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         ))
         markers.add(position,marker!!)
 
-//        standardBottomSheetBehavior.peekHeight = 400
-//        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        standardBottomSheetBehavior.peekHeight = 80
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -411,18 +416,19 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showRouteOnMap(line: String) {
+    private fun showRouteOnMap(line: String, distanceText: String, durationText: String, choosedIcon: String) {
         val rnd = Random()
         val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         checkLine = line
         if (line.isNotBlank()) {
             val polyline: List<LatLng> = PolyUtil.decode(line)
+
             val options = PolylineOptions()
             options.width(8F)
             options.color(color)
             options.addAll(polyline)
             val addedPolyline = googleMap.addPolyline(options)
-
+            addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
             polylines.add(addedPolyline)
 
             Log.i("TEST", "AFTER ADDED POLYLINE : $polylines")
@@ -432,8 +438,41 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     10F
                 )
             )
+
         }
 
+    }
+
+    private fun Polyline.addInfoWindow(map: GoogleMap, title: String, message: String, iconType: String) {
+        val pointsOnLine = this.points.size
+        val infoLatLng = this.points[(pointsOnLine / 2)]
+
+        val iconMarker = when(iconType){
+            "driving" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_car_24)
+            "bus" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_bus_24)
+            "train" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_transit_filled_24)
+            "walking" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_walk_24)
+            "bicycling" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_bike_24)
+            else -> bitmapDescriptorFromVector(R.drawable.ic_baseline_mode_of_travel_24)
+        }
+        map.addMarker(
+            MarkerOptions()
+                .position(infoLatLng)
+                .title(title)
+                .snippet(message)
+                .alpha(1f)
+                .icon(iconMarker)
+                .anchor(0f, 0f)
+        )?.showInfoWindow()
+    }
+
+    private fun  bitmapDescriptorFromVector(vectorResId:Int):BitmapDescriptor {
+        val vectorDrawable = ContextCompat.getDrawable(requireContext(), vectorResId);
+        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight);
+        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888);
+        val canvas =  Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
 

@@ -23,24 +23,24 @@ class Repository private constructor(
             val resp = service.getDirections(origin,destination,mode,transit,key)
             if (resp.isSuccessful) {
                 resp.body()?.let { data ->
-                    //TODO: not yet implement
-
                     directions = data
                     Log.i("TEST", "Data: $data")
                 }?:  Log.i("TEST","Failed to load directions")
             }
             else {
                 Log.i("TEST","Failed to read directions")
+                onError("Failed to read directions")
             }
         }
         catch (ex: IOException) {
             ex.printStackTrace()
-            Log.i("TEST","FAILED because $ex")
             Log.i("TEST","Failed to load directions, check internet connection")
+            onError("Failed to load directions, check internet connection")
         }
         catch (ex: Exception) {
             ex.printStackTrace()
             Log.i("TEST","Failed to load directions, error")
+            onError("Failed to load directions, error")
         }
         return directions
     }

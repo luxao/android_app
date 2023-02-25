@@ -6,7 +6,6 @@
     tools:context=".ui.fragments.maps.TestMapFragment">
 
     <data>
-
         <variable
             name="model"
             type="com.example.journey_dp.ui.viewmodel.MapViewModel" />
