@@ -52,25 +52,16 @@ import java.util.*
 
 
 //TODO: """
-// VO FEBRUARI SPRAVIT LOGIKU PLANOVANIA A ZOBRAZOVANIA TRASY
-// 5. Implementovanie nadpájania trás roznymi dopravnymi prostriedkami
 // 6. Zrozumitelne zobrazovanie napr. informácii o ceste autobusom
 // 7. Fetchovanie obrázkov,popisov, url odkazov a inych informácii o Places a pridanie ich do mapy alebo bottom sheetu po kliknuti na place
 // 8. Jednoduche zaregistrovanie otvorenia intentu odkazu nejakeho hotelu a zapisanie informacii o ubytovani
 // 9. IMPLEMENTOVANIE LOKALNEJ DATABAZY a SHAREDPREFERENCES pre nastavenie prihlaseneho usera pokial sa neodhlasi
 // 10. Implementacia Loginu z FIREBASE a INTEGRACIA appky s FIREBASE
 // 11. A LOT OF WORK TO END :(
-// 12....
+// 12. Osetrit ak nie je internet
+// 13. Uprava ziskavania lokacie
 // """
 
-
-
-//TODO: """ Tento Tyzden
-// 1. Implementacia SQL LOKAL DB ????
-// 2. ViewModel pre Map Fragment ???
-// 4. REST API pre získavanie trasy - zaciatok len pre štart a ciel a zobrazenie na mape ---> Hlavna priorita
-// 5. Osetrit ak nie je internet
-// """
 
 
 
@@ -113,6 +104,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private val inputs = mutableListOf<LinearLayout>()
     private var markers = mutableListOf<Marker>()
+    private var infoMarkers = mutableListOf<Marker>()
     private var polylines = mutableListOf<Polyline>()
     private var checkLine: String = ""
 
@@ -201,6 +193,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         }
                                         counter+=1
                                     }
+                                    val infoMark = infoMarkers.getOrNull(position)
+                                    infoMark?.remove()
+                                    infoMarkers.removeAt(position)
                                     polylines.removeAt(position)
                                 }
                                 Log.i("TEST", "ALL POLYLINE after removed: $polylines")
@@ -340,7 +335,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter("","",inputs,markers,polylines,resultLauncher)
+        inputAdapter = InputAdapter("","",inputs,markers,polylines,infoMarkers,resultLauncher)
         recyclerView.adapter = inputAdapter
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
@@ -455,7 +450,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             "bicycling" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_bike_24)
             else -> bitmapDescriptorFromVector(R.drawable.ic_baseline_mode_of_travel_24)
         }
-        map.addMarker(
+        val info: Marker? = map.addMarker(
             MarkerOptions()
                 .position(infoLatLng)
                 .title(title)
@@ -463,7 +458,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 .alpha(1f)
                 .icon(iconMarker)
                 .anchor(0f, 0f)
-        )?.showInfoWindow()
+        )
+        info?.showInfoWindow()
+        infoMarkers.add(info!!)
     }
 
     private fun  bitmapDescriptorFromVector(vectorResId:Int):BitmapDescriptor {

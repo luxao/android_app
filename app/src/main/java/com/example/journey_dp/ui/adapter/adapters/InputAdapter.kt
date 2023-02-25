@@ -28,7 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputEditText
 
 
-class InputAdapter(private var name: String,private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val polylines: MutableList<Polyline>,private val result: ActivityResultLauncher<Intent>) :
+class InputAdapter(private var name: String,private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val polylines: MutableList<Polyline>,private var infoMarkers: MutableList<Marker>,private val result: ActivityResultLauncher<Intent>) :
     RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
 
@@ -67,6 +67,9 @@ class InputAdapter(private var name: String,private var destination: String, pri
                         }
                         counter+=1
                     }
+                    val infoMark = infoMarkers.getOrNull(holder.adapterPosition)
+                    infoMark?.remove()
+                    infoMarkers.removeAt(holder.adapterPosition)
                     polylines.removeAt(holder.adapterPosition)
                 }
 
@@ -97,6 +100,9 @@ class InputAdapter(private var name: String,private var destination: String, pri
                         }
                         counter+=1
                     }
+                    val infoMark = infoMarkers.getOrNull(holder.adapterPosition)
+                    infoMark?.remove()
+                    infoMarkers.removeAt(holder.adapterPosition)
                     polylines.removeAt(holder.adapterPosition)
                 }
 
@@ -138,8 +144,6 @@ class InputAdapter(private var name: String,private var destination: String, pri
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)
         val deleteButton: ImageView = itemView.findViewById(R.id.delete_input)
-        val imageOfDirection: ImageView = itemView.findViewById(R.id.mode_of_travel)
-
     }
 }
 
