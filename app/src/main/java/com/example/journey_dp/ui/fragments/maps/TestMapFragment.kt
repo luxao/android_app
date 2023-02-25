@@ -45,6 +45,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.maps.android.PolyUtil
+import okio.ByteString.Companion.decodeBase64
 import java.util.*
 
 //TODO: """
@@ -255,6 +256,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             peekHeight = 80
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
 
 
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {

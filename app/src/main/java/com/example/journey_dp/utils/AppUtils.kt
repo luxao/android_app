@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.text.Html
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -25,6 +27,7 @@ import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
+import okio.ByteString.Companion.encodeUtf8
 
 
 fun isLightColor(color: Int): Boolean {
@@ -37,7 +40,9 @@ fun isLightColor(color: Int): Boolean {
     return luminance > 0.5
 }
 
-
+fun clearFromHtml(htmlString: String): String {
+    return Html.fromHtml(htmlString.encodeUtf8().toString(), Html.FROM_HTML_MODE_LEGACY).toString()
+}
 
 fun setLogOut(
     activity: FragmentActivity,
