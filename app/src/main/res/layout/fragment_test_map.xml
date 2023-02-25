@@ -70,7 +70,7 @@
                 android:src="@drawable/ic_baseline_remove_24"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center|top"
-                 />
+                />
 
             <LinearLayout
                 android:id="@+id/layout_for_add_station"
@@ -335,4 +335,3 @@
 
 
 </layout>
-

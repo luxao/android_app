@@ -86,9 +86,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var status: Status
 
+    //TODO: Move to viewModel
     private var changeUserLocation = false
     private var checkLine: String = ""
-
+    //TODO: Move to viewModel
     private val inputs = mutableListOf<LinearLayout>()
     private var markers = mutableListOf<Marker>()
     private var infoMarkers = mutableListOf<Marker>()
@@ -118,9 +119,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             )
                         )
                     }
+
                     val position = inputAdapter.getID()
 
-                    Log.i("TEST","Position of inputs from adapter $position and ${markers.size} and $changeUserLocation")
 
                     if ((!changeUserLocation).and(position >= 0)) {
                         inputAdapter.setPosition(position)
@@ -133,12 +134,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             inputAdapter.getNewOrigin(position.minus(1))
                         }
 
-
                         var mode = "driving"
                         var transit = ""
                         val key = BuildConfig.GOOGLE_MAPS_API_KEY
 
-                        Log.i("TEST", "ORIGIN AND DESTINATION:  $origin and $destination")
 
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
 
@@ -166,8 +165,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 if ((mode == "driving").or(mode == "walking").or(mode == "bicycling")) {
                                     transit = ""
                                 }
-                                Log.i("TEST", "CHECKED CHIP ${chip?.tag} and $mode and $transit")
-                                Log.i("TEST", "ALL POLYLINE before removed: $polylines")
                                 if (polylines.isNotEmpty()) {
                                     var counter = 0
                                     for (line in polylines) {
@@ -181,8 +178,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     infoMarkers.removeAt(position)
                                     polylines.removeAt(position)
                                 }
-                                Log.i("TEST", "ALL POLYLINE after removed: $polylines")
-                                Log.i("TEST", "QUERY ?origin=$origin&destination=$destination&mode=$mode&transit_mode=$transit&key=${BuildConfig.GOOGLE_MAPS_API_KEY}")
                                 mapViewModel.getDirections(origin, destination, mode, transit, key)
 
                             }
@@ -395,7 +390,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
             polylines.add(addedPolyline)
 
-            Log.i("TEST", "AFTER ADDED POLYLINE : $polylines")
             googleMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     placeFromSearch.latLng!!,
