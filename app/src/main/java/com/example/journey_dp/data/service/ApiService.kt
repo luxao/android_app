@@ -14,7 +14,6 @@ interface ApiService {
     //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=walking&key=YOUR_API_KEY
     //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=bus|train|subway&key=YOUR_API_KEY
 
-    //https://maps.googleapis.com/maps/api/directions/json?origin=48.14838109999999,17.1080601&destination=48.3061414,18.076376&mode=transit&transit_mode=train&key=AIzaSyCO6xmxS7BzhcUdNJE0zx5usSuL25of2ic
     @GET("directions/json")
     suspend fun getDirections(
         @Query("origin") origin: String,
