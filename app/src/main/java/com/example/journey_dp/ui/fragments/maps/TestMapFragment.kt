@@ -310,7 +310,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         binding.testButton.setOnClickListener {
             inputAdapter.setName("","")
             mapViewModel.setIconType("driving")
-            binding.carDirectionsIcon.isChecked = true
             binding.chipGroupDirections.visibility = View.GONE
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
@@ -335,8 +334,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         ))
         markers.add(position,marker!!)
 
-        standardBottomSheetBehavior.isHideable = true
-        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        standardBottomSheetBehavior.peekHeight = 80
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -378,7 +377,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private fun showRouteOnMap(line: String, distanceText: String, durationText: String, choosedIcon: String) {
         val rnd = Random()
-        val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        var color: Int
+
+        do {
+            color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        } while (isLightColor(color))
+
         checkLine = line
         if (line.isNotBlank()) {
             val polyline: List<LatLng> = PolyUtil.decode(line)
@@ -400,7 +404,16 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             )
 
         }
+    }
 
+    private fun isLightColor(color: Int): Boolean {
+        val r = Color.red(color)
+        val g = Color.green(color)
+        val b = Color.blue(color)
+        // Calculate the luminance of the color
+        val luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+        // Check if the luminance is greater than 0.5 (i.e., light color)
+        return luminance > 0.5
     }
 
     private fun Polyline.addInfoWindow(map: GoogleMap, title: String, message: String, iconType: String) {
