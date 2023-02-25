@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -24,6 +25,18 @@ import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
+
+
+fun isLightColor(color: Int): Boolean {
+    val r = Color.red(color)
+    val g = Color.green(color)
+    val b = Color.blue(color)
+    // Calculate the luminance of the color
+    val luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    // Check if the luminance is greater than 0.5 (i.e., light color)
+    return luminance > 0.5
+}
+
 
 
 fun setLogOut(

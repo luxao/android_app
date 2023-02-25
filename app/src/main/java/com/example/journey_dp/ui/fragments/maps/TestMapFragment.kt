@@ -24,6 +24,7 @@ import com.example.journey_dp.databinding.FragmentTestMapBinding
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
+import com.example.journey_dp.utils.isLightColor
 import com.example.journey_dp.utils.setMapMenu
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -378,7 +379,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private fun showRouteOnMap(line: String, distanceText: String, durationText: String, choosedIcon: String) {
         val rnd = Random()
         var color: Int
-
         do {
             color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
         } while (isLightColor(color))
@@ -404,16 +404,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             )
 
         }
-    }
-
-    private fun isLightColor(color: Int): Boolean {
-        val r = Color.red(color)
-        val g = Color.green(color)
-        val b = Color.blue(color)
-        // Calculate the luminance of the color
-        val luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-        // Check if the luminance is greater than 0.5 (i.e., light color)
-        return luminance > 0.5
     }
 
     private fun Polyline.addInfoWindow(map: GoogleMap, title: String, message: String, iconType: String) {
