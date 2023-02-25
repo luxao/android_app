@@ -1,8 +1,5 @@
 package com.example.journey_dp.ui.fragments.maps
 
-
-
-
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -17,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,18 +46,15 @@ import com.google.android.material.chip.Chip
 import com.google.maps.android.PolyUtil
 import java.util.*
 
-
 //TODO: """
 // 6. Zrozumitelne zobrazovanie napr. informácii o ceste autobusom
 // 7. Fetchovanie obrázkov,popisov, url odkazov a inych informácii o Places a pridanie ich do mapy alebo bottom sheetu po kliknuti na place
 // 8. Jednoduche zaregistrovanie otvorenia intentu odkazu nejakeho hotelu a zapisanie informacii o ubytovani
 // 9. IMPLEMENTOVANIE LOKALNEJ DATABAZY a SHAREDPREFERENCES pre nastavenie prihlaseneho usera pokial sa neodhlasi
 // 10. Implementacia Loginu z FIREBASE a INTEGRACIA appky s FIREBASE
-// 11. A LOT OF WORK TO END :(
-// 12. Osetrit ak nie je internet
-// 13. Uprava ziskavania lokacie
+// 11. Osetrit ak nie je internet
+// 12. Uprava ziskavania lokacie
 // """
-
 
 
 
@@ -88,25 +81,17 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Search Fragment late initialization
     private lateinit var searchView: AutocompleteSupportFragment
 
-    // Set default Location : If user not granted permission
-    private val defaultLocation = LatLng( 48.14838109999999, 17.1080601)
-
-    private val defaultLocationName = "Bratislava"
-
-    private var permissionStateDenied = false
-
-    private var changeUserLocation = false
-
     private lateinit var placeFromSearch: Place
 
-    private var isStatusSet: MutableLiveData<Boolean> = MutableLiveData(false)
     private lateinit var status: Status
+
+    private var changeUserLocation = false
+    private var checkLine: String = ""
 
     private val inputs = mutableListOf<LinearLayout>()
     private var markers = mutableListOf<Marker>()
     private var infoMarkers = mutableListOf<Marker>()
     private var polylines = mutableListOf<Polyline>()
-    private var checkLine: String = ""
 
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -114,11 +99,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             Activity.RESULT_OK -> {
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
-                    mapViewModel.setPlaceName(placeFromSearch.name!!)
+
                     val destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
                     inputAdapter.setName(placeFromSearch.name!!, destination)
-
-
 
                     if (changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
@@ -157,7 +140,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         Log.i("TEST", "ORIGIN AND DESTINATION:  $origin and $destination")
 
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
-
 
                         mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
                             if (result != null) {
@@ -207,18 +189,14 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                     }
 
-
-
                     binding.chipGroupDirections.visibility = View.VISIBLE
                     changeUserLocation = false
 
                 }
             }
             AutocompleteActivity.RESULT_ERROR -> {
-                // TODO: Handle the error.
                 result.data?.let {
                     status = Autocomplete.getStatusFromIntent(result.data!!)
-                    isStatusSet.postValue(true)
                     Log.i("TEST", status.statusMessage ?: "")
                     Toast.makeText(context,"Error: ${status.statusMessage}", Toast.LENGTH_SHORT).show()
                 }
@@ -231,11 +209,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
-
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //Initialize Places Client
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
 
         mapViewModel = ViewModelProvider(
@@ -243,9 +218,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             Injection.provideViewModelFactory()
         )[MapViewModel::class.java]
 
-        // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-//        getLocation(requireContext())
     }
 
 
@@ -253,7 +226,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // setup fragment view
         _binding = FragmentTestMapBinding.inflate(inflater, container, false)
         setMapMenu(
             activity = requireActivity() ,
@@ -278,20 +250,15 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         searchView = search
         searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
 
-        // keyboard off
         binding.myLocationInput.focusable = View.NOT_FOCUSABLE
 
-        // get places client
         places = activity?.applicationContext?.let { Places.createClient(it) }!!
 
-        // initialized bottom sheet
         standardBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetBehavior)
         standardBottomSheetBehavior.apply {
             peekHeight = 80
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-
-
 
 
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
@@ -347,7 +314,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             binding.chipGroupDirections.visibility = View.GONE
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
-            mapViewModel.setValueOfPlace(false)
         }
 
         binding.myLocationInput.setOnClickListener {
@@ -369,8 +335,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         ))
         markers.add(position,marker!!)
 
-        standardBottomSheetBehavior.peekHeight = 80
-        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        standardBottomSheetBehavior.isHideable = true
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -385,26 +351,25 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap = mapG
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        mapViewModel.setLocation(defaultLocation)
+        mapViewModel.setLocation(mapViewModel.defaultLocation)
 
         val marker = googleMap.addMarker(
             MarkerOptions()
-                .position(defaultLocation)
-                .title(defaultLocationName)
+                .position(mapViewModel.defaultLocation)
+                .title(mapViewModel.defaultLocationName)
         )
         markers.add(0,marker!!)
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
-                defaultLocation,
+                mapViewModel.defaultLocation,
                 15F
             ))
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnPoiClickListener(this)
-        binding.myLocationInput.setText(defaultLocationName)
+        binding.myLocationInput.setText(mapViewModel.defaultLocationName)
 
     }
 
-    
     override fun onPoiClick(poi: PointOfInterest) {
         //TODO: THIS FUNCTION WILL BE GETTING INFORMATION ABOUT PLACE ON CLICK, NOT TO SET MARKERS
         //TODO: MAX MARKERS WILL BE DIFFERENT FROM PLANNING MARKERS , OR THERE WILL BE INFO WINDOW ON CLICK,WITH SOME TEXT AND IMAGE ABOUT PLACE
@@ -419,7 +384,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             val polyline: List<LatLng> = PolyUtil.decode(line)
 
             val options = PolylineOptions()
-            options.width(8F)
+            options.width(10F)
             options.color(color)
             options.addAll(polyline)
             val addedPolyline = googleMap.addPolyline(options)

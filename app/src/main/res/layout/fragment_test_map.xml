@@ -9,7 +9,6 @@
         <variable
             name="model"
             type="com.example.journey_dp.ui.viewmodel.MapViewModel" />
-
         <import type="android.view.View"/>
     </data>
 
@@ -142,13 +141,13 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="65dp"
+                android:layout_marginTop="20dp"
                 tools:context=".ui.fragments.maps.TestFragment">
 
                 <ScrollView
                     android:id="@+id/scrollView"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="200dp"
                     android:scrollbarFadeDuration="@integer/material_motion_duration_medium_1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -160,19 +159,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layoutManager="LinearLayoutManager"
-                        tools:itemCount="3"
+                        tools:itemCount="4"
                         tools:listitem="@layout/destination_item"
                         />
                 </ScrollView>
 
-                <com.google.android.material.divider.MaterialDivider
-                    android:id="@+id/material_divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:layout_marginTop="@dimen/spacing_smlarge"
-                    app:dividerInsetEnd="16dp"
-                    app:dividerInsetStart="16dp"
-                    app:dividerColor="@color/black"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/finish_button"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="@string/finish_plan"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -181,8 +178,19 @@
                     app:layout_constraintVertical_bias="0.0"
                     />
 
-
-
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/material_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="@dimen/spacing_smlarge"
+                    app:dividerColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/finish_button"
+                    app:layout_constraintVertical_bias="0.0"
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -192,7 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="420dp"
+                android:layout_marginTop="370dp"
                 android:layout_marginStart="14dp"
                 android:layout_marginEnd="6dp"
                 app:chipSpacingHorizontal="8dp"

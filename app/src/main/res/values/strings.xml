@@ -46,6 +46,7 @@
     <string name="bike">bicycling</string>
     <string name="train">train</string>
     <string name="car">driving</string>
+    <string name="finish_plan">Finish plan</string>
 
 
 </resources>

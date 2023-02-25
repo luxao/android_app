@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 
 //@Database(entities = [RouteEntity::class], version = 1, exportSchema = false)
 //abstract class AppDatabase : RoomDatabase() {
-//    abstract fun dao(): DirectionsDao
+//    abstract fun dao(): AppDao
 //
 //    companion object {
 //        @Volatile

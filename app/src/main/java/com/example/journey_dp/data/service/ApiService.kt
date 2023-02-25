@@ -9,11 +9,6 @@ import retrofit2.http.*
 
 interface ApiService {
 
-
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=driving&key=YOUR_API_KEY
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=walking&key=YOUR_API_KEY
-    //https://maps.googleapis.com/maps/api/directions/json?origin=Bratislava&destination=Nitra&mode=transit&transit_mode=bus|train|subway&key=YOUR_API_KEY
-
     @GET("directions/json")
     suspend fun getDirections(
         @Query("origin") origin: String,

@@ -15,14 +15,12 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     val message: LiveData<Errors<String>>
         get() = _message
 
+    val defaultLocation = LatLng( 48.14838109999999, 17.1080601)
+
+    val defaultLocationName = "Bratislava"
+
     private var _loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val loading: MutableLiveData<Boolean> get() = _loading
-
-    private var _isPlaceSet: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isPlaceSet: LiveData<Boolean> get() = _isPlaceSet
-
-    private val _placeName: MutableLiveData<String> = MutableLiveData("")
-    val placeName: LiveData<String> get() = _placeName
 
     private val _directions =  MutableLiveData<DirectionsResponse?>()
     val directions: LiveData<DirectionsResponse?> get() = _directions
@@ -32,16 +30,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     private val _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
-
-
-    fun setPlaceName(nameOfPlace: String) {
-        _isPlaceSet.value = true
-        _placeName.value = nameOfPlace
-    }
-
-    fun setValueOfPlace(boolean: Boolean) {
-        _isPlaceSet.value = boolean
-    }
 
 
 
