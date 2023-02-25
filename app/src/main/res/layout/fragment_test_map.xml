@@ -173,6 +173,7 @@
                     android:layout_marginTop="@dimen/spacing_smlarge"
                     app:dividerInsetEnd="16dp"
                     app:dividerInsetStart="16dp"
+                    app:dividerColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -187,12 +188,18 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <LinearLayout
-                android:id="@+id/directions_layout"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_directions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="420dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="6dp"
+                app:chipSpacingHorizontal="8dp"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -200,109 +207,118 @@
                 android:visibility="gone"
                 >
 
-                <ImageView
+                <com.google.android.material.chip.Chip
                     android:id="@+id/car_directions_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="@dimen/spacing_small"
-                    android:contextClickable="true"
-                    android:contentDescription="@string/car"
-                    android:src="@drawable/ic_baseline_directions_car_24"
+                    android:tag="@string/car"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:checked="true"
+                    android:checkable="true"
                     android:clickable="true"
+                    app:checkedIconVisible="true"
+                    android:contextClickable="true"
+                    app:checkedIconTint="@color/purple_700"
+                    app:chipIconSize="30dp"
+                    app:checkedIcon="@drawable/ic_baseline_directions_car_24"
+                    app:chipIcon="@drawable/ic_baseline_directions_car_24"
+                    app:chipIconTint="@color/black"
+                    app:iconStartPadding="15dp"
+                    app:iconEndPadding="15dp"
+                    app:chipIconVisible="true"
                     />
 
-                <TextView
-                    android:id="@+id/car_directions_time"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:text="@string/car_directions_time"
-                    android:textFontWeight="800"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/train_directions_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:clickable="true"
-                    android:contextClickable="true"
-                    android:contentDescription="@string/train"
-                    android:src="@drawable/ic_baseline_directions_transit_filled_24"
-                    />
-
-                <TextView
-                    android:id="@+id/train_directions_time"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:text="@string/train_directions_time"
-                    android:textFontWeight="800"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/bike_directions_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:clickable="true"
-                    android:contextClickable="true"
-                    android:contentDescription="@string/bike"
-                    android:src="@drawable/ic_baseline_directions_bike_24"
-                    />
-
-                <TextView
-                    android:id="@+id/bicycle_directions_time"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:text="@string/bicycle_directions_time"
-                    android:textFontWeight="800"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <ImageView
+                <com.google.android.material.chip.Chip
                     android:id="@+id/bus_directions_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:tag="@string/bus"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:checked="false"
+                    android:checkable="true"
                     android:clickable="true"
-                    android:contentDescription="@string/bus"
+                    app:checkedIconVisible="true"
                     android:contextClickable="true"
-                    android:src="@drawable/ic_baseline_directions_bus_24"
+                    app:checkedIconTint="@color/purple_700"
+                    app:chipIconSize="30dp"
+                    app:checkedIcon="@drawable/ic_baseline_directions_bus_24"
+                    app:chipIcon="@drawable/ic_baseline_directions_bus_24"
+                    app:chipIconTint="@color/black"
+                    app:iconStartPadding="15dp"
+                    app:iconEndPadding="15dp"
+                    app:chipIconVisible="true"
                     />
 
-                <TextView
-                    android:id="@+id/bus_directions_time"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:text="@string/bus_directions_time"
-                    android:textFontWeight="800"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-
-                <ImageView
-                    android:id="@+id/walk_directions_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/train_directions_icon"
+                    android:tag="@string/train"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:checked="false"
+                    android:checkable="true"
                     android:clickable="true"
+                    app:checkedIconVisible="true"
                     android:contextClickable="true"
-                    android:src="@drawable/ic_baseline_directions_walk_24"
-                    android:contentDescription="@string/walk" />
-
-                <TextView
-                    android:id="@+id/walk_directions_time"
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:text="@string/walk_directions_time"
-                    android:textFontWeight="800"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    app:checkedIconTint="@color/purple_700"
+                    app:chipIconSize="30dp"
+                    app:checkedIcon="@drawable/ic_baseline_directions_transit_filled_24"
+                    app:chipIcon="@drawable/ic_baseline_directions_transit_filled_24"
+                    app:chipIconTint="@color/black"
+                    app:iconStartPadding="15dp"
+                    app:iconEndPadding="15dp"
+                    app:chipIconVisible="true"
+                    />
 
 
-            </LinearLayout>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/walk_directions_icon"
+                    android:tag="@string/walk"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:checked="false"
+                    android:checkable="true"
+                    android:clickable="true"
+                    app:checkedIconVisible="true"
+                    android:contextClickable="true"
+                    app:checkedIconTint="@color/purple_700"
+                    app:chipIconSize="30dp"
+                    app:checkedIcon="@drawable/ic_baseline_directions_walk_24"
+                    app:chipIcon="@drawable/ic_baseline_directions_walk_24"
+                    app:chipIconTint="@color/black"
+                    app:iconStartPadding="15dp"
+                    app:iconEndPadding="15dp"
+                    app:chipIconVisible="true"
+                    />
+
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/bike_directions_icon"
+                    android:tag="@string/bike"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:checked="false"
+                    android:checkable="true"
+                    android:clickable="true"
+                    app:checkedIconVisible="true"
+                    android:contextClickable="true"
+                    app:checkedIconTint="@color/purple_700"
+                    app:chipIconSize="30dp"
+                    app:checkedIcon="@drawable/ic_baseline_directions_bike_24"
+                    app:chipIcon="@drawable/ic_baseline_directions_bike_24"
+                    app:chipIconTint="@color/black"
+                    app:iconStartPadding="15dp"
+                    app:iconEndPadding="15dp"
+                    app:chipIconVisible="true"
+                    />
+
+
+
+
+            </com.google.android.material.chip.ChipGroup>
 
 
         </FrameLayout>
@@ -312,5 +328,4 @@
 
 
 </layout>
-
 

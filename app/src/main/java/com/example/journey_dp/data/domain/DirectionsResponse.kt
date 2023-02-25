@@ -124,7 +124,7 @@ data class Vehicle(
 data class Agencies(
     val name: String?,
     val phone: String?,
-    val url: Uri
+    val url: String
 )
 
 data class ArrivalDepartureTime(

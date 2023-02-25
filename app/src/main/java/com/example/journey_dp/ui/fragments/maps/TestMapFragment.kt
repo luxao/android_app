@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
@@ -43,6 +44,8 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.maps.android.PolyUtil
 import java.util.*
 
@@ -155,9 +158,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
                         //TODO: dynamically set mode
-                        val mode = "driving"
+                        var mode = "driving"
                         //TODO: dynamically set transit
-                        val transit = ""
+                        var transit = ""
                         val key = BuildConfig.GOOGLE_MAPS_API_KEY
 
                         Log.i("TEST", "ORIGIN AND DESTINATION:  $origin and $destination")
@@ -166,17 +169,49 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
                         mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
-                            //TODO: result!!.routes[0].legs[0].distance
-                            if (checkLine != result?.routes?.get(0)?.overviewPolyline!!.points) {
-                                showRouteOnMap(result?.routes?.get(0)?.overviewPolyline!!.points)
+                            if (result != null) {
+                                if (checkLine != result?.routes?.get(0)?.overviewPolyline!!.points) {
+                                    showRouteOnMap(result?.routes[0].overviewPolyline.points)
+                                }
                             }
-
                         })
+
+                        binding.chipGroupDirections.setOnCheckedStateChangeListener { group, checkedIds ->
+                            checkedIds.map {
+                                val chip: Chip? = group.findViewById(it)
+                                mode = chip?.tag.toString()
+                                if ((mode == "bus").or(mode == "train")) {
+                                    mode = "transit"
+                                    transit = chip?.tag.toString()
+                                }
+                                if ((mode == "driving").or(mode == "walking").or(mode == "bicycling")) {
+                                    transit = ""
+                                }
+                                Log.i("TEST", "CHECKED CHIP ${chip?.tag} and $mode and $transit")
+                                Log.i("TEST", "ALL POLYLINE before removed: $polylines")
+                                if (polylines.isNotEmpty()) {
+                                    var counter = 0
+                                    for (line in polylines) {
+                                        if (counter == position) {
+                                            line.remove()
+                                        }
+                                        counter+=1
+                                    }
+                                    polylines.removeAt(position)
+                                }
+                                Log.i("TEST", "ALL POLYLINE after removed: $polylines")
+                                Log.i("TEST", "QUERY ?origin=$origin&destination=$destination&mode=$mode&transit_mode=$transit&key=${BuildConfig.GOOGLE_MAPS_API_KEY}")
+                                mapViewModel.getDirections(origin, destination, mode, transit, BuildConfig.GOOGLE_MAPS_API_KEY)
+                            }
+                        }
 
                     }
 
-//                    git push origin --delete push
-                    binding.directionsLayout.visibility = View.VISIBLE
+                    mapViewModel.message.observe(viewLifecycleOwner) {
+                        Log.i("TEST", "ERROR: ${mapViewModel.show(it.toString())}")
+                    }
+
+                    binding.chipGroupDirections.visibility = View.VISIBLE
                     changeUserLocation = false
 
                 }
@@ -307,7 +342,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         binding.testButton.setOnClickListener {
             inputAdapter.setName("","")
-            binding.directionsLayout.visibility = View.GONE
+            binding.carDirectionsIcon.isChecked = true
+            binding.chipGroupDirections.visibility = View.GONE
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
             mapViewModel.setValueOfPlace(false)
@@ -383,7 +419,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             val polyline: List<LatLng> = PolyUtil.decode(line)
             val options = PolylineOptions()
             options.width(8F)
-            options.color(Color.BLACK)
+            options.color(color)
             options.addAll(polyline)
             val addedPolyline = googleMap.addPolyline(options)
 

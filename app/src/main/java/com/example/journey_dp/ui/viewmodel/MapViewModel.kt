@@ -45,7 +45,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
 
     fun getDirections(origin: String, destination: String,
-    mode: String, transit: String?, key: String) {
+    mode: String, transit: String?, key: String){
         viewModelScope.launch {
             _loading.postValue(true)
             val result = repository.getDirections(origin, destination, mode, transit, key) {

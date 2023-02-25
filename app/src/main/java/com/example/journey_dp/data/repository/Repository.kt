@@ -14,7 +14,7 @@ class Repository private constructor(
         origin: String,
         destination: String,
         mode: String,
-        transit: String?,
+        transit: String,
         key: String,
         onError: (error: String) -> Unit
     ) : DirectionsResponse? {
@@ -27,19 +27,20 @@ class Repository private constructor(
 
                     directions = data
                     Log.i("TEST", "Data: $data")
-                }?: onError("Failed to load directions")
+                }?:  Log.i("TEST","Failed to load directions")
             }
             else {
-                onError("Failed to read directions")
+                Log.i("TEST","Failed to read directions")
             }
         }
         catch (ex: IOException) {
             ex.printStackTrace()
-            onError("Failed to load directions, check internet connection")
+            Log.i("TEST","FAILED because $ex")
+            Log.i("TEST","Failed to load directions, check internet connection")
         }
         catch (ex: Exception) {
             ex.printStackTrace()
-            onError("Failed to load directions, error")
+            Log.i("TEST","Failed to load directions, error")
         }
         return directions
     }
