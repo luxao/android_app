@@ -47,6 +47,9 @@
     <string name="train">train</string>
     <string name="car">driving</string>
     <string name="finish_plan">Finish plan</string>
+    <string name="test_string_for_steps">Pokračujte smerom na hodžovo namestie</string>
+    <string name="test_duration_distance">0,4 km \n 1 min</string>
+    <string name="test">test</string>
 
 
 </resources>

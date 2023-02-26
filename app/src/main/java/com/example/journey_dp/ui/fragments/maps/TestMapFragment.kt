@@ -22,6 +22,7 @@ import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
+import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.isLightColor
@@ -67,8 +68,11 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerViewSteps: RecyclerView
+
     private lateinit var inputAdapter: InputAdapter
     private lateinit var mapViewModel: MapViewModel
+    private lateinit var stepsAdapter: StepsAdapter
 
     // Declaration of binding google map
     private lateinit var googleMap: GoogleMap
@@ -142,17 +146,20 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
 
-                        mapViewModel.directions.observe(viewLifecycleOwner, Observer { result ->
+                        mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                             if (result != null) {
                                 if (checkLine != result.routes?.get(0)?.overviewPolyline!!.points) {
                                     val points = result.routes[0].overviewPolyline.points
                                     val distance = result.routes[0].legs[0].distance.text
                                     val duration = result.routes[0].legs[0].duration.text
                                     val iconType = mapViewModel.iconType.value
+                                    recyclerViewSteps.adapter = stepsAdapter
+                                    binding.stepsLayout.visibility = View.VISIBLE
+                                    stepsAdapter.submitList(result.routes[0].legs[0].steps)
                                     showRouteOnMap(points, distance, duration, iconType!!)
                                 }
                             }
-                        })
+                        }
 
                         binding.chipGroupDirections.setOnCheckedStateChangeListener { group, checkedIds ->
                             checkedIds.map {
@@ -230,6 +237,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             view = binding.root
         )
         recyclerView = binding.inputsList
+        recyclerViewSteps = binding.recyclerViewSteps
         return binding.root
     }
 
@@ -256,7 +264,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             peekHeight = 80
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-
 
 
         searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
@@ -298,10 +305,13 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             }
         })
 
+        recyclerViewSteps.layoutManager = LinearLayoutManager(context)
+        stepsAdapter = StepsAdapter()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         inputAdapter = InputAdapter("","",inputs,markers,polylines,infoMarkers,resultLauncher)
         recyclerView.adapter = inputAdapter
+
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
@@ -322,6 +332,11 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             changeUserLocation = true
             resultLauncher.launch(intent)
         }
+
+        mapViewModel.loading.observe(viewLifecycleOwner) {
+            binding.stepsScrollView.isRefreshing = it
+        }
+
 
     }
 
@@ -398,7 +413,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     10F
                 )
             )
-
         }
     }
 

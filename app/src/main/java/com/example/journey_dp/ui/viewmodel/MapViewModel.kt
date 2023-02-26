@@ -4,6 +4,7 @@ package com.example.journey_dp.ui.viewmodel
 
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
+import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.repository.Repository
 import com.example.journey_dp.utils.Errors
 import com.google.android.gms.maps.model.LatLng
@@ -30,6 +31,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     private val _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
+
+
 
 
 
