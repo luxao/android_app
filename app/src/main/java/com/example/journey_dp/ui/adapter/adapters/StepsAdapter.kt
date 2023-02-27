@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.adapter.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -42,6 +43,7 @@ class StepsAdapter : ListAdapter<Step, StepsAdapter.StepItemViewHolder>(DiffCall
                 }
             )
             binding.instructionsTextView.text = clearFromHtml(step.instructions!!)
+
             binding.travelModeImageView.setImageResource(
                 when(step.travelMode) {
                     "DRIVING" -> R.drawable.ic_baseline_directions_car_24

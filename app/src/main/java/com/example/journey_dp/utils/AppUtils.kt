@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.text.htmlEncode
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.FragmentActivity
@@ -28,6 +29,8 @@ import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import okio.ByteString.Companion.encodeUtf8
+import org.jsoup.Jsoup
+import java.net.URLDecoder
 
 
 fun isLightColor(color: Int): Boolean {
@@ -41,7 +44,8 @@ fun isLightColor(color: Int): Boolean {
 }
 
 fun clearFromHtml(htmlString: String): String {
-    return Html.fromHtml(htmlString.encodeUtf8().toString(), Html.FROM_HTML_MODE_LEGACY).toString()
+    val decoded = URLDecoder.decode(htmlString, "UTF-8")
+    return Jsoup.parse(decoded).text()
 }
 
 fun setLogOut(

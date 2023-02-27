@@ -154,7 +154,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     val duration = result.routes[0].legs[0].duration.text
                                     val iconType = mapViewModel.iconType.value
                                     recyclerViewSteps.adapter = stepsAdapter
-                                    binding.stepsLayout.visibility = View.VISIBLE
+                                    binding.stepsScrollView.visibility = View.VISIBLE
                                     stepsAdapter.submitList(result.routes[0].legs[0].steps)
                                     showRouteOnMap(points, distance, duration, iconType!!)
                                 }
@@ -333,9 +333,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             resultLauncher.launch(intent)
         }
 
-        mapViewModel.loading.observe(viewLifecycleOwner) {
-            binding.stepsScrollView.isRefreshing = it
-        }
+//        mapViewModel.loading.observe(viewLifecycleOwner) {
+//            binding.stepsScrollView.isRefreshing = it
+//        }
 
 
     }
