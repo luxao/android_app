@@ -18,6 +18,7 @@
 
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/search_wrapper"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:cardBackgroundColor="@color/white"
@@ -77,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_mxlarge"
-                android:layout_marginBottom="@dimen/spacing_mlarge"
+
                 android:layout_marginLeft="@dimen/spacing_mlarge"
                 android:layout_marginRight="@dimen/spacing_mlarge"
                 android:orientation="horizontal"
@@ -87,7 +88,6 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginBottom="@dimen/spacing_middle"
                     android:layout_marginLeft="@dimen/spacing_middle"
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:layout_marginTop="@dimen/spacing_medium"
@@ -130,7 +130,6 @@
                     android:layout_height="48dp"
                     android:layout_marginLeft="@dimen/spacing_xmedium"
                     android:layout_marginRight="@dimen/spacing_middle"
-                    android:layout_marginBottom="@dimen/spacing_middle"
                     android:background="@drawable/ic_baseline_add_circle_24"
                     android:contentDescription="@string/add_input" />
 
@@ -140,15 +139,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="90dp"
+                android:nestedScrollingEnabled="true"
                 tools:context=".ui.fragments.maps.TestFragment">
 
                 <ScrollView
                     android:id="@+id/scrollView"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scrollbarFadeDuration="@integer/material_motion_duration_medium_1"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -168,7 +166,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/finish_plan"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -179,165 +176,162 @@
                     android:id="@+id/material_divider"
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
-                    android:layout_marginTop="@dimen/spacing_smlarge"
                     app:dividerColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/finish_button"
                     app:layout_constraintVertical_bias="0.0" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_directions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    app:chipSpacingHorizontal="6dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/material_divider"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_directions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="370dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:chipSpacingHorizontal="6dp"
-                app:singleLine="true"
-                app:singleSelection="true"
-                app:selectionRequired="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/material_divider"
-                android:visibility="visible"
-                >
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/car_directions_icon"
-                    android:tag="@string/car"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:checked="true"
-                    android:checkable="true"
-                    android:clickable="true"
-                    app:checkedIconVisible="true"
-                    android:contextClickable="true"
-                    app:checkedIconTint="@color/purple_700"
-                    app:chipIconSize="30dp"
-                    app:checkedIcon="@drawable/ic_baseline_directions_car_24"
-                    app:chipIcon="@drawable/ic_baseline_directions_car_24"
-                    app:chipIconTint="@color/black"
-                    app:iconStartPadding="10dp"
-                    app:iconEndPadding="10dp"
-                    app:chipIconVisible="true"
-                    />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/car_directions_icon"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:checkable="true"
+                        android:checked="true"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:tag="@string/car"
+                        app:checkedIcon="@drawable/ic_baseline_directions_car_24"
+                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconVisible="true"
+                        app:chipIcon="@drawable/ic_baseline_directions_car_24"
+                        app:chipIconSize="30dp"
+                        app:chipIconTint="@color/black"
+                        app:chipIconVisible="true"
+                        app:iconEndPadding="10dp"
+                        app:iconStartPadding="10dp" />
 
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/bus_directions_icon"
-                    android:tag="@string/bus"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:checked="false"
-                    android:checkable="true"
-                    android:clickable="true"
-                    app:checkedIconVisible="true"
-                    android:contextClickable="true"
-                    app:checkedIconTint="@color/purple_700"
-                    app:chipIconSize="30dp"
-                    app:checkedIcon="@drawable/ic_baseline_directions_bus_24"
-                    app:chipIcon="@drawable/ic_baseline_directions_bus_24"
-                    app:chipIconTint="@color/black"
-                    app:iconStartPadding="10dp"
-                    app:iconEndPadding="10dp"
-                    app:chipIconVisible="true"
-                    />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/bus_directions_icon"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:tag="@string/bus"
+                        app:checkedIcon="@drawable/ic_baseline_directions_bus_24"
+                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconVisible="true"
+                        app:chipIcon="@drawable/ic_baseline_directions_bus_24"
+                        app:chipIconSize="30dp"
+                        app:chipIconTint="@color/black"
+                        app:chipIconVisible="true"
+                        app:iconEndPadding="10dp"
+                        app:iconStartPadding="10dp" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/train_directions_icon"
-                    android:tag="@string/train"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:checked="false"
-                    android:checkable="true"
-                    android:clickable="true"
-                    app:checkedIconVisible="true"
-                    android:contextClickable="true"
-                    app:checkedIconTint="@color/purple_700"
-                    app:chipIconSize="30dp"
-                    app:checkedIcon="@drawable/ic_baseline_directions_transit_filled_24"
-                    app:chipIcon="@drawable/ic_baseline_directions_transit_filled_24"
-                    app:chipIconTint="@color/black"
-                    app:iconStartPadding="10dp"
-                    app:iconEndPadding="10dp"
-                    app:chipIconVisible="true"
-                    />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/train_directions_icon"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:tag="@string/train"
+                        app:checkedIcon="@drawable/ic_baseline_directions_transit_filled_24"
+                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconVisible="true"
+                        app:chipIcon="@drawable/ic_baseline_directions_transit_filled_24"
+                        app:chipIconSize="30dp"
+                        app:chipIconTint="@color/black"
+                        app:chipIconVisible="true"
+                        app:iconEndPadding="10dp"
+                        app:iconStartPadding="10dp" />
 
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/walk_directions_icon"
-                    android:tag="@string/walk"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:checked="false"
-                    android:checkable="true"
-                    android:clickable="true"
-                    app:checkedIconVisible="true"
-                    android:contextClickable="true"
-                    app:checkedIconTint="@color/purple_700"
-                    app:chipIconSize="30dp"
-                    app:checkedIcon="@drawable/ic_baseline_directions_walk_24"
-                    app:chipIcon="@drawable/ic_baseline_directions_walk_24"
-                    app:chipIconTint="@color/black"
-                    app:iconStartPadding="10dp"
-                    app:iconEndPadding="10dp"
-                    app:chipIconVisible="true"
-                    />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/walk_directions_icon"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:tag="@string/walk"
+                        app:checkedIcon="@drawable/ic_baseline_directions_walk_24"
+                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconVisible="true"
+                        app:chipIcon="@drawable/ic_baseline_directions_walk_24"
+                        app:chipIconSize="30dp"
+                        app:chipIconTint="@color/black"
+                        app:chipIconVisible="true"
+                        app:iconEndPadding="10dp"
+                        app:iconStartPadding="10dp" />
 
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/bike_directions_icon"
-                    android:tag="@string/bike"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:checked="false"
-                    android:checkable="true"
-                    android:clickable="true"
-                    app:checkedIconVisible="true"
-                    android:contextClickable="true"
-                    app:checkedIconTint="@color/purple_700"
-                    app:chipIconSize="30dp"
-                    app:checkedIcon="@drawable/ic_baseline_directions_bike_24"
-                    app:chipIcon="@drawable/ic_baseline_directions_bike_24"
-                    app:chipIconTint="@color/black"
-                    app:iconStartPadding="10dp"
-                    app:iconEndPadding="10dp"
-                    app:chipIconVisible="true"
-                    />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/bike_directions_icon"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:tag="@string/bike"
+                        app:checkedIcon="@drawable/ic_baseline_directions_bike_24"
+                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconVisible="true"
+                        app:chipIcon="@drawable/ic_baseline_directions_bike_24"
+                        app:chipIconSize="30dp"
+                        app:chipIconTint="@color/black"
+                        app:chipIconVisible="true"
+                        app:iconEndPadding="10dp"
+                        app:iconStartPadding="10dp" />
 
 
-            </com.google.android.material.chip.ChipGroup>
+                </com.google.android.material.chip.ChipGroup>
+
 
                 <ScrollView
                     android:id="@+id/steps_scrollView"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginTop="450dp"
-                    android:scrollbars="vertical"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="60dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/chip_group_directions"
                     android:visibility="gone"
+                    android:layout_marginBottom="60dp"
                     >
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView_steps"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:listitem="@layout/step_item"
+                        android:scrollbars="vertical"
                         app:layoutManager="LinearLayoutManager"
+                        tools:listitem="@layout/step_item"
                         />
 
                 </ScrollView>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
@@ -351,3 +345,13 @@
 </layout>
 
 
+<!--<LinearLayout-->
+<!--android:id="@+id/wrapper"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:visibility="visible"-->
+<!--android:layout_marginTop="60dp"-->
+<!--android:orientation="vertical"-->
+<!--app:layout_constraintStart_toStartOf="parent"-->
+<!--app:layout_constraintTop_toTopOf="@+id/chip_group_directions"-->
+<!--    >-->

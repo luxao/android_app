@@ -173,6 +173,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 if ((mode == "driving").or(mode == "walking").or(mode == "bicycling")) {
                                     transit = ""
                                 }
+                                mapViewModel.getDirections(origin, destination, mode, transit, key)
                                 if (polylines.isNotEmpty()) {
                                     var counter = 0
                                     for (line in polylines) {
@@ -186,7 +187,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     infoMarkers.removeAt(position)
                                     polylines.removeAt(position)
                                 }
-                                mapViewModel.getDirections(origin, destination, mode, transit, key)
+
 
                             }
                         }
@@ -332,10 +333,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             changeUserLocation = true
             resultLauncher.launch(intent)
         }
-
-//        mapViewModel.loading.observe(viewLifecycleOwner) {
-//            binding.stepsScrollView.isRefreshing = it
-//        }
 
 
     }
