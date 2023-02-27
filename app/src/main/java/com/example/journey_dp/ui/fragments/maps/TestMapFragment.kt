@@ -107,7 +107,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
 
-                    val destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
+                    var destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
                     inputAdapter.setName(placeFromSearch.name!!, destination)
 
                     if (changeUserLocation) {
@@ -125,7 +125,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         )
                     }
 
-                    val position = inputAdapter.getID()
+                    var position = inputAdapter.getID()
 
 
                     if ((!changeUserLocation).and(position >= 0)) {
@@ -142,22 +142,31 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         var mode = "driving"
                         var transit = ""
                         val key = BuildConfig.GOOGLE_MAPS_API_KEY
-
+                        var points: String
+                        var distance: String
+                        var duration: String
+                        var iconType: String
+                        var comparison: Boolean
 
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
 
                         mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                             if (result != null) {
-                                if (checkLine != result.routes?.get(0)?.overviewPolyline!!.points) {
-                                    val points = result.routes[0].overviewPolyline.points
-                                    val distance = result.routes[0].legs[0].distance.text
-                                    val duration = result.routes[0].legs[0].duration.text
-                                    val iconType = mapViewModel.iconType.value
+                                comparison = (checkLine == result.routes?.get(0)?.overviewPolyline!!.points)
+                                Log.i("TEST", "-----------------------------------")
+                                Log.i("TEST", "CHECKLINE: $comparison")
+                                Log.i("TEST", "-----------------------------------")
+                                if (!comparison) {
+                                    points = result.routes[0].overviewPolyline.points
+                                    distance = result.routes[0].legs[0].distance.text
+                                    duration = result.routes[0].legs[0].duration.text
+                                    iconType = mapViewModel.iconType.value!!
                                     recyclerViewSteps.adapter = stepsAdapter
                                     binding.stepsScrollView.visibility = View.VISIBLE
                                     stepsAdapter.submitList(result.routes[0].legs[0].steps)
-                                    showRouteOnMap(points, distance, duration, iconType!!)
+                                    showRouteOnMap(points, distance, duration, iconType)
                                 }
+
                             }
                         }
 
@@ -173,7 +182,18 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 if ((mode == "driving").or(mode == "walking").or(mode == "bicycling")) {
                                     transit = ""
                                 }
+                                position = inputAdapter.getID()
+                                if (position != 0) {
+                                    origin =  inputAdapter.getNewOrigin(position.minus(1))
+                                    destination = inputAdapter.getNewOrigin(position)
+                                }
+                                if ((position == 0).and(polylines.size == 1).and(infoMarkers.size == 1)) {
+                                    origin =  binding.myLocationInput.text.toString()
+                                    destination = inputAdapter.getNewOrigin(position)
+                                }
+
                                 mapViewModel.getDirections(origin, destination, mode, transit, key)
+                                Log.i("Test", "POLYLINES BEFORE ICON CHANGE: $polylines")
                                 if (polylines.isNotEmpty()) {
                                     var counter = 0
                                     for (line in polylines) {
@@ -182,13 +202,16 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         }
                                         counter+=1
                                     }
-                                    val infoMark = infoMarkers.getOrNull(position)
-                                    infoMark?.remove()
-                                    infoMarkers.removeAt(position)
-                                    polylines.removeAt(position)
+                                    Log.i("TEST", "POSITION IS $position and INFOMARKS BEFORE REMOVED: $infoMarkers ")
+                                    if (position <= infoMarkers.size.minus(1)) {
+                                        val infoMark = infoMarkers.getOrNull(position)
+                                        infoMark?.remove()
+                                        infoMarkers.removeAt(position)
+                                        polylines.removeAt(position)
+                                    }
+                                    Log.i("Test", "INFOMARKS AFTER REMOVED: $infoMarkers")
+                                    Log.i("Test", "POLYLINES AFTER REMOVED: $polylines")
                                 }
-
-
                             }
                         }
 
@@ -318,8 +341,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         binding.testButton.setOnClickListener {
             inputAdapter.setName("","")
-            mapViewModel.setIconType("driving")
+            binding.chipGroupDirections.clearCheck()
             binding.chipGroupDirections.visibility = View.GONE
+            mapViewModel.setIconType("driving")
             inputs.add(layout)
             inputAdapter.notifyItemInserted(inputs.size)
         }
@@ -413,6 +437,14 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         }
     }
 
+    private fun setNewInfoWindow(position: Int, distanceText: String, durationText: String, choosedIcon: String) {
+        if (polylines.isNotEmpty().and(position <= polylines.size.minus(1))) {
+            val currentPolyline = polylines[position]
+            currentPolyline.addInfoWindow(googleMap, distanceText, durationText, choosedIcon)
+        }
+    }
+
+
     private fun Polyline.addInfoWindow(map: GoogleMap, title: String, message: String, iconType: String) {
         val pointsOnLine = this.points.size
         val infoLatLng = this.points[(pointsOnLine / 2)]
@@ -435,7 +467,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 .anchor(0f, 0f)
         )
         info?.showInfoWindow()
+        Log.i("Test", "INFOMARKS BEFORE ADDED: $infoMarkers")
         infoMarkers.add(info!!)
+        Log.i("Test", "INFOMARKS AFTER ADDED: $infoMarkers")
     }
 
     private fun  bitmapDescriptorFromVector(vectorResId:Int):BitmapDescriptor {

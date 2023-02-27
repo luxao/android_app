@@ -86,7 +86,7 @@ class InputAdapter(private var name: String,private var destination: String, pri
         }
 
         holder.deleteButton.setOnClickListener{
-            idPosition = holder.adapterPosition - 1
+            idPosition = holder.adapterPosition.minus(1)
             if (holder.inputText.text.toString().isNotBlank()) {
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
@@ -100,9 +100,11 @@ class InputAdapter(private var name: String,private var destination: String, pri
                         }
                         counter+=1
                     }
+                    Log.i("TEST", "INFOMARKS BEFORE REMOVED IN ADAPTER: $infoMarkers and POSITION IS ${holder.adapterPosition}")
                     val infoMark = infoMarkers.getOrNull(holder.adapterPosition)
                     infoMark?.remove()
                     infoMarkers.removeAt(holder.adapterPosition)
+                    Log.i("Test", "INFOMARKS AFTER REMOVED IN ADAPTER: $infoMarkers")
                     polylines.removeAt(holder.adapterPosition)
                 }
 
@@ -138,7 +140,6 @@ class InputAdapter(private var name: String,private var destination: String, pri
         this.name = name
         this.destination = destination
     }
-
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
