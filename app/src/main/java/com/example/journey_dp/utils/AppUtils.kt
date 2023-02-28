@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.text.Html
 import android.util.Log
@@ -15,6 +17,7 @@ import android.view.View
 import android.widget.ScrollView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.text.htmlEncode
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -29,6 +32,8 @@ import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.material.chip.ChipGroup
 import okio.ByteString.Companion.encodeUtf8
 import org.jsoup.Jsoup
@@ -89,6 +94,8 @@ fun hideElements(view: View) {
     chips.visibility = View.GONE
 
 }
+
+
 
 
 fun setMapMenu(

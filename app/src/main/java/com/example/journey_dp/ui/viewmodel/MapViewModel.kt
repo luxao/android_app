@@ -32,6 +32,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var checkLine: String = ""
     var changeUserLocation = false
 
+    var stepsList = mutableListOf<List<Step>>()
+
     private var _loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val loading: MutableLiveData<Boolean> get() = _loading
 

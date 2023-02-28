@@ -50,7 +50,6 @@ import okio.ByteString.Companion.decodeBase64
 import java.util.*
 
 //TODO: """
-// 6. Zrozumitelne zobrazovanie napr. informácii o ceste autobusom
 // 7. Fetchovanie obrázkov,popisov, url odkazov a inych informácii o Places a pridanie ich do mapy alebo bottom sheetu po kliknuti na place
 // 8. Jednoduche zaregistrovanie otvorenia intentu odkazu nejakeho hotelu a zapisanie informacii o ubytovani
 // 9. IMPLEMENTOVANIE LOKALNEJ DATABAZY a SHAREDPREFERENCES pre nastavenie prihlaseneho usera pokial sa neodhlasi
@@ -145,9 +144,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                             if (result != null) {
                                 comparison = (mapViewModel.checkLine == result.routes?.get(0)?.overviewPolyline!!.points)
-                                Log.i("TEST", "-----------------------------------")
-                                Log.i("TEST", "CHECKLINE: $comparison")
-                                Log.i("TEST", "-----------------------------------")
                                 if (!comparison) {
                                     points = result.routes[0].overviewPolyline.points
                                     distance = result.routes[0].legs[0].distance.text
@@ -156,6 +152,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     position = inputAdapter.getID()
                                     recyclerViewSteps.adapter = stepsAdapter
                                     binding.stepsScrollView.visibility = View.VISIBLE
+                                    mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
                                     stepsAdapter.submitList(result.routes[0].legs[0].steps)
                                     showRouteOnMap(points, distance, duration, iconType,position)
                                 }
@@ -176,6 +173,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     transit = ""
                                 }
                                 position = inputAdapter.getID()
+                                if (mapViewModel.stepsList.isNotEmpty().and(position != -1)) {
+                                    mapViewModel.stepsList.removeAt(position)
+                                }
                                 if (position != 0) {
                                     origin =  inputAdapter.getNewOrigin(position.minus(1))
                                     destination = inputAdapter.getNewOrigin(position)
@@ -322,7 +322,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         stepsAdapter = StepsAdapter()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter(binding.root,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,resultLauncher)
+        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, mapViewModel.stepsList,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,resultLauncher)
         recyclerView.adapter = inputAdapter
 
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
@@ -346,8 +346,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             mapViewModel.changeUserLocation = true
             resultLauncher.launch(intent)
         }
-
-
     }
 
 
@@ -461,7 +459,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         mapViewModel.infoMarkers.add(info!!)
     }
 
-    private fun  bitmapDescriptorFromVector(vectorResId:Int):BitmapDescriptor {
+    private fun  bitmapDescriptorFromVector(vectorResId:Int): BitmapDescriptor {
         val vectorDrawable = ContextCompat.getDrawable(requireContext(), vectorResId);
         vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight);
         val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888);
@@ -469,7 +467,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

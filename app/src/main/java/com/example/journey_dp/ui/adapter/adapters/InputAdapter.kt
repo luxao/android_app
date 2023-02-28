@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
+import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.ui.fragments.maps.TestMapFragment
 import com.example.journey_dp.utils.hideElements
 import com.google.android.gms.maps.GoogleMap
@@ -29,7 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputEditText
 
 
-class InputAdapter(private var viewMap: View,private var name: String,private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val polylines: MutableList<Polyline>,private var infoMarkers: MutableList<Marker>,private val result: ActivityResultLauncher<Intent>) :
+class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView, private var steps: MutableList<List<Step>>, private var name: String, private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>, private val polylines: MutableList<Polyline>, private var infoMarkers: MutableList<Marker>, private val result: ActivityResultLauncher<Intent>) :
     RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
 
@@ -88,6 +89,7 @@ class InputAdapter(private var viewMap: View,private var name: String,private va
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition.minus(1)
+            steps.removeAt(holder.adapterPosition)
             if (idPosition == -1) {
                 hideElements(viewMap)
             }
@@ -114,6 +116,12 @@ class InputAdapter(private var viewMap: View,private var name: String,private va
             }
             holder.inputText.setText("")
             inputs.removeAt(holder.adapterPosition)
+
+            if (idPosition != -1) {
+                recyclerView.adapter = stepsAdapter
+                stepsAdapter.submitList(steps[idPosition])
+            }
+
             notifyItemRemoved(holder.adapterPosition)
 
         }
