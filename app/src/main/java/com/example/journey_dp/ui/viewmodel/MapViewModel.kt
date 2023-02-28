@@ -2,12 +2,15 @@ package com.example.journey_dp.ui.viewmodel
 
 
 
+import android.widget.LinearLayout
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.repository.Repository
 import com.example.journey_dp.utils.Errors
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.Polyline
 import kotlinx.coroutines.launch
 
 
@@ -20,19 +23,26 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     val defaultLocationName = "Bratislava"
 
+    var inputs = mutableListOf<LinearLayout>()
+    var markers = mutableListOf<Marker>()
+    var infoMarkers = mutableListOf<Marker>()
+    var polylines = mutableListOf<Polyline>()
+
+
+    var checkLine: String = ""
+    var changeUserLocation = false
+
     private var _loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val loading: MutableLiveData<Boolean> get() = _loading
 
-    private val _directions =  MutableLiveData<DirectionsResponse?>()
+    private var _directions =  MutableLiveData<DirectionsResponse?>()
     val directions: LiveData<DirectionsResponse?> get() = _directions
 
-    private val _iconType = MutableLiveData("driving")
+    private var _iconType = MutableLiveData("driving")
     val iconType: LiveData<String> get() = _iconType
 
-    private val _location: MutableLiveData<LatLng> = MutableLiveData()
+    private var _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
-
-
 
 
 
