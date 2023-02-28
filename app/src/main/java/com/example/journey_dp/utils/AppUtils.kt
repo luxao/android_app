@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ScrollView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.text.htmlEncode
@@ -28,6 +29,7 @@ import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.material.chip.ChipGroup
 import okio.ByteString.Companion.encodeUtf8
 import org.jsoup.Jsoup
 import java.net.URLDecoder
@@ -79,6 +81,15 @@ fun setLogOut(
         }
     }, lifecycleOwner, Lifecycle.State.RESUMED)
 }
+
+fun hideElements(view: View) {
+    val chips = view.findViewById<ChipGroup>(R.id.chip_group_directions)
+    val steps = view.findViewById<ScrollView>(R.id.steps_scrollView)
+    steps.visibility = View.GONE
+    chips.visibility = View.GONE
+
+}
+
 
 fun setMapMenu(
     activity: FragmentActivity,

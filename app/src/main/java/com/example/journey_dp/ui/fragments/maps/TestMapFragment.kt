@@ -186,7 +186,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 }
 
                                 mapViewModel.getDirections(origin, destination, mode, transit, key)
-                                Log.i("Test", "POLYLINES BEFORE ICON CHANGE: $mapViewModel.polylines")
                                 if (mapViewModel.polylines.isNotEmpty()) {
                                     var counter = 0
                                     for (line in mapViewModel.polylines) {
@@ -195,15 +194,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         }
                                         counter+=1
                                     }
-                                    Log.i("TEST", "POSITION IS $position and INFOMARKS BEFORE REMOVED: $mapViewModel.infoMarkers ")
                                     if (position <= mapViewModel.infoMarkers.size.minus(1)) {
                                         val infoMark = mapViewModel.infoMarkers.getOrNull(position)
                                         infoMark?.remove()
                                         mapViewModel.infoMarkers.removeAt(position)
                                         mapViewModel.polylines.removeAt(position)
                                     }
-                                    Log.i("Test", "INFOMARKS AFTER REMOVED: $mapViewModel.infoMarkers")
-                                    Log.i("Test", "POLYLINES AFTER REMOVED: $mapViewModel.polylines")
                                 }
                             }
                         }
@@ -326,7 +322,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         stepsAdapter = StepsAdapter()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter("","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,resultLauncher)
+        inputAdapter = InputAdapter(binding.root,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,resultLauncher)
         recyclerView.adapter = inputAdapter
 
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
@@ -462,9 +458,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 .anchor(0f, 0f)
         )
         info?.showInfoWindow()
-        Log.i("Test", "INFOMARKS BEFORE ADDED: $mapViewModel.infoMarkers")
         mapViewModel.infoMarkers.add(info!!)
-        Log.i("Test", "INFOMARKS AFTER ADDED: $mapViewModel.infoMarkers")
     }
 
     private fun  bitmapDescriptorFromVector(vectorResId:Int):BitmapDescriptor {

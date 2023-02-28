@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
 import com.example.journey_dp.ui.fragments.maps.TestMapFragment
+import com.example.journey_dp.utils.hideElements
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -28,7 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputEditText
 
 
-class InputAdapter(private var name: String,private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val polylines: MutableList<Polyline>,private var infoMarkers: MutableList<Marker>,private val result: ActivityResultLauncher<Intent>) :
+class InputAdapter(private var viewMap: View,private var name: String,private var destination: String, private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,private val polylines: MutableList<Polyline>,private var infoMarkers: MutableList<Marker>,private val result: ActivityResultLauncher<Intent>) :
     RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
 
@@ -87,11 +88,13 @@ class InputAdapter(private var name: String,private var destination: String, pri
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition.minus(1)
+            if (idPosition == -1) {
+                hideElements(viewMap)
+            }
             if (holder.inputText.text.toString().isNotBlank()) {
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
                 markers.removeAt(holder.adapterPosition.plus(1))
-                Log.i("TEST", "ALL POLYLINE before removed: $polylines")
                 if (polylines.isNotEmpty()) {
                     var counter = 0
                     for (line in polylines) {
@@ -100,16 +103,13 @@ class InputAdapter(private var name: String,private var destination: String, pri
                         }
                         counter+=1
                     }
-                    Log.i("TEST", "INFOMARKS BEFORE REMOVED IN ADAPTER: $infoMarkers and POSITION IS ${holder.adapterPosition}")
                     val infoMark = infoMarkers.getOrNull(holder.adapterPosition)
                     infoMark?.remove()
                     infoMarkers.removeAt(holder.adapterPosition)
-                    Log.i("Test", "INFOMARKS AFTER REMOVED IN ADAPTER: $infoMarkers")
                     polylines.removeAt(holder.adapterPosition)
                 }
 
                 newOrigin.removeAt(holder.adapterPosition)
-                Log.i("TEST", "ALL POLYLINE after removed: $polylines")
 
             }
             holder.inputText.setText("")
