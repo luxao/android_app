@@ -49,16 +49,24 @@ import com.google.maps.android.PolyUtil
 import okio.ByteString.Companion.decodeBase64
 import java.util.*
 
-//TODO: """
-// 7. Fetchovanie obrázkov,popisov, url odkazov a inych informácii o Places a pridanie ich do mapy alebo bottom sheetu po kliknuti na place
-// 8. Jednoduche zaregistrovanie otvorenia intentu odkazu nejakeho hotelu a zapisanie informacii o ubytovani
-// 9. IMPLEMENTOVANIE LOKALNEJ DATABAZY a SHAREDPREFERENCES pre nastavenie prihlaseneho usera pokial sa neodhlasi
-// 10. Implementacia Loginu z FIREBASE a INTEGRACIA appky s FIREBASE
-// 11. Osetrit ak nie je internet
-// 12. Uprava ziskavania lokacie
-// """
-
-
+// TODO: """
+//  Pridat ikonku informaciu ku kazdemu miestu po pliknuti na ikonku fetchnut informacie o danom mieste, zobrazit ich v layoute,
+//  pridat ikonku sipky spat na vratenie sa planovanie teda zobrazit info co predtym cize nastavit na visbile
+//  Pridat ikonku pridat poznamku, pridat nejaky check ze ak zadam rezervacia alebo check ze rezervacia zobrazi sa nejaky formular
+//  nie len input text
+//  Calculacie celkovej vzdialenosti a času
+//  Rozlisenie farieb polylines podla dopravneho prostriedku (deklarovat napr. modru pre auto, ..)
+//  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
+//  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
+//  po kliknuti na karticku vyletu vytiahnut z databazy tieto informacie, prejst loopom cez ne a vykreslit na mapu pricom
+//  po kliknuti na karticku zobrazit najskôr ikonku loadovania a potom zobrazit danu trasu uz.
+//  Po finish buttone automaticky ulozit tieto info do DB - mozno zobrazit animaciu loadovania a nasledne presmerovanie
+//  do profilu na karticku pricom pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
+//  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
+//  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
+//  OTESTOVANIE a OSETRENIE
+//  STYLOVANIE
+//  """
 
 class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
