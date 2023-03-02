@@ -35,6 +35,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var totalDistance = 0.0
     var totalDuration = 0.0
 
+    var counter = 0
+
     var stepsList = mutableListOf<List<Step>>()
 
     private var _loading: MutableLiveData<Boolean> = MutableLiveData(false)

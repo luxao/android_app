@@ -148,6 +148,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         var iconType: String
                         var comparison: Boolean
 
+
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
 
                         mapViewModel.directions.observe(viewLifecycleOwner) { result ->
@@ -166,6 +167,16 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     duration = result.routes[0].legs[0].duration.text
                                     currentDuration = result.routes[0].legs[0].duration.value.div(60.0).div(60.0)
                                     inputAdapter.setDuration(currentDuration)
+
+                                    if (mapViewModel.counter == 0) {
+                                        mapViewModel.totalDistance += currentDistance
+                                        mapViewModel.totalDuration += currentDuration
+
+                                        binding.totalDistance.text = getString(R.string.totalDistance).plus(mapViewModel.totalDistance.toString()).plus(" \t km")
+                                        binding.totalDuration.text = getString(R.string.totalDuration).plus(mapViewModel.totalDuration.toString()).plus(" \t h")
+                                    }
+
+                                    mapViewModel.counter += 1
 
 
                                     iconType = mapViewModel.iconType.value!!
@@ -216,6 +227,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     destination = inputAdapter.getNewOrigin(position)
                                 }
 
+                                mapViewModel.counter = 0
                                 mapViewModel.getDirections(origin, destination, mode, transit, key)
                                 if (mapViewModel.polylines.isNotEmpty()) {
                                     var counter = 0
@@ -235,11 +247,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             }
                         }
 
-                        mapViewModel.totalDistance += currentDistance
-                        mapViewModel.totalDuration += currentDuration
-
-                        binding.totalDistance.text = getString(R.string.totalDistance).plus(mapViewModel.totalDistance.toString()).plus(" \t km")
-                        binding.totalDuration.text = getString(R.string.totalDuration).plus(mapViewModel.totalDuration.toString()).plus(" \t h")
 
                         binding.chipGroupDirections.visibility = View.VISIBLE
                         mapViewModel.changeUserLocation = false
@@ -367,6 +374,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
         binding.testButton.setOnClickListener {
+            mapViewModel.counter = 0
             inputAdapter.setName("","")
             binding.chipGroupDirections.clearCheck()
             binding.chipGroupDirections.visibility = View.GONE

@@ -117,6 +117,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             duration.text = helperStringDuration.plus(model.totalDuration.toString()).plus(" \th")
 
             if (idPosition == -1) {
+                model.checkLine = ""
                 currentDistance = 0.0
                 currentDuration = 0.0
                 model.totalDistance = 0.0
