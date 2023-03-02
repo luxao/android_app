@@ -50,6 +50,10 @@
     <string name="test_string_for_steps">Pokračujte smerom na hodžovo namestie</string>
     <string name="test_duration_distance">0,4 km \n 1 min</string>
     <string name="test">test</string>
+    <string name="test_total_duration_25_h">Total Duration : 0.0 h</string>
+    <string name="test_total_distance_500_km">Total Distance : 0.0 km</string>
+    <string name="totalDistance">Total Distance : </string>
+    <string name="totalDuration">Total Duration : </string>
 
 
 </resources>

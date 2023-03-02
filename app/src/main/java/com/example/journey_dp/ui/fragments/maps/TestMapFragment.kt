@@ -48,6 +48,7 @@ import com.google.android.material.chip.Chip
 import com.google.maps.android.PolyUtil
 import okio.ByteString.Companion.decodeBase64
 import java.util.*
+import kotlin.math.ceil
 
 // TODO: """
 //  Pridat ikonku informaciu ku kazdemu miestu po pliknuti na ikonku fetchnut informacie o danom mieste, zobrazit ich v layoute,
@@ -99,7 +100,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private lateinit var status: Status
 
 
-
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
@@ -126,7 +126,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                     var position = inputAdapter.getID()
 
-
                     if ((!mapViewModel.changeUserLocation).and(position >= 0)) {
                         inputAdapter.setPosition(position)
                         showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
@@ -144,6 +143,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         var points: String
                         var distance: String
                         var duration: String
+                        var currentDistance: Double = 0.0
+                        var currentDuration: Double = 0.0
                         var iconType: String
                         var comparison: Boolean
 
@@ -152,18 +153,32 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                             if (result != null) {
                                 comparison = (mapViewModel.checkLine == result.routes?.get(0)?.overviewPolyline!!.points)
-                                if (!comparison) {
+                                position = inputAdapter.getID()
+                                val lastDeleted = inputAdapter.getLastDeleted()
+
+                                if (!comparison.and(lastDeleted.isBlank().or(lastDeleted != placeFromSearch.name!!))) {
                                     points = result.routes[0].overviewPolyline.points
+
                                     distance = result.routes[0].legs[0].distance.text
+                                    currentDistance = result.routes[0].legs[0].distance.value.div(1000.0)
+                                    inputAdapter.setDistance(currentDistance )
+
                                     duration = result.routes[0].legs[0].duration.text
+                                    currentDuration = result.routes[0].legs[0].duration.value.div(60.0).div(60.0)
+                                    inputAdapter.setDuration(currentDuration)
+
+
                                     iconType = mapViewModel.iconType.value!!
-                                    position = inputAdapter.getID()
+
                                     recyclerViewSteps.adapter = stepsAdapter
                                     binding.stepsScrollView.visibility = View.VISIBLE
+
                                     mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
                                     stepsAdapter.submitList(result.routes[0].legs[0].steps)
+
                                     showRouteOnMap(points, distance, duration, iconType,position)
                                 }
+
 
                             }
                         }
@@ -173,6 +188,11 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 val chip: Chip? = group.findViewById(it)
                                 mode = chip?.tag.toString()
                                 mapViewModel.setIconType(mode)
+                                mapViewModel.totalDuration -= currentDuration
+                                mapViewModel.totalDistance -= currentDistance
+                                binding.totalDistance.text = getString(R.string.totalDistance).plus(mapViewModel.totalDistance.toString()).plus(" \t km")
+                                binding.totalDuration.text = getString(R.string.totalDuration).plus(mapViewModel.totalDuration.toString()).plus(" \t h")
+
                                 if ((mode == "bus").or(mode == "train")) {
                                     mode = "transit"
                                     transit = chip?.tag.toString()
@@ -182,7 +202,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 }
                                 position = inputAdapter.getID()
                                 if (mapViewModel.stepsList.isNotEmpty().and(position != -1)) {
-                                    mapViewModel.stepsList.removeAt(position)
+                                    if (position <= mapViewModel.stepsList.size.minus(1)) {
+                                        Log.i("TEST", "THIS WAS FIRED: $position and ${mapViewModel.stepsList.size}")
+                                        mapViewModel.stepsList.removeAt(position)
+                                    }
                                 }
                                 if (position != 0) {
                                     origin =  inputAdapter.getNewOrigin(position.minus(1))
@@ -212,10 +235,17 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             }
                         }
 
+                        mapViewModel.totalDistance += currentDistance
+                        mapViewModel.totalDuration += currentDuration
+
+                        binding.totalDistance.text = getString(R.string.totalDistance).plus(mapViewModel.totalDistance.toString()).plus(" \t km")
+                        binding.totalDuration.text = getString(R.string.totalDuration).plus(mapViewModel.totalDuration.toString()).plus(" \t h")
+
+                        binding.chipGroupDirections.visibility = View.VISIBLE
+                        mapViewModel.changeUserLocation = false
                     }
 
-                    binding.chipGroupDirections.visibility = View.VISIBLE
-                    mapViewModel.changeUserLocation = false
+
 
                 }
             }
@@ -330,7 +360,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         stepsAdapter = StepsAdapter()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, mapViewModel.stepsList,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,resultLauncher)
+        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, mapViewModel.stepsList,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,mapViewModel,resultLauncher)
         recyclerView.adapter = inputAdapter
 
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)

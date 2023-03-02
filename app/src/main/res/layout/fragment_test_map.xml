@@ -162,7 +162,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/finish_button"
-                    android:layout_width="200dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/finish_plan"
                     android:textColor="@color/white"
@@ -172,6 +172,41 @@
                     app:layout_constraintTop_toBottomOf="@+id/scrollView"
                     app:layout_constraintVertical_bias="0.0" />
 
+                <LinearLayout
+                    android:id="@+id/information_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/finish_button"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/totalDistance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:text="@string/test_total_distance_500_km"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/totalDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:text="@string/test_total_duration_25_h"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/material_divider"
                     android:layout_width="match_parent"
@@ -180,7 +215,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/finish_button"
+                    app:layout_constraintTop_toBottomOf="@+id/information_layout"
                     app:layout_constraintVertical_bias="0.0" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -190,7 +225,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:orientation="horizontal"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:chipSpacingHorizontal="6dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"

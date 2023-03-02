@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_medium"
         android:layout_marginBottom="@dimen/spacing_medium"
-        android:layout_marginLeft="@dimen/spacing_mlarge"
-        android:layout_marginRight="@dimen/spacing_mlarge"
+        android:layout_marginLeft="@dimen/spacing_large"
+        android:layout_marginRight="@dimen/spacing_large"
         android:orientation="horizontal"
 
         >
@@ -73,10 +73,36 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginBottom="@dimen/spacing_middle"
-            android:layout_marginLeft="@dimen/spacing_middle"
-            android:layout_marginRight="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:layout_marginRight="@dimen/spacing_small"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/ic_baseline_delete_24"
+            android:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/info_button"
+            android:layout_width="35dp"
+            android:clickable="true"
+            android:layout_height="35dp"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:layout_marginRight="@dimen/spacing_small"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:background="@drawable/info_icon"
+            android:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/note_button"
+            android:layout_width="35dp"
+            android:clickable="true"
+            android:layout_height="35dp"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:layout_marginRight="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:background="@drawable/note_add_icon"
             android:visibility="visible"
             />
 
