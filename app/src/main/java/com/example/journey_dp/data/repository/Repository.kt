@@ -24,22 +24,22 @@ class Repository private constructor(
             if (resp.isSuccessful) {
                 resp.body()?.let { data ->
                     directions = data
-                    Log.i("TEST", "Data: $data")
-                }?:  Log.i("TEST","Failed to load directions")
+                    Log.i("MYTEST", "Data: $data")
+                }?:  Log.i("MYTEST","Failed to load directions")
             }
             else {
-                Log.i("TEST","Failed to read directions")
+                Log.i("MYTEST","Failed to read directions")
                 onError("Failed to read directions")
             }
         }
         catch (ex: IOException) {
             ex.printStackTrace()
-            Log.i("TEST","Failed to load directions, check internet connection")
+            Log.i("MYTEST","Failed to load directions, check internet connection")
             onError("Failed to load directions, check internet connection")
         }
         catch (ex: Exception) {
             ex.printStackTrace()
-            Log.i("TEST","Failed to load directions, error")
+            Log.i("MYTEST","Failed to load directions, error")
             onError("Failed to load directions, error")
         }
         return directions

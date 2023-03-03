@@ -53,6 +53,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
 
 
+
     fun getDirections(origin: String, destination: String,
     mode: String, transit: String, key: String){
         viewModelScope.launch {
@@ -65,6 +66,10 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
             _directions.value = result
             _loading.postValue(false)
         }
+    }
+
+    fun setDirectionsToStart() {
+        _directions.value = null
     }
 
     fun setIconType(iconType: String) {
