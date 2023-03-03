@@ -49,6 +49,8 @@ import com.google.maps.android.PolyUtil
 import okio.ByteString.Companion.decodeBase64
 import java.util.*
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.round
 
 // TODO: """
 //  Pridat ikonku informaciu ku kazdemu miestu po pliknuti na ikonku fetchnut informacie o danom mieste, zobrazit ich v layoute,
@@ -57,6 +59,7 @@ import kotlin.math.ceil
 //  nie len input text
 //  Calculacie celkovej vzdialenosti a času
 //  Rozlisenie farieb polylines podla dopravneho prostriedku (deklarovat napr. modru pre auto, ..)
+//  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
 //  po kliknuti na karticku vyletu vytiahnut z databazy tieto informacie, prejst loopom cez ne a vykreslit na mapu pricom
@@ -89,8 +92,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Declaration of Places Client
     private lateinit var places: PlacesClient
 
-    // Declaration of fusedLocationProvider
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     // Search Fragment late initialization
     private lateinit var searchView: AutocompleteSupportFragment
@@ -137,6 +138,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             inputAdapter.getNewOrigin(position.minus(1))
                         }
 
+                        // HELPER VARIABLES
                         var mode = "driving"
                         var transit = ""
                         val key = BuildConfig.GOOGLE_MAPS_API_KEY
@@ -152,44 +154,48 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
 
                         mapViewModel.directions.observe(viewLifecycleOwner) { result ->
-                            if (result != null) {
-                                comparison = (mapViewModel.checkLine == result.routes?.get(0)?.overviewPolyline!!.points)
-                                position = inputAdapter.getID()
-                                val lastDeleted = inputAdapter.getLastDeleted()
-
-                                if (!comparison.and(lastDeleted.isBlank().or(lastDeleted != placeFromSearch.name!!))) {
+                            if ((result != null).and(result?.routes?.size!! > 0)) {
+                                comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
+                                if (!comparison) {
                                     points = result.routes[0].overviewPolyline.points
 
                                     distance = result.routes[0].legs[0].distance.text
-                                    currentDistance = result.routes[0].legs[0].distance.value.div(1000.0)
-                                    inputAdapter.setDistance(currentDistance )
-
                                     duration = result.routes[0].legs[0].duration.text
-                                    currentDuration = result.routes[0].legs[0].duration.value.div(60.0).div(60.0)
-                                    inputAdapter.setDuration(currentDuration)
+
+
+                                    Log.i("TEST", "COUNTER : ${mapViewModel.counter}")
+                                    Log.i("TEST", "BEFORE NEW CALL DISTANCE AND DURATION : $currentDistance and $currentDuration")
 
                                     if (mapViewModel.counter == 0) {
-                                        mapViewModel.totalDistance += currentDistance
-                                        mapViewModel.totalDuration += currentDuration
+                                        currentDistance = result.routes[0].legs[0].distance.value.div(1000.0)
+                                        inputAdapter.setDistance(currentDistance)
+
+                                        currentDuration = round(result.routes[0].legs[0].duration.value.div(60.0).div(60.0))
+                                        inputAdapter.setDuration(currentDuration)
+
+                                        Log.i("TEST", "AFTER NEW CALL DISTANCE AND DURATION : $currentDistance and $currentDuration")
+                                        mapViewModel.totalDistance = mapViewModel.totalDistance.plus(currentDistance)
+                                        mapViewModel.totalDuration = mapViewModel.totalDuration.plus(currentDuration)
 
                                         binding.totalDistance.text = getString(R.string.totalDistance).plus(mapViewModel.totalDistance.toString()).plus(" \t km")
                                         binding.totalDuration.text = getString(R.string.totalDuration).plus(mapViewModel.totalDuration.toString()).plus(" \t h")
+
+                                        position = inputAdapter.getID()
+
+                                        iconType = mapViewModel.iconType.value!!
+
+                                        recyclerViewSteps.adapter = stepsAdapter
+                                        binding.stepsScrollView.visibility = View.VISIBLE
+
+                                        mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
+                                        stepsAdapter.submitList(result.routes[0].legs[0].steps)
+
+                                        showRouteOnMap(points, distance, duration, iconType,position)
                                     }
 
-                                    mapViewModel.counter += 1
+                                    mapViewModel.setCounterValue(mapViewModel.counter.plus(1))
 
-
-                                    iconType = mapViewModel.iconType.value!!
-
-                                    recyclerViewSteps.adapter = stepsAdapter
-                                    binding.stepsScrollView.visibility = View.VISIBLE
-
-                                    mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
-                                    stepsAdapter.submitList(result.routes[0].legs[0].steps)
-
-                                    showRouteOnMap(points, distance, duration, iconType,position)
                                 }
-
 
                             }
                         }
@@ -199,10 +205,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 val chip: Chip? = group.findViewById(it)
                                 mode = chip?.tag.toString()
                                 mapViewModel.setIconType(mode)
-                                mapViewModel.totalDuration -= currentDuration
-                                mapViewModel.totalDistance -= currentDistance
+                                Log.i("TEST", "TOTAL DISTANCE AND TOTAL DURATION BEFORE CHANGE: ${mapViewModel.totalDistance} and ${mapViewModel.totalDuration}")
+                                mapViewModel.totalDuration = mapViewModel.totalDuration.minus(currentDuration)
+                                mapViewModel.totalDistance = mapViewModel.totalDistance.minus(currentDistance)
                                 binding.totalDistance.text = getString(R.string.totalDistance).plus(mapViewModel.totalDistance.toString()).plus(" \t km")
                                 binding.totalDuration.text = getString(R.string.totalDuration).plus(mapViewModel.totalDuration.toString()).plus(" \t h")
+                                Log.i("TEST", "TOTAL DISTANCE AND TOTAL DURATION AFTER CHANGE: ${mapViewModel.totalDistance} and ${mapViewModel.totalDuration}")
 
                                 if ((mode == "bus").or(mode == "train")) {
                                     mode = "transit"
@@ -214,10 +222,11 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 position = inputAdapter.getID()
                                 if (mapViewModel.stepsList.isNotEmpty().and(position != -1)) {
                                     if (position <= mapViewModel.stepsList.size.minus(1)) {
-                                        Log.i("TEST", "THIS WAS FIRED: $position and ${mapViewModel.stepsList.size}")
+                                        Log.i("TEST", "DELETE AT POSITION STEPS LIST: $position and ${mapViewModel.stepsList.size}")
                                         mapViewModel.stepsList.removeAt(position)
                                     }
                                 }
+
                                 if (position != 0) {
                                     origin =  inputAdapter.getNewOrigin(position.minus(1))
                                     destination = inputAdapter.getNewOrigin(position)
@@ -227,9 +236,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     destination = inputAdapter.getNewOrigin(position)
                                 }
 
-                                mapViewModel.counter = 0
-                                mapViewModel.getDirections(origin, destination, mode, transit, key)
                                 if (mapViewModel.polylines.isNotEmpty()) {
+                                    Log.i("TEST", "POSITION  : $position")
+                                    Log.i("TEST", "POLYLINES BEFORE DELETE IN CHANGE : ${mapViewModel.polylines}")
                                     var counter = 0
                                     for (line in mapViewModel.polylines) {
                                         if (counter == position) {
@@ -237,13 +246,22 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         }
                                         counter+=1
                                     }
+
+                                    Log.i("TEST", "POSITION AND SIZE INFOMARKERS  : $position and  ${mapViewModel.infoMarkers.size}")
                                     if (position <= mapViewModel.infoMarkers.size.minus(1)) {
                                         val infoMark = mapViewModel.infoMarkers.getOrNull(position)
                                         infoMark?.remove()
                                         mapViewModel.infoMarkers.removeAt(position)
                                         mapViewModel.polylines.removeAt(position)
+                                        Log.i("TEST", "POLYLINES AFTER DELETE IN CHANGE : ${mapViewModel.polylines}")
                                     }
                                 }
+
+                                mapViewModel.setCounterValue(0)
+                                Log.i("TEST", "SET COUNTER TO ZERO : ${mapViewModel.counter}")
+
+                                mapViewModel.getDirections(origin, destination, mode, transit, key)
+
                             }
                         }
 
@@ -251,8 +269,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         binding.chipGroupDirections.visibility = View.VISIBLE
                         mapViewModel.changeUserLocation = false
                     }
-
-
 
                 }
             }
@@ -279,9 +295,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             this,
             Injection.provideViewModelFactory()
         )[MapViewModel::class.java]
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
+
 
 
     override fun onCreateView(
@@ -374,7 +389,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
         binding.testButton.setOnClickListener {
-            mapViewModel.counter = 0
+            mapViewModel.setCounterValue(0)
+            Log.i("TEST", "ADD NEW INPUT RESET COUNTER AND LINE: ${mapViewModel.counter} and ${mapViewModel.checkLine}")
             inputAdapter.setName("","")
             binding.chipGroupDirections.clearCheck()
             binding.chipGroupDirections.visibility = View.GONE
@@ -437,17 +453,18 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
     override fun onPoiClick(poi: PointOfInterest) {
-        //TODO: THIS FUNCTION WILL BE GETTING INFORMATION ABOUT PLACE ON CLICK, NOT TO SET MARKERS
-        //TODO: MAX MARKERS WILL BE DIFFERENT FROM PLANNING MARKERS , OR THERE WILL BE INFO WINDOW ON CLICK,WITH SOME TEXT AND IMAGE ABOUT PLACE
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
     private fun showRouteOnMap(line: String, distanceText: String, durationText: String, choosedIcon: String, position: Int) {
-        val rnd = Random()
-        var color: Int
-        do {
-            color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-        } while (isLightColor(color))
+        val color = when(choosedIcon){
+            "driving" -> Color.BLUE
+            "bus" -> Color.rgb(210, 152, 121)
+            "train" -> Color.rgb(187, 62, 146)
+            "walking" -> Color.rgb(32, 96, 70)
+            "bicycling" -> Color.rgb(176,129,213)
+            else -> Color.BLUE
+        }
 
         mapViewModel.checkLine = line
         if (line.isNotBlank()) {
@@ -459,9 +476,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             options.addAll(polyline)
             val addedPolyline = googleMap.addPolyline(options)
             addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
+
+            Log.i("TEST", "POLYLINES BEFORE ADD: ${mapViewModel.polylines}")
             mapViewModel.polylines.add(addedPolyline)
+            Log.i("TEST", "POLYLINES AFTER ADD: ${mapViewModel.polylines}")
 
-
+            mapViewModel.setCounterValue(0)
 
             googleMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
@@ -469,13 +489,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     10F
                 )
             )
-        }
-    }
-
-    private fun setNewInfoWindow(position: Int, distanceText: String, durationText: String, choosedIcon: String) {
-        if (mapViewModel.polylines.isNotEmpty().and(position <= mapViewModel.polylines.size.minus(1))) {
-            val currentPolyline = mapViewModel.polylines[position]
-            currentPolyline.addInfoWindow(googleMap, distanceText, durationText, choosedIcon)
         }
     }
 

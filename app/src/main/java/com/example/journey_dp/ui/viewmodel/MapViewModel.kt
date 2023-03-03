@@ -71,6 +71,18 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         _iconType.value = iconType
     }
 
+    fun setModelDistanceAndDuration(distance: Double, duration: Double) {
+        this.totalDistance = distance
+        this.totalDuration = duration
+    }
+
+    fun setCounterValue(counterValue: Int) {
+        this.counter = counterValue
+    }
+
+    fun setLine(lineValue: String) {
+        this.checkLine = lineValue
+    }
 
     fun setLocation(coordinates: LatLng) {
         _location.value = coordinates

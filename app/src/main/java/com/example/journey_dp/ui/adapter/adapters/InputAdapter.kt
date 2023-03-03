@@ -43,7 +43,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
     private var helperStringDuration: String = "Total Duration : "
     private var idPosition: Int = 0
     private var newOrigin = mutableListOf<String>()
-    private var lastDeleted: String = ""
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.destination_item, parent, false)
@@ -68,8 +68,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
         holder.inputText.setOnClickListener {
             if (holder.inputText.text.toString().isNotBlank()) {
-                model.totalDistance -= currentDistance
-                model.totalDuration -= currentDuration
+                model.totalDuration = model.totalDuration.minus(currentDuration)
+                model.totalDistance = model.totalDistance.minus(currentDistance)
                 distance.text = helperStringDistance.plus(model.totalDistance.toString()).plus(" \tkm")
                 duration.text = helperStringDuration.plus(model.totalDuration.toString()).plus(" \th")
 
@@ -103,7 +103,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         }
 
         holder.deleteButton.setOnClickListener{
-            lastDeleted = holder.inputText.text.toString()
+
             idPosition = holder.adapterPosition.minus(1)
             Log.i("TEST", "STEPS ${steps.size}")
             Log.i("TEST", "STEPS $holder.adapterPosition")
@@ -111,21 +111,27 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 steps.removeAt(holder.adapterPosition)
             }
 
-            model.totalDistance -= currentDistance
-            model.totalDuration -= currentDuration
-            distance.text = helperStringDistance.plus(model.totalDistance.toString()).plus(" \tkm")
-            duration.text = helperStringDuration.plus(model.totalDuration.toString()).plus(" \th")
 
             if (idPosition == -1) {
-                model.checkLine = ""
-                currentDistance = 0.0
-                currentDuration = 0.0
-                model.totalDistance = 0.0
-                model.totalDuration = 0.0
+                Log.i("TEST", "IDPOSITION IF MINUS 1 : $idPosition")
+                model.setLine("")
+                setDistance(0.0)
+                setDuration(0.0)
+                model.setCounterValue(0)
+                model.setModelDistanceAndDuration(0.0, 0.0)
                 distance.text = helperStringDistance.plus(model.totalDistance.toString()).plus(" \tkm")
                 duration.text = helperStringDuration.plus(model.totalDuration.toString()).plus(" \th")
                 hideElements(viewMap)
             }
+            else {
+                Log.i("TEST", "IDPOSITION IN ELSE : $idPosition")
+                model.totalDuration = model.totalDuration.minus(currentDuration)
+                model.totalDistance = model.totalDistance.minus(currentDistance)
+                distance.text = helperStringDistance.plus(model.totalDistance.toString()).plus(" \tkm")
+                duration.text = helperStringDuration.plus(model.totalDuration.toString()).plus(" \th")
+            }
+
+
             if (holder.inputText.text.toString().isNotBlank()) {
                 val marker = markers.getOrNull(holder.adapterPosition.plus(1))
                 marker?.remove()
@@ -171,10 +177,6 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
     fun getID(): Int {
         return this.idPosition
-    }
-
-    fun getLastDeleted(): String {
-        return this.lastDeleted
     }
 
     fun setPosition(position: Int) {
