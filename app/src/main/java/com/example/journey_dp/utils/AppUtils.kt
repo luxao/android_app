@@ -15,6 +15,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -34,6 +35,7 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
 import okio.ByteString.Companion.encodeUtf8
 import org.jsoup.Jsoup
@@ -95,7 +97,51 @@ fun hideElements(view: View) {
 
 }
 
+fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
+    var totalDistance = 0.0
+    var totalDurationHours = 0
+    var totalDurationMinutes = 0
+    val helperDistanceText = "Total Distance : "
+    val helperDurationText = "Total Duration : "
+    infoMarkers.map {
+        val distanceItem = it.title!!.split("km")[0].trim().toDouble()
+        var durationItemHour = 0
+        var durationItemMinutes = ""
+        if (it.snippet!!.contains("hour")) {
+            durationItemHour = it.snippet!!.split("hour")[0].trim().toInt()
+            durationItemMinutes = it.snippet!!.split("hour")[1].split("mins")[0]
+            if (durationItemMinutes.contains("s")) {
+                durationItemMinutes = durationItemMinutes.split("s")[1]
+            }
+            totalDurationHours += durationItemHour
+            totalDurationMinutes += durationItemMinutes.trim().toInt()
+        }
+        else {
+            durationItemMinutes = it.snippet!!.split("mins")[0]
+            totalDurationMinutes += durationItemMinutes.trim().toInt()
+        }
+        totalDistance += distanceItem
+        if (totalDurationMinutes >= 60) {
+            val h = totalDurationMinutes.div(60)
+            val m = totalDurationMinutes.mod(60)
+            totalDurationHours += h
+            totalDurationMinutes = m
+        }
 
+        Log.i("MYTEST", "___________________________________")
+        Log.i("MYTEST", "DISTANCE : $distanceItem")
+        Log.i("MYTEST", "DURATION : $durationItemHour h  $durationItemMinutes m")
+        Log.i("MYTEST", "___________________________________")
+    }
+    Log.i("MYTEST", "___________________________________")
+    Log.i("MYTEST", "TOTAL DISTANCE : $totalDistance")
+    Log.i("MYTEST", "TOTAL DURATION : $totalDurationHours h  $totalDurationMinutes m")
+    val distanceView = view.findViewById<TextView>(R.id.totalDistance)
+    val durationView = view.findViewById<TextView>(R.id.totalDuration)
+    distanceView.text = helperDistanceText.plus(String.format("%.2f", totalDistance)).plus(" km")
+    durationView.text = helperDurationText.plus(totalDurationHours.toString()).plus( " h ").plus(totalDurationMinutes.toString()).plus(" m")
+
+}
 
 
 fun setMapMenu(

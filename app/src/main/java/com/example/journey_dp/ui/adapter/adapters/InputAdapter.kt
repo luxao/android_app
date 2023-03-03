@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.ui.viewmodel.MapViewModel
+import com.example.journey_dp.utils.calculateDistanceAndDuration
 
 import com.example.journey_dp.utils.hideElements
 
@@ -80,6 +81,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 }
 
                 newOrigin.removeAt(holder.adapterPosition)
+
+                calculateDistanceAndDuration(model.infoMarkers, viewMap)
             }
             idPosition = holder.adapterPosition
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
@@ -139,6 +142,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 recyclerView.adapter = stepsAdapter
                 stepsAdapter.submitList(steps[idPosition])
             }
+
+            calculateDistanceAndDuration(model.infoMarkers, viewMap)
 
             notifyItemRemoved(holder.adapterPosition)
 

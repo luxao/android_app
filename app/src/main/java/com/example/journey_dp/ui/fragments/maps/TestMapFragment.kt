@@ -25,6 +25,7 @@ import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
+import com.example.journey_dp.utils.calculateDistanceAndDuration
 import com.example.journey_dp.utils.isLightColor
 import com.example.journey_dp.utils.setMapMenu
 import com.google.android.gms.common.api.Status
@@ -58,7 +59,6 @@ import kotlin.math.round
 //  Pridat ikonku pridat poznamku, pridat nejaky check ze ak zadam rezervacia alebo check ze rezervacia zobrazi sa nejaky formular
 //  nie len input text
 //  Calculacie celkovej vzdialenosti a času
-//  Rozlisenie farieb polylines podla dopravneho prostriedku (deklarovat napr. modru pre auto, ..)
 //  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
@@ -132,7 +132,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
 
 
-
                         var origin = if (position == 0) {
                             mapViewModel.location.value!!.latitude.toString() + "," + mapViewModel.location.value!!.longitude.toString()
                         } else {
@@ -173,6 +172,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             }
                         }
 
+
                         binding.chipGroupDirections.setOnCheckedStateChangeListener { group, checkedIds ->
                                 checkedIds.map {
                                     val chip: Chip? = group.findViewById(it)
@@ -203,6 +203,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         Log.i("MYTEST", "SECOND POSITION : $position and origin and destination is $origin and $destination")
 
                                     }
+
 
                                     Log.i("MYTEST", "ORIG, DEST IN CHIPS : $origin and $destination")
                                     mapViewModel.getDirections(origin, destination, mode, transit, key)
@@ -364,7 +365,34 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val marker = mapViewModel.markers.getOrNull(0)
                 marker?.remove()
                 mapViewModel.markers.removeAt(0)
+                //TODO:
+                //                if (mapViewModel.polylines.isNotEmpty()) {
+                //                    for (line in mapViewModel.polylines) {
+                //                        line.remove()
+                //                    }
+                //                    if (mapViewModel.infoMarkers.size > 0) {
+                //                        for (i in 0..mapViewModel.infoMarkers.size) {
+                //                            val infoMarker = mapViewModel.infoMarkers.getOrNull(i)
+                //                            infoMarker?.remove()
+                //                            mapViewModel.infoMarkers.removeAt(i)
+                //                        }
+                //                    }
+                //                    if (mapViewModel.inputs.size > 0) {
+                //                        for (j in 0..mapViewModel.inputs.size) {
+                //                            mapViewModel.inputs.removeAt(j)
+                //                            inputAdapter.notifyItemRemoved(j)
+                //                        }
+                //                    }
+                //                    if (mapViewModel.markers.size > 0) {
+                //                        for (i in 0..mapViewModel.markers.size) {
+                //                            val anotherMarker = mapViewModel.markers.getOrNull(i)
+                //                            anotherMarker?.remove()
+                //                            mapViewModel.markers.removeAt(i)
+                //                        }
+                //                    }
+                //                }
             }
+
             mapViewModel.changeUserLocation = true
             resultLauncher.launch(intent)
         }
@@ -449,6 +477,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     10F
                 )
             )
+            calculateDistanceAndDuration(mapViewModel.infoMarkers, binding.root)
         }
     }
 
