@@ -58,7 +58,9 @@ import java.util.*
 //  po kliknuti na karticku zobrazit najskôr ikonku loadovania a potom zobrazit danu trasu uz.
 //  Po finish buttone automaticky ulozit tieto info do DB - mozno zobrazit animaciu loadovania a nasledne presmerovanie
 //  do profilu na karticku pricom pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
+//  _______________________________________________________________________________________
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
+//  ________________________________________________________________________________________
 //  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
 //  OTESTOVANIE a OSETRENIE
 //  STYLOVANIE

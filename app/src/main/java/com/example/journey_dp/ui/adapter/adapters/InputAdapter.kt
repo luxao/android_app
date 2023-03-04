@@ -139,8 +139,10 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             inputs.removeAt(holder.adapterPosition)
 
             if (idPosition != -1) {
-                recyclerView.adapter = stepsAdapter
-                stepsAdapter.submitList(steps[idPosition])
+                if (steps.size > 0) {
+                    recyclerView.adapter = stepsAdapter
+                    stepsAdapter.submitList(steps[idPosition])
+                }
             }
 
             calculateDistanceAndDuration(model.infoMarkers, viewMap)
