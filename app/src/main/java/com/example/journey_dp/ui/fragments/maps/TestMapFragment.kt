@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,11 +25,8 @@ import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.calculateDistanceAndDuration
-import com.example.journey_dp.utils.isLightColor
 import com.example.journey_dp.utils.setMapMenu
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -47,18 +43,14 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.maps.android.PolyUtil
-import okio.ByteString.Companion.decodeBase64
 import java.util.*
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.round
+
 
 // TODO: """
-//  Pridat ikonku informaciu ku kazdemu miestu po pliknuti na ikonku fetchnut informacie o danom mieste, zobrazit ich v layoute,
+//  Pridat ikonku informaciu ku kazdemu miestu po kliknuti na ikonku fetchnut informacie o danom mieste, zobrazit ich v layoute,
 //  pridat ikonku sipky spat na vratenie sa planovanie teda zobrazit info co predtym cize nastavit na visbile
 //  Pridat ikonku pridat poznamku, pridat nejaky check ze ak zadam rezervacia alebo check ze rezervacia zobrazi sa nejaky formular
 //  nie len input text
-//  Calculacie celkovej vzdialenosti a času
 //  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
@@ -123,6 +115,40 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 15F
                             )
                         )
+
+                        val changedOrigin = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
+                        if (mapViewModel.polylines.isNotEmpty()) {
+                            val firstDestination = inputAdapter.getNewOrigin(0)
+                            var counter = 0
+                            for (line in mapViewModel.polylines) {
+                                if (counter == 0) {
+                                    line.remove()
+                                }
+                                counter+=1
+                            }
+                            if (mapViewModel.infoMarkers.size > 0) {
+                                val infoMark = mapViewModel.infoMarkers.getOrNull(0)
+                                infoMark?.remove()
+                                mapViewModel.infoMarkers.removeAt(0)
+                                mapViewModel.polylines.removeAt(0)
+                            }
+                            Log.i("MYTEST", "USER LOC: $changedOrigin and $firstDestination")
+                            mapViewModel.getDirections(changedOrigin, firstDestination, "driving", "", BuildConfig.GOOGLE_MAPS_API_KEY)
+                            mapViewModel.directions.observe(viewLifecycleOwner) { result ->
+                                if (result != null) {
+                                    val comparison = (mapViewModel.checkLine == result.routes?.get(0)?.overviewPolyline!!.points)
+                                    if (!comparison) {
+                                        recyclerViewSteps.adapter = stepsAdapter
+                                        binding.stepsScrollView.visibility = View.VISIBLE
+                                        mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
+                                        stepsAdapter.submitList(result.routes[0].legs[0].steps)
+                                        showRouteOnMap(result.routes[0].overviewPolyline.points, result.routes[0].legs[0].distance.text,
+                                            result.routes[0].legs[0].duration.text, mapViewModel.iconType.value!!,0)
+                                        mapViewModel.changeUserLocation = false
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     var position = inputAdapter.getID()
@@ -365,32 +391,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val marker = mapViewModel.markers.getOrNull(0)
                 marker?.remove()
                 mapViewModel.markers.removeAt(0)
-                //TODO:
-                //                if (mapViewModel.polylines.isNotEmpty()) {
-                //                    for (line in mapViewModel.polylines) {
-                //                        line.remove()
-                //                    }
-                //                    if (mapViewModel.infoMarkers.size > 0) {
-                //                        for (i in 0..mapViewModel.infoMarkers.size) {
-                //                            val infoMarker = mapViewModel.infoMarkers.getOrNull(i)
-                //                            infoMarker?.remove()
-                //                            mapViewModel.infoMarkers.removeAt(i)
-                //                        }
-                //                    }
-                //                    if (mapViewModel.inputs.size > 0) {
-                //                        for (j in 0..mapViewModel.inputs.size) {
-                //                            mapViewModel.inputs.removeAt(j)
-                //                            inputAdapter.notifyItemRemoved(j)
-                //                        }
-                //                    }
-                //                    if (mapViewModel.markers.size > 0) {
-                //                        for (i in 0..mapViewModel.markers.size) {
-                //                            val anotherMarker = mapViewModel.markers.getOrNull(i)
-                //                            anotherMarker?.remove()
-                //                            mapViewModel.markers.removeAt(i)
-                //                        }
-                //                    }
-                //                }
             }
 
             mapViewModel.changeUserLocation = true

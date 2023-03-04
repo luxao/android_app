@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_mxlarge"
-
+                android:visibility="visible"
                 android:layout_marginLeft="@dimen/spacing_mlarge"
                 android:layout_marginRight="@dimen/spacing_mlarge"
                 android:orientation="horizontal"
@@ -113,12 +113,13 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:visibility="visible"
                     >
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/my_location_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColorHint="#757575"
                         android:hint="@string/destination"
+                        android:textColorHint="#757575"
 
                         />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -141,6 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="90dp"
                 android:nestedScrollingEnabled="true"
+                android:visibility="visible"
                 tools:context=".ui.fragments.maps.TestFragment">
 
                 <ScrollView
