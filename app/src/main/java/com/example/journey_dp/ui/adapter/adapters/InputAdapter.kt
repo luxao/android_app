@@ -1,7 +1,9 @@
 package com.example.journey_dp.ui.adapter.adapters
 
 
+import android.animation.Animator
 import android.content.Intent
+import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,37 +12,45 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
+import androidx.constraintlayout.widget.ConstraintLayout
 
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.journey_dp.R
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.calculateDistanceAndDuration
 
 import com.example.journey_dp.utils.hideElements
+import com.google.android.gms.common.api.ApiException
 
 import com.google.android.gms.maps.model.Marker
 
 import com.google.android.gms.maps.model.Polyline
 
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.*
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 import com.google.android.material.textfield.TextInputEditText
-import kotlin.math.ceil
 
 
 class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView,
+                   private var imageAdapter: ImageAdapter, private var recyclerViewImage: RecyclerView,
                    private var steps: MutableList<List<Step>>, private var name: String, private var destination: String,
                    private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,
                    private val polylines: MutableList<Polyline>, private var infoMarkers: MutableList<Marker>,
-                   private val model: MapViewModel,
+                   private val model: MapViewModel,private var standardBottomSheetBehavior: BottomSheetBehavior<View>,
+                   private val placesClient: PlacesClient,
                    private val result: ActivityResultLauncher<Intent>) : RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
 
     private var idPosition: Int = 0
     private var newOrigin = mutableListOf<String>()
+    private var placeIds = mutableListOf<String>()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.destination_item, parent, false)
@@ -81,6 +91,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 }
 
                 newOrigin.removeAt(holder.adapterPosition)
+                placeIds.removeAt(holder.adapterPosition)
 
                 calculateDistanceAndDuration(model.infoMarkers, viewMap)
             }
@@ -121,6 +132,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 }
 
                 newOrigin.removeAt(holder.adapterPosition)
+                placeIds.removeAt(holder.adapterPosition)
                 Log.i("MYTEST", "MARKERS: $markers")
                 Log.i("MYTEST", "INFOMARKERS: $infoMarkers")
                 Log.i("MYTEST", "POLYLINES: $polylines")
@@ -151,6 +163,126 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
         }
 
+        val planWrapper = viewMap.findViewById<ConstraintLayout>(R.id.plan_wrapper)
+        val userLocationInput = viewMap.findViewById<LinearLayout>(R.id.layout_for_add_station)
+        val backButton = viewMap.findViewById<ImageView>(R.id.back_button)
+        val placeWrapper = viewMap.findViewById<ConstraintLayout>(R.id.place_wrapper)
+        val placeName = viewMap.findViewById<TextView>(R.id.place_name)
+        val address = viewMap.findViewById<TextView>(R.id.address)
+        val phone = viewMap.findViewById<TextView>(R.id.phone_number)
+        val uriOfPage = viewMap.findViewById<TextView>(R.id.uri_of_page)
+        val animationWrapper = viewMap.findViewById<ConstraintLayout>(R.id.animation_layout)
+        val loadingAnimation = viewMap.findViewById<LottieAnimationView>(R.id.loading_animation)
+        val bitmapList = mutableListOf<Bitmap>()
+
+        holder.infoButton.setOnClickListener {
+            userLocationInput.visibility = View.GONE
+            planWrapper.visibility = View.GONE
+            animationWrapper.visibility = View.VISIBLE
+
+            standardBottomSheetBehavior.peekHeight = 700
+            standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            if (holder.inputText.text.toString().isNotBlank()) {
+                placeName.text = holder.inputText.text.toString()
+
+                val placeId = this.placeIds[holder.adapterPosition]
+
+                val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
+
+                val request = FetchPlaceRequest.newInstance(placeId, placeFields)
+
+                placesClient.fetchPlace(request)
+                    .addOnSuccessListener { response: FetchPlaceResponse ->
+                        val place = response.place
+
+                        if (place.address != null) {
+                            address.text = place.address
+                        }
+                        else {
+                            address.visibility = View.GONE
+                        }
+                        if (place.phoneNumber != null) {
+                            phone.text = place.phoneNumber
+                        }
+                        else {
+                            phone.visibility = View.GONE
+                        }
+
+                        if (place.websiteUri != null) {
+                            uriOfPage.text = place.websiteUri!!.toString()
+                        }
+                        else {
+                            uriOfPage.visibility = View.GONE
+                        }
+
+                        // Get the photo metadata.
+                        val metadata = place.photoMetadatas
+                        if (metadata == null || metadata.isEmpty()) {
+                            Log.w("MYTEST", "No photo metadata.")
+                            return@addOnSuccessListener
+                        }
+                        var counter = 0
+                        loadingAnimation.playAnimation()
+                        loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator) {
+                                for (meta in metadata) {
+                                    // Get the attribution text.
+                                    val attributions = meta?.attributions
+
+                                    // Create a FetchPhotoRequest.
+                                    val photoRequest = FetchPhotoRequest.builder(meta)
+                                        .setMaxWidth(500) // Optional.
+                                        .setMaxHeight(300) // Optional.
+                                        .build()
+                                    placesClient.fetchPhoto(photoRequest)
+                                        .addOnSuccessListener { fetchPhotoResponse: FetchPhotoResponse ->
+                                            val bitmap = fetchPhotoResponse.bitmap
+                                            bitmapList.add(bitmap)
+                                            counter += 1
+                                        }.addOnFailureListener { exception: Exception ->
+                                            if (exception is ApiException) {
+                                                Log.e("MYTEST", "Place not found: " + exception.message)
+                                                val statusCode = exception.statusCode
+                                                TODO("Handle error with given status code.")
+                                            }
+                                        }
+
+                                }
+                            }
+
+                            override fun onAnimationEnd(animation: Animator) {
+                                if (counter == metadata.size) {
+                                    animationWrapper.visibility = View.GONE
+                                    placeWrapper.visibility = View.VISIBLE
+                                    recyclerViewImage.adapter = imageAdapter
+                                    imageAdapter.submitList(bitmapList)
+                                }
+                                else {
+                                    loadingAnimation.playAnimation()
+                                }
+                            }
+                            override fun onAnimationCancel(animation: Animator) {
+                                Log.i("info", "animation cancel")
+                            }
+                            override fun onAnimationRepeat(animation: Animator) {
+                                Log.i("info", "animation repeat")
+                            }
+                        })
+
+
+                    }
+
+            }
+        }
+
+
+        backButton.setOnClickListener {
+            placeWrapper.visibility = View.GONE
+            userLocationInput.visibility = View.VISIBLE
+            planWrapper.visibility = View.VISIBLE
+        }
+
     }
 
     fun getNewOrigin(position: Int): String {
@@ -159,6 +291,10 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         }
         return this.newOrigin[position]
 
+    }
+
+    fun addPlaceId(placeId: String) {
+        this.placeIds.add(placeId)
     }
 
     fun getID(): Int {
@@ -178,6 +314,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val inputText: TextInputEditText = itemView.findViewById(R.id.input_destination)
         val deleteButton: ImageView = itemView.findViewById(R.id.delete_input)
+        val infoButton: ImageView = itemView.findViewById(R.id.info_button)
+        val notesButton: ImageView = itemView.findViewById(R.id.note_button)
     }
 }
 

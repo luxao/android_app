@@ -71,7 +71,7 @@
                 android:src="@drawable/ic_baseline_remove_24"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center|top"
-                />
+                android:contentDescription="@string/holder_bottom_sheet" />
 
             <LinearLayout
                 android:id="@+id/layout_for_add_station"
@@ -88,11 +88,11 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginLeft="@dimen/spacing_middle"
+                    android:layout_marginLeft="@dimen/spacing_small"
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:src="@drawable/ic_baseline_my_location_24"
-                    />
+                    android:contentDescription="@string/my_location_icon" />
 
                 <View
                     android:layout_width="20dp"
@@ -105,7 +105,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/my_location_label"
-                    android:layout_width="200dp"
+                    android:layout_width="165dp"
                     android:layout_height="60dp"
                     android:textAlignment="center"
                     app:hintAnimationEnabled="false"
@@ -138,6 +138,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/plan_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="90dp"
@@ -365,6 +366,180 @@
                         />
 
                 </ScrollView>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/animation_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                >
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/loading_animation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:tooltipText="Loading information"
+                    app:lottie_autoPlay="false"
+                    app:lottie_loop="false"
+                    app:lottie_rawRes="@raw/loading"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:lottie_speed="0.5"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/place_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
+                android:visibility="gone"
+                tools:context=".ui.fragments.maps.TestFragment">
+
+                <ImageView
+                    android:id="@+id/back_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/back_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/back_to_plan" />
+
+                <TextView
+                    android:id="@+id/place_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:textColor="@color/black"
+                    android:textAlignment="center"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/place_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    app:dividerColor="@color/black"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginEnd="60dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/place_name"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <LinearLayout
+                    android:id="@+id/image_list"
+                    android:layout_marginTop="60dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/place_divider"
+                    app:layout_constraintVertical_bias="0.0"
+                    >
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/image_recyclerView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layoutManager="LinearLayoutManager"
+                        tools:listitem="@layout/image_item_layout"
+                        android:scrollbars="horizontal" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/attributions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:textSize="11sp"
+                    android:visibility="gone"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/image_list"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/attributions"
+                    />
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/image_list"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/info_image"
+                    />
+
+                <TextView
+                    android:id="@+id/phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/purple_700"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/address"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/info_image"
+                    />
+
+                <TextView
+                    android:id="@+id/uri_of_page"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/blue"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/phone_number"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/info_image"
+                    />
+
+
+
 
 
 

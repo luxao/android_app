@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentTestMapBinding
+import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
@@ -47,8 +48,6 @@ import java.util.*
 
 
 // TODO: """
-//  Pridat ikonku informaciu ku kazdemu miestu po kliknuti na ikonku fetchnut informacie o danom mieste, zobrazit ich v layoute,
-//  pridat ikonku sipky spat na vratenie sa planovanie teda zobrazit info co predtym cize nastavit na visbile
 //  Pridat ikonku pridat poznamku, pridat nejaky check ze ak zadam rezervacia alebo check ze rezervacia zobrazi sa nejaky formular
 //  nie len input text
 //  -----------------------------------------------------------------------------------
@@ -71,6 +70,9 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Declaration of binding fragment
     private var _binding : FragmentTestMapBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var recyclerViewImage: RecyclerView
+    private lateinit var imageAdapter: ImageAdapter
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerViewSteps: RecyclerView
@@ -101,8 +103,6 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
 
-                    var destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
-                    inputAdapter.setName(placeFromSearch.name!!, destination)
 
                     if (mapViewModel.changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
@@ -153,9 +153,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         }
                     }
 
+                    var destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
                     var position = inputAdapter.getID()
                     Log.i("MYTEST", "FIRST POSITION : $position")
                     if ((!mapViewModel.changeUserLocation).and(position >= 0)) {
+                        inputAdapter.setName(placeFromSearch.name!!, destination)
+                        inputAdapter.addPlaceId(placeFromSearch.id!!)
                         inputAdapter.setPosition(position)
                         showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
 
@@ -302,6 +305,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         )
         recyclerView = binding.inputsList
         recyclerViewSteps = binding.recyclerViewSteps
+        recyclerViewImage = binding.imageRecyclerView
         return binding.root
     }
 
@@ -372,8 +376,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         recyclerViewSteps.layoutManager = LinearLayoutManager(context)
         stepsAdapter = StepsAdapter()
 
+        imageAdapter = ImageAdapter()
+        recyclerViewImage.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, mapViewModel.stepsList,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,mapViewModel.infoMarkers,mapViewModel,resultLauncher)
+        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, imageAdapter,recyclerViewImage,mapViewModel.stepsList,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,
+            mapViewModel.infoMarkers,mapViewModel,standardBottomSheetBehavior,places,resultLauncher)
         recyclerView.adapter = inputAdapter
 
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
