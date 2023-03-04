@@ -63,7 +63,9 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
                     Errors(it)
                 )
             }
-            _directions.value = result
+            if (result != null) {
+                _directions.value = result
+            }
             _loading.postValue(false)
         }
     }

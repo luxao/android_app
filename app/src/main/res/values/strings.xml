@@ -59,6 +59,11 @@
     <string name="holder_bottom_sheet">holder for manipulating bottom sheet</string>
     <string name="info_image">info image about place</string>
     <string name="attributions">attributions</string>
-
-
+    <string name="add_note_hint">Add note to destination</string>
+    <string name="add_note">Add note</string>
+    <string name="note">note</string>
+    <string name="reservation">Reservation</string>
+    <string name="from">from</string>
+    <string name="to">to</string>
+    <string name="payment_value">0.00</string>
 </resources>

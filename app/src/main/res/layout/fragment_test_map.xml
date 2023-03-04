@@ -389,7 +389,7 @@
                     app:lottie_rawRes="@raw/loading"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:lottie_speed="0.5"
+                    app:lottie_speed="1"
                     tools:ignore="SpeakableTextPresentCheck" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -539,8 +539,264 @@
                     />
 
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/notes_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:context=".ui.fragments.maps.TestFragment"
+                >
+
+                <ImageView
+                    android:id="@+id/back_button_from_notes"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/back_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/back_to_plan" />
+
+
+                <LinearLayout
+                    android:id="@+id/layout_for_note_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/note"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="56dp"
+                        android:layout_marginStart="32dp"
+                        android:src="@drawable/note_alt"
+                        android:contentDescription="@string/note"
+                        />
+
+                    <TextView
+                        android:id="@+id/add_note_ifno"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="60dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="32dp"
+                        android:textColor="@color/black"
+                        android:text="@string/add_note"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+
+                        />
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/note_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="6dp"
+                    app:dividerColor="@color/black"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_for_note_info"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/place_name_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/note_divider"
+                    app:layout_constraintVertical_bias="0.0"
+                    />
+
+
+                <CheckBox
+                    android:id="@+id/reservation_check"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:checked="false"
+                    android:text="@string/reservation"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/place_name_note"
+                    app:layout_constraintVertical_bias="0.0"
+                    />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/label_textarea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="20dp"
+                    app:hintAnimationEnabled="false"
+                    app:hintEnabled="false"
+                    android:textAlignment="center"
+                    android:gravity="top|left"
+                    android:inputType="textMultiLine"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:lines="10"
+                    android:visibility="visible"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/reservation_check"
+                    app:layout_constraintVertical_bias="0.0"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textarea"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="#757575"
+                        android:hint="@string/add_note_hint"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/user_name_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/user_name"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:visibility="gone"
+                    app:startIconDrawable="@drawable/ic_person_24"
+                    app:startIconContentDescription="@string/user_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/reservation_check"
+                    app:layout_constraintVertical_bias="0.0"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/user_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="#757575" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/date_from_layout"
+                        android:layout_width="150dp"
+                        android:layout_height="60dp"
+                        android:hint="@string/from"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="4dp"
+                        android:visibility="gone"
+                        app:startIconDrawable="@drawable/ic_baseline_calendar_month_24"
+                        app:startIconContentDescription="@string/from"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="@+id/user_name_note"
+                        app:layout_constraintTop_toBottomOf="@+id/user_name_note"
+                        app:layout_constraintVertical_bias="0.0"
+                        >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/date_from"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="#757575" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/date_to_layout"
+                        android:layout_width="150dp"
+                        android:layout_height="60dp"
+                        android:hint="@string/to"
+                        android:visibility="gone"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="4dp"
+                        app:startIconDrawable="@drawable/ic_baseline_calendar_month_24"
+                        app:startIconContentDescription="@string/to"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        app:layout_constraintEnd_toEndOf="@+id/user_name_note"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintTop_toBottomOf="@+id/user_name_note"
+                        app:layout_constraintVertical_bias="0.0"
+                        >
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/date_to"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColorHint="#757575" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/value_layout"
+                    android:layout_width="150dp"
+                    android:layout_height="60dp"
+                    android:hint="@string/payment_value"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
+                    app:startIconDrawable="@drawable/ic_baseline_euro_24"
+                    app:startIconContentDescription="@string/payment_value"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/date_to_layout"
+                    app:layout_constraintVertical_bias="0.0"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/value_of_reservation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="#757575" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                <Button
+                    android:id="@+id/add_note_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="300dp"
+                    android:background="@drawable/note_add_icon"
+                    android:contentDescription="@string/add_input"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/note_divider"
+                    app:layout_constraintVertical_bias="0.0"
+                    />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

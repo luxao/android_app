@@ -8,11 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginTop
 
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
@@ -35,6 +34,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 
 class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView,
@@ -50,6 +50,10 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
     private var idPosition: Int = 0
     private var newOrigin = mutableListOf<String>()
     private var placeIds = mutableListOf<String>()
+    private var bitmapList = mutableListOf<List<Bitmap>>()
+    private var addressList = mutableListOf<String>()
+    private var phoneList = mutableListOf<String>()
+    private var websiteList = mutableListOf<String>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -93,6 +97,19 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 newOrigin.removeAt(holder.adapterPosition)
                 placeIds.removeAt(holder.adapterPosition)
 
+                if (holder.adapterPosition <= bitmapList.size.minus(1)) {
+                    bitmapList.removeAt(holder.adapterPosition)
+                }
+
+                if (holder.adapterPosition <= addressList.size.minus(1)) {
+                    addressList.removeAt(holder.adapterPosition)
+                }
+                if (holder.adapterPosition <= phoneList.size.minus(1)) {
+                    phoneList.removeAt(holder.adapterPosition)
+                }
+                if (holder.adapterPosition <= websiteList.size.minus(1)) {
+                    websiteList.removeAt(holder.adapterPosition)
+                }
                 calculateDistanceAndDuration(model.infoMarkers, viewMap)
             }
             idPosition = holder.adapterPosition
@@ -133,6 +150,10 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
                 newOrigin.removeAt(holder.adapterPosition)
                 placeIds.removeAt(holder.adapterPosition)
+                bitmapList.removeAt(holder.adapterPosition)
+                addressList.removeAt(holder.adapterPosition)
+                phoneList.removeAt(holder.adapterPosition)
+                websiteList.removeAt(holder.adapterPosition)
                 Log.i("MYTEST", "MARKERS: $markers")
                 Log.i("MYTEST", "INFOMARKERS: $infoMarkers")
                 Log.i("MYTEST", "POLYLINES: $polylines")
@@ -172,106 +193,130 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         val phone = viewMap.findViewById<TextView>(R.id.phone_number)
         val uriOfPage = viewMap.findViewById<TextView>(R.id.uri_of_page)
         val animationWrapper = viewMap.findViewById<ConstraintLayout>(R.id.animation_layout)
+        val notesWrapper = viewMap.findViewById<ConstraintLayout>(R.id.notes_wrapper)
         val loadingAnimation = viewMap.findViewById<LottieAnimationView>(R.id.loading_animation)
-        val bitmapList = mutableListOf<Bitmap>()
+        val backButtonNote = viewMap.findViewById<ImageView>(R.id.back_button_from_notes)
+        var bitmaps: MutableList<Bitmap>
+        var placeId = ""
 
         holder.infoButton.setOnClickListener {
             userLocationInput.visibility = View.GONE
             planWrapper.visibility = View.GONE
             animationWrapper.visibility = View.VISIBLE
-
+            bitmaps = mutableListOf()
             standardBottomSheetBehavior.peekHeight = 700
             standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
             if (holder.inputText.text.toString().isNotBlank()) {
                 placeName.text = holder.inputText.text.toString()
 
-                val placeId = this.placeIds[holder.adapterPosition]
+                Log.i("MYTEST", "PLACE ID: $placeIds and ${holder.adapterPosition}")
+                placeId = this.placeIds[holder.adapterPosition]
+                Log.i("MYTEST", "PLACE ID SELECTED: $placeId ")
+                Log.i("MYTEST", "Bitmap list $bitmapList ")
 
-                val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
-
-                val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-
-                placesClient.fetchPlace(request)
-                    .addOnSuccessListener { response: FetchPlaceResponse ->
-                        val place = response.place
-
-                        if (place.address != null) {
-                            address.text = place.address
-                        }
-                        else {
-                            address.visibility = View.GONE
-                        }
-                        if (place.phoneNumber != null) {
-                            phone.text = place.phoneNumber
-                        }
-                        else {
-                            phone.visibility = View.GONE
-                        }
-
-                        if (place.websiteUri != null) {
-                            uriOfPage.text = place.websiteUri!!.toString()
-                        }
-                        else {
-                            uriOfPage.visibility = View.GONE
-                        }
-
-                        // Get the photo metadata.
-                        val metadata = place.photoMetadatas
-                        if (metadata == null || metadata.isEmpty()) {
-                            Log.w("MYTEST", "No photo metadata.")
-                            return@addOnSuccessListener
-                        }
-                        var counter = 0
-                        loadingAnimation.playAnimation()
-                        loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
-                            override fun onAnimationStart(animation: Animator) {
-                                for (meta in metadata) {
-                                    // Get the attribution text.
-                                    val attributions = meta?.attributions
-
-                                    // Create a FetchPhotoRequest.
-                                    val photoRequest = FetchPhotoRequest.builder(meta)
-                                        .setMaxWidth(500) // Optional.
-                                        .setMaxHeight(300) // Optional.
-                                        .build()
-                                    placesClient.fetchPhoto(photoRequest)
-                                        .addOnSuccessListener { fetchPhotoResponse: FetchPhotoResponse ->
-                                            val bitmap = fetchPhotoResponse.bitmap
-                                            bitmapList.add(bitmap)
-                                            counter += 1
-                                        }.addOnFailureListener { exception: Exception ->
-                                            if (exception is ApiException) {
-                                                Log.e("MYTEST", "Place not found: " + exception.message)
-                                                val statusCode = exception.statusCode
-                                                TODO("Handle error with given status code.")
-                                            }
-                                        }
-
-                                }
-                            }
-
-                            override fun onAnimationEnd(animation: Animator) {
-                                if (counter == metadata.size) {
-                                    animationWrapper.visibility = View.GONE
-                                    placeWrapper.visibility = View.VISIBLE
-                                    recyclerViewImage.adapter = imageAdapter
-                                    imageAdapter.submitList(bitmapList)
-                                }
-                                else {
-                                    loadingAnimation.playAnimation()
-                                }
-                            }
-                            override fun onAnimationCancel(animation: Animator) {
-                                Log.i("info", "animation cancel")
-                            }
-                            override fun onAnimationRepeat(animation: Animator) {
-                                Log.i("info", "animation repeat")
-                            }
-                        })
-
-
+                if (holder.adapterPosition <= bitmapList.size.minus(1)) {
+                    placeWrapper.visibility = View.VISIBLE
+                    recyclerViewImage.adapter = imageAdapter
+                    imageAdapter.submitList(bitmapList[holder.adapterPosition])
+                    if (holder.adapterPosition <= addressList.size.minus(1)) {
+                        address.text = addressList[holder.adapterPosition]
                     }
+                    if (holder.adapterPosition <= phoneList.size.minus(1)) {
+                        phone.text = phoneList[holder.adapterPosition]
+                    }
+                    if (holder.adapterPosition <= websiteList.size.minus(1)) {
+                        uriOfPage.text = websiteList[holder.adapterPosition]
+                    }
+                }
+                else {
+                    val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
+
+                    val request = FetchPlaceRequest.newInstance(placeId, placeFields)
+
+                    placesClient.fetchPlace(request)
+                        .addOnSuccessListener { response: FetchPlaceResponse ->
+                            val place = response.place
+
+                            if (place.address != null) {
+                                address.text = place.address
+                                addressList.add(holder.adapterPosition, place.address!!)
+                            }
+                            else {
+                                address.visibility = View.GONE
+                            }
+                            if (place.phoneNumber != null) {
+                                phone.text = place.phoneNumber
+                                phoneList.add(holder.adapterPosition, place.phoneNumber!!)
+                            }
+                            else {
+                                phone.visibility = View.GONE
+                            }
+
+                            if (place.websiteUri != null) {
+                                uriOfPage.text = place.websiteUri!!.toString()
+                                websiteList.add(holder.adapterPosition, place.websiteUri!!.toString())
+                            }
+                            else {
+                                uriOfPage.visibility = View.GONE
+                            }
+
+                            // Get the photo metadata.
+                            val metadata = place.photoMetadatas
+                            if (metadata == null || metadata.isEmpty()) {
+                                Log.w("MYTEST", "No photo metadata.")
+                                return@addOnSuccessListener
+                            }
+
+                            loadingAnimation.playAnimation()
+                            for (meta in metadata) {
+                                // Get the attribution text.
+                                val attributions = meta?.attributions
+
+                                // Create a FetchPhotoRequest.
+                                val photoRequest = FetchPhotoRequest.builder(meta)
+                                    .setMaxWidth(500) // Optional.
+                                    .setMaxHeight(300) // Optional.
+                                    .build()
+                                placesClient.fetchPhoto(photoRequest)
+                                    .addOnSuccessListener { fetchPhotoResponse: FetchPhotoResponse ->
+                                        val bitmap = fetchPhotoResponse.bitmap
+                                        bitmaps.add(bitmap)
+                                    }.addOnFailureListener { exception: Exception ->
+                                        if (exception is ApiException) {
+                                            Log.e("MYTEST", "Place not found: " + exception.message)
+                                            val statusCode = exception.statusCode
+                                            TODO("Handle error with given status code.")
+                                        }
+                                    }
+                            }
+                            loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                                override fun onAnimationStart(animation: Animator) {
+                                    Log.i("MYTEST", "animation start")
+                                }
+                                override fun onAnimationEnd(animation: Animator) {
+                                    if (bitmaps.size == metadata.size) {
+                                        animationWrapper.visibility = View.GONE
+                                        placeWrapper.visibility = View.VISIBLE
+                                        bitmapList.add(holder.adapterPosition, bitmaps)
+                                        recyclerViewImage.adapter = imageAdapter
+                                        imageAdapter.submitList(bitmaps)
+                                        Log.i("MYTEST", "Bitmap list $bitmaps ")
+                                    }
+                                    else {
+                                        loadingAnimation.playAnimation()
+                                    }
+                                }
+                                override fun onAnimationCancel(animation: Animator) {
+                                    Log.i("info", "animation cancel")
+                                }
+                                override fun onAnimationRepeat(animation: Animator) {
+                                    Log.i("info", "animation repeat")
+                                }
+                            })
+                        }
+                }
+
 
             }
         }
@@ -279,6 +324,65 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
         backButton.setOnClickListener {
             placeWrapper.visibility = View.GONE
+            userLocationInput.visibility = View.VISIBLE
+            planWrapper.visibility = View.VISIBLE
+        }
+
+        holder.notesButton.setOnClickListener {
+            userLocationInput.visibility = View.GONE
+            planWrapper.visibility = View.GONE
+            notesWrapper.visibility = View.VISIBLE
+            val checkReservation = viewMap.findViewById<CheckBox>(R.id.reservation_check)
+            val noteAddButton = viewMap.findViewById<Button>(R.id.add_note_button)
+
+            val textAreaLayout = viewMap.findViewById<TextInputLayout>(R.id.label_textarea)
+            val textArea = viewMap.findViewById<TextInputEditText>(R.id.textarea)
+
+            val userNameLayout = viewMap.findViewById<TextInputLayout>(R.id.user_name_note)
+            val userName = viewMap.findViewById<TextInputEditText>(R.id.user_name)
+
+            val dateFromLayout = viewMap.findViewById<TextInputLayout>(R.id.date_from_layout)
+            val dateFrom =  viewMap.findViewById<TextInputEditText>(R.id.date_from)
+
+            val dateToLayout = viewMap.findViewById<TextInputLayout>(R.id.date_to_layout)
+            val dateTo = viewMap.findViewById<TextInputEditText>(R.id.date_to)
+
+            val paymentLayout = viewMap.findViewById<TextInputLayout>(R.id.value_layout)
+            val payment = viewMap.findViewById<TextInputEditText>(R.id.value_of_reservation)
+
+            checkReservation.setOnCheckedChangeListener{ _, isChecked ->
+                if (isChecked) {
+                    textAreaLayout.visibility = View.GONE
+                    noteAddButton.marginTop.plus(100)
+                    userNameLayout.visibility = View.VISIBLE
+                    dateFromLayout.visibility = View.VISIBLE
+                    dateToLayout.visibility = View.VISIBLE
+                    paymentLayout.visibility = View.VISIBLE
+                }
+                else {
+                    userNameLayout.visibility = View.GONE
+                    dateFromLayout.visibility = View.GONE
+                    dateToLayout.visibility = View.GONE
+                    paymentLayout.visibility = View.GONE
+                    textAreaLayout.visibility = View.VISIBLE
+                }
+            }
+
+            noteAddButton.setOnClickListener {
+                Log.i("MYTEST", "TEXTAREA : ${textArea.text.toString()}")
+                Log.i("MYTEST", "USER NAME : ${userName.text.toString()}")
+                Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
+                Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
+                Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
+                notesWrapper.visibility = View.GONE
+                userLocationInput.visibility = View.VISIBLE
+                planWrapper.visibility = View.VISIBLE
+            }
+
+        }
+
+        backButtonNote.setOnClickListener {
+            notesWrapper.visibility = View.GONE
             userLocationInput.visibility = View.VISIBLE
             planWrapper.visibility = View.VISIBLE
         }
