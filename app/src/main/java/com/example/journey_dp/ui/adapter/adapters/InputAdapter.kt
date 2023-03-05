@@ -41,9 +41,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView,
                    private var imageAdapter: ImageAdapter, private var recyclerViewImage: RecyclerView,
-                   private var steps: MutableList<List<Step>>, private var name: String, private var destination: String,
-                   private val inputs: MutableList<LinearLayout>, private val markers: MutableList<Marker>,
-                   private val polylines: MutableList<Polyline>, private var infoMarkers: MutableList<Marker>,
+                   private var name: String, private var destination: String,
                    private val model: MapViewModel,private var standardBottomSheetBehavior: BottomSheetBehavior<View>,
                    private val placesClient: PlacesClient,
                    private val result: ActivityResultLauncher<Intent>) : RecyclerView.Adapter<InputAdapter.ViewHolder>() {
@@ -64,7 +62,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
     }
 
     override fun getItemCount(): Int {
-        return inputs.size
+        return model.inputs.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -72,131 +70,6 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         holder.inputText.tag = "input_$position"
 
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-
-        idPosition = holder.adapterPosition
-
-
-        holder.inputText.focusable = View.NOT_FOCUSABLE
-
-        holder.inputText.setOnClickListener {
-            if (holder.inputText.text.toString().isNotBlank()) {
-                val marker = markers.getOrNull(holder.adapterPosition.plus(1))
-                marker?.remove()
-                markers.removeAt(holder.adapterPosition.plus(1))
-                if (polylines.isNotEmpty()) {
-                    var counter = 0
-                    for (line in polylines) {
-                        if (counter == holder.adapterPosition) {
-                            line.remove()
-                        }
-                        counter+=1
-                    }
-                    val infoMark = infoMarkers.getOrNull(holder.adapterPosition)
-                    infoMark?.remove()
-                    infoMarkers.removeAt(holder.adapterPosition)
-                    polylines.removeAt(holder.adapterPosition)
-                }
-
-                newOrigin.removeAt(holder.adapterPosition)
-                placeIds.removeAt(holder.adapterPosition)
-
-                if (holder.adapterPosition <= bitmapList.size.minus(1)) {
-                    bitmapList.removeAt(holder.adapterPosition)
-                }
-
-                if (holder.adapterPosition <= addressList.size.minus(1)) {
-                    addressList.removeAt(holder.adapterPosition)
-                }
-                if (holder.adapterPosition <= phoneList.size.minus(1)) {
-                    phoneList.removeAt(holder.adapterPosition)
-                }
-                if (holder.adapterPosition <= websiteList.size.minus(1)) {
-                    websiteList.removeAt(holder.adapterPosition)
-                }
-                calculateDistanceAndDuration(model.infoMarkers, viewMap)
-            }
-            idPosition = holder.adapterPosition
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
-            result.launch(intent)
-        }
-
-        holder.inputText.isFocused.and(name.isNotBlank()).apply {
-            newOrigin.add(holder.adapterPosition,destination)
-            holder.inputText.setText(name)
-        }
-
-        holder.deleteButton.setOnClickListener{
-            idPosition = holder.adapterPosition.minus(1)
-            Log.i("MYTEST","POSITION AND ADAPTER POSITION : $idPosition and ${holder.adapterPosition}")
-            if (steps.isNotEmpty().and(holder.inputText.text.toString().isNotBlank())) {
-                steps.removeAt(holder.adapterPosition)
-            }
-
-            if (holder.inputText.text.toString().isNotBlank()) {
-                Log.i("MYTEST", "IDPOSITION IS BEFORE DELETE: $idPosition and $newOrigin")
-                val marker = markers.getOrNull(holder.adapterPosition.plus(1))
-                marker?.remove()
-                markers.removeAt(holder.adapterPosition.plus(1))
-                if (polylines.isNotEmpty()) {
-                    var counter = 0
-                    for (line in polylines) {
-                        if (counter == holder.adapterPosition) {
-                            line.remove()
-                        }
-                        counter+=1
-                    }
-                    val infoMark = infoMarkers.getOrNull(holder.adapterPosition)
-                    infoMark?.remove()
-                    infoMarkers.removeAt(holder.adapterPosition)
-                    polylines.removeAt(holder.adapterPosition)
-                }
-
-                newOrigin.removeAt(holder.adapterPosition)
-                placeIds.removeAt(holder.adapterPosition)
-
-                if (holder.adapterPosition <= bitmapList.size.minus(1)) {
-                    bitmapList.removeAt(holder.adapterPosition)
-                }
-
-                if (holder.adapterPosition <= addressList.size.minus(1)) {
-                    addressList.removeAt(holder.adapterPosition)
-                }
-                if (holder.adapterPosition <= phoneList.size.minus(1)) {
-                    phoneList.removeAt(holder.adapterPosition)
-                }
-                if (holder.adapterPosition <= websiteList.size.minus(1)) {
-                    websiteList.removeAt(holder.adapterPosition)
-                }
-
-                Log.i("MYTEST", "MARKERS: $markers")
-                Log.i("MYTEST", "INFOMARKERS: $infoMarkers")
-                Log.i("MYTEST", "POLYLINES: $polylines")
-                Log.i("MYTEST", "IDPOSITION IS AFTER DELETE: $idPosition and $newOrigin")
-            }
-
-            if (idPosition == -1) {
-                model.setLine("")
-                model.setDirectionsToStart()
-                Log.i("MYTEST", "CHECKLINE: ${model.checkLine}")
-                hideElements(viewMap)
-            }
-
-
-            holder.inputText.setText("")
-            inputs.removeAt(holder.adapterPosition)
-
-            if (idPosition != -1) {
-                if (steps.size > 0) {
-                    recyclerView.adapter = stepsAdapter
-                    stepsAdapter.submitList(steps[idPosition])
-                }
-            }
-
-            calculateDistanceAndDuration(model.infoMarkers, viewMap)
-
-            notifyItemRemoved(holder.adapterPosition)
-
-        }
 
         val planWrapper = viewMap.findViewById<ConstraintLayout>(R.id.plan_wrapper)
         val userLocationInput = viewMap.findViewById<LinearLayout>(R.id.layout_for_add_station)
@@ -212,6 +85,126 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         val backButtonNote = viewMap.findViewById<ImageView>(R.id.back_button_from_notes)
         var bitmaps: MutableList<Bitmap>
         var placeId = ""
+
+
+        idPosition = holder.adapterPosition
+
+
+        bitmapList.add(holder.adapterPosition, mutableListOf())
+        addressList.add(holder.adapterPosition, "")
+        phoneList.add(holder.adapterPosition, "")
+        websiteList.add(holder.adapterPosition, "")
+
+        holder.inputText.focusable = View.NOT_FOCUSABLE
+
+        holder.inputText.setOnClickListener {
+            if (holder.inputText.text.toString().isNotBlank()) {
+                val marker = model.markers.getOrNull(holder.adapterPosition.plus(1))
+                marker?.remove()
+                model.markers.removeAt(holder.adapterPosition.plus(1))
+                if (model.polylines.isNotEmpty()) {
+                    var counter = 0
+                    for (line in model.polylines) {
+                        if (counter == holder.adapterPosition) {
+                            line.remove()
+                        }
+                        counter+=1
+                    }
+                    val infoMark = model.infoMarkers.getOrNull(holder.adapterPosition)
+                    infoMark?.remove()
+                    model.infoMarkers.removeAt(holder.adapterPosition)
+                    model.polylines.removeAt(holder.adapterPosition)
+                }
+
+                newOrigin.removeAt(holder.adapterPosition)
+                placeIds.removeAt(holder.adapterPosition)
+                model.notes.removeAt(holder.adapterPosition)
+
+                bitmapList.removeAt(holder.adapterPosition)
+                addressList.removeAt(holder.adapterPosition)
+                phoneList.removeAt(holder.adapterPosition)
+                websiteList.removeAt(holder.adapterPosition)
+
+                calculateDistanceAndDuration(model.infoMarkers, viewMap)
+            }
+            idPosition = holder.adapterPosition
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
+            result.launch(intent)
+        }
+        // TODO:
+        holder.inputText.isFocused.and(name.isNotBlank()).apply {
+            newOrigin.add(holder.adapterPosition,destination)
+            holder.inputText.setText(name)
+        }
+
+        holder.deleteButton.setOnClickListener{
+            idPosition = holder.adapterPosition.minus(1)
+            Log.i("MYTEST","POSITION AND ADAPTER POSITION : $idPosition and ${holder.adapterPosition}")
+            if (model.stepsList.isNotEmpty().and(holder.inputText.text.toString().isNotBlank())) {
+                model.stepsList.removeAt(holder.adapterPosition)
+            }
+
+            if (holder.inputText.text.toString().isNotBlank()) {
+                Log.i("MYTEST", "IDPOSITION IS BEFORE DELETE: $idPosition and $newOrigin")
+                val marker = model.markers.getOrNull(holder.adapterPosition.plus(1))
+                marker?.remove()
+                model.markers.removeAt(holder.adapterPosition.plus(1))
+                if (model.polylines.isNotEmpty()) {
+                    var counter = 0
+                    for (line in model.polylines) {
+                        if (counter == holder.adapterPosition) {
+                            line.remove()
+                        }
+                        counter+=1
+                    }
+                    val infoMark = model.infoMarkers.getOrNull(holder.adapterPosition)
+                    infoMark?.remove()
+                    model.infoMarkers.removeAt(holder.adapterPosition)
+                    model.polylines.removeAt(holder.adapterPosition)
+                }
+
+                newOrigin.removeAt(holder.adapterPosition)
+                placeIds.removeAt(holder.adapterPosition)
+                model.notes.removeAt(holder.adapterPosition)
+                model.travelMode.removeAt(holder.adapterPosition)
+
+                bitmapList.removeAt(holder.adapterPosition)
+                addressList.removeAt(holder.adapterPosition)
+                phoneList.removeAt(holder.adapterPosition)
+                websiteList.removeAt(holder.adapterPosition)
+
+
+                Log.i("MYTEST", "MARKERS: ${model.markers}")
+                Log.i("MYTEST", "INFOMARKERS: ${model.infoMarkers}")
+                Log.i("MYTEST", "POLYLINES: ${model.polylines}")
+                Log.i("MYTEST", "IDPOSITION IS AFTER DELETE: $idPosition and $newOrigin")
+            }
+
+            if (idPosition == -1) {
+                model.setLine("")
+                model.setDirectionsToStart()
+                Log.i("MYTEST", "CHECKLINE: ${model.checkLine}")
+                hideElements(viewMap)
+            }
+
+
+            holder.inputText.setText("")
+            model.inputs.removeAt(holder.adapterPosition)
+
+            if (idPosition != -1) {
+                if (model.stepsList.size > 0) {
+                    recyclerView.adapter = stepsAdapter
+                    stepsAdapter.submitList(model.stepsList[idPosition])
+                }
+            }
+
+            calculateDistanceAndDuration(model.infoMarkers, viewMap)
+
+            notifyItemRemoved(holder.adapterPosition)
+
+        }
+
+
 
         holder.infoButton.setOnClickListener {
             userLocationInput.visibility = View.GONE
@@ -229,24 +222,35 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 Log.i("MYTEST", "PLACE ID SELECTED: $placeId ")
                 Log.i("MYTEST", "Bitmap list $bitmapList ")
 
-                if (holder.adapterPosition <= bitmapList.size.minus(1)) {
+                if (bitmapList[holder.adapterPosition].isNotEmpty()) {
                     placeWrapper.visibility = View.VISIBLE
                     recyclerViewImage.adapter = imageAdapter
                     imageAdapter.submitList(bitmapList[holder.adapterPosition])
-                    if (holder.adapterPosition <= addressList.size.minus(1)) {
+                    if (addressList[holder.adapterPosition].isNotEmpty()) {
                         address.text = addressList[holder.adapterPosition]
                     }
-                    if (holder.adapterPosition <= phoneList.size.minus(1)) {
+                    else {
+                        address.visibility = View.GONE
+                    }
+
+                    if (phoneList[holder.adapterPosition].isNotEmpty()) {
                         phone.text = phoneList[holder.adapterPosition]
                         phone.setOnClickListener {
                             callIntent(phone.text.toString(), viewMap.context)
                         }
                     }
-                    if (holder.adapterPosition <= websiteList.size.minus(1)) {
+                    else {
+                        phone.visibility = View.GONE
+                    }
+
+                    if (websiteList[holder.adapterPosition].isNotEmpty()) {
                         uriOfPage.text = websiteList[holder.adapterPosition]
                         uriOfPage.setOnClickListener {
                             showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
                         }
+                    }
+                    else {
+                        uriOfPage.visibility = View.GONE
                     }
                 }
 
@@ -378,6 +382,17 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             val paymentLayout = viewMap.findViewById<TextInputLayout>(R.id.value_layout)
             val payment = viewMap.findViewById<TextInputEditText>(R.id.value_of_reservation)
 
+            if (textArea.text!!.isNotBlank()) {
+                textArea.setText("")
+            }
+            if (userName.text!!.isNotBlank()) {
+                userName.setText("")
+                dateFrom.setText("")
+                dateTo.setText("")
+                payment.setText("")
+            }
+
+
             checkReservation.setOnCheckedChangeListener{ _, isChecked ->
                 if (isChecked) {
                     textAreaLayout.visibility = View.GONE
@@ -402,6 +417,13 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
                 Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
                 Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
+                var noteInfo = ""
+                noteInfo = if (checkReservation.isChecked) {
+                    userName.text.toString() + "-" + dateFrom.text.toString() + "-" + dateTo.text.toString() + "-" + payment.text.toString()
+                } else {
+                    textArea.text.toString()
+                }
+                model.notes.add(holder.adapterPosition, noteInfo)
                 notesWrapper.visibility = View.GONE
                 userLocationInput.visibility = View.VISIBLE
                 planWrapper.visibility = View.VISIBLE
@@ -423,6 +445,10 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         }
         return this.newOrigin[position]
 
+    }
+    
+    fun getAllDestinations(): List<String> {
+        return this.newOrigin
     }
 
     fun addPlaceId(placeId: String) {

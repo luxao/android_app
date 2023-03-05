@@ -49,6 +49,8 @@ import java.util.*
 
 
 // TODO: """
+//  Saving travel mode to list by position, saving notes by position
+//  odstranit zbytocne vela parametrov z inputadaptera ked staci jeden viewModel poslat
 //  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
@@ -197,6 +199,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                             duration = result.routes[0].legs[0].duration.text
                                             iconType = mapViewModel.iconType.value!!
                                             position = inputAdapter.getID()
+
+                                            Log.i("MYTEST", "ADD TRAVEL MODE AT $position and $iconType")
+                                            mapViewModel.travelMode.add(position, iconType)
+
                                             recyclerViewSteps.adapter = stepsAdapter
                                             binding.stepsScrollView.visibility = View.VISIBLE
                                             mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
@@ -217,6 +223,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 checkedIds.map {
                                     val chip: Chip? = group.findViewById(it)
                                     mode = chip?.tag.toString()
+
                                     mapViewModel.setIconType(mode)
                                     if ((mode == "bus").or(mode == "train")) {
                                         mode = "transit"
@@ -226,6 +233,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         transit = ""
                                     }
                                     position = inputAdapter.getID()
+
+
                                     if (mapViewModel.stepsList.isNotEmpty().and(position != -1)) {
                                         if (position <= mapViewModel.stepsList.size.minus(1)) {
                                             Log.i("MYTEST", "DELETE AT POSITION STEPS LIST: $position and ${mapViewModel.stepsList.size}")
@@ -263,6 +272,10 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                             mapViewModel.polylines.removeAt(position)
                                             Log.i("MYTEST", "POlYLINES IN CHIPS AFTER DELETE: ${mapViewModel.polylines}")
                                         }
+                                        if (position <= mapViewModel.travelMode.size.minus(1)) {
+                                            mapViewModel.travelMode.removeAt(position)
+                                        }
+
                                     }
                                 }
 
@@ -389,8 +402,8 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         recyclerViewImage.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, imageAdapter,recyclerViewImage,mapViewModel.stepsList,"","",mapViewModel.inputs,mapViewModel.markers,mapViewModel.polylines,
-            mapViewModel.infoMarkers,mapViewModel,standardBottomSheetBehavior,places,resultLauncher)
+        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, imageAdapter,recyclerViewImage,"","",
+            mapViewModel,standardBottomSheetBehavior,places,resultLauncher)
         recyclerView.adapter = inputAdapter
 
         val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
@@ -400,6 +413,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             inputAdapter.setName("","")
             binding.chipGroupDirections.clearCheck()
             binding.chipGroupDirections.visibility = View.GONE
+            mapViewModel.notes.add("")
             mapViewModel.setIconType("driving")
             mapViewModel.inputs.add(layout)
             inputAdapter.notifyItemInserted(mapViewModel.inputs.size)
@@ -416,7 +430,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             resultLauncher.launch(intent)
         }
 
-        val nameDialog = journeyNameDialog(requireActivity())
+        val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, inputAdapter.getAllDestinations())
         binding.finishButton.setOnClickListener {
             nameDialog.show()
         }

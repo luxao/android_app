@@ -34,6 +34,7 @@ import com.example.journey_dp.R
 
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
+import com.example.journey_dp.ui.viewmodel.MapViewModel
 
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -199,7 +200,7 @@ fun showWebPageIntent(uriWeb: String, context: Context) {
 }
 
 
-fun journeyNameDialog(activity: FragmentActivity): Dialog {
+fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestinations: List<String>): Dialog {
     return activity.let {
         val builder = AlertDialog.Builder(it)
         val inflater = activity.layoutInflater;
@@ -211,8 +212,10 @@ fun journeyNameDialog(activity: FragmentActivity): Dialog {
             .setPositiveButton(R.string.confirm
             ) { dialog, id ->
                 Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
-                val action = TestMapFragmentDirections.actionTestMapFragmentToProfileFragment2()
-                view.findNavController().navigate(action)
+                Log.i("MYTEST", "FIRST ORIGIN : ${model.location.value.toString()}")
+                Log.i("MYTEST", "ALL DESTINATIONS : $allDestinations")
+                Log.i("MYTEST", "ALL TRAVEL MODES : ${model.travelMode}")
+                Log.i("MYTEST", "ALL NOTES : ${model.notes}")
             }
             .setNegativeButton(R.string.cancel
             ) { dialog, id ->
@@ -221,6 +224,10 @@ fun journeyNameDialog(activity: FragmentActivity): Dialog {
             }
         builder.create()
     }
+}
+
+fun saveJourney(userLocation: String, destinations: List<String>) {
+    // TODO: will be implemented
 }
 
 

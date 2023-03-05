@@ -28,6 +28,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var markers = mutableListOf<Marker>()
     var infoMarkers = mutableListOf<Marker>()
     var polylines = mutableListOf<Polyline>()
+    var travelMode = mutableListOf<String>()
+    var notes = mutableListOf<String>()
 
 
     var checkLine: String = ""
