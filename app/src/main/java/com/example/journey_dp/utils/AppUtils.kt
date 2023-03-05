@@ -5,10 +5,12 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.text.Html
 import android.util.Log
 import android.view.Menu
@@ -17,6 +19,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -151,21 +154,13 @@ fun setMapMenu(
     lifecycleOwner: LifecycleOwner,
     view: View
 ) {
-    // The usage of an interface lets you inject your own implementation
     val menuHost: MenuHost = activity
-
-    // Add menu items without using the Fragment Menu APIs
-    // Note how we can tie the MenuProvider to the viewLifecycleOwner
-    // and an optional Lifecycle.State (here, RESUMED) to indicate when
-    // the menu should be visible
     menuHost.addMenuProvider(object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            // Add menu items here
             menuInflater.inflate(R.menu.top_map_menu, menu)
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            // Handle the menu selection
             return when (menuItem.itemId) {
                 R.id.home -> {
                     val action = TestMapFragmentDirections.actionTestMapFragmentToPlanJourneyFragment()
@@ -185,6 +180,24 @@ fun setMapMenu(
     }, lifecycleOwner, Lifecycle.State.RESUMED)
 }
 
+fun callIntent(uriWeb: String, context: Context) {
+    if (uriWeb.startsWith("https://") || uriWeb.startsWith("http://")) {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.parse(uriWeb))
+        context.startActivity(intent)
+    } else {
+        Toast.makeText(context, "Invalid Url", Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun showWebPageIntent(uriWeb: String, context: Context) {
+    if (uriWeb.startsWith("https://") || uriWeb.startsWith("http://")) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uriWeb))
+        context.startActivity(intent)
+    } else {
+        Toast.makeText(context, "Invalid Url", Toast.LENGTH_SHORT).show()
+    }
+}
+
 
 fun journeyNameDialog(activity: FragmentActivity): Dialog {
     return activity.let {
@@ -198,6 +211,8 @@ fun journeyNameDialog(activity: FragmentActivity): Dialog {
             .setPositiveButton(R.string.confirm
             ) { dialog, id ->
                 Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
+                val action = TestMapFragmentDirections.actionTestMapFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
             }
             .setNegativeButton(R.string.cancel
             ) { dialog, id ->
@@ -216,16 +231,16 @@ fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {
         builder.apply {
             setTitle("Are you sure to log out ? ")
             setMessage("Good bye :(")
-            setPositiveButton("OK",
-                DialogInterface.OnClickListener { dialog, id ->
-                    view.findNavController().navigate(
-                        PlanJourneyFragmentDirections.actionPlanJourneyFragmentToLoginFragment()
-                    )
-                })
-            setNegativeButton("Cancel",
-                DialogInterface.OnClickListener { dialog, id ->
-                    // User cancelled the dialog
-                })
+            setPositiveButton("OK"
+            ) { dialog, id ->
+                view.findNavController().navigate(
+                    PlanJourneyFragmentDirections.actionPlanJourneyFragmentToLoginFragment()
+                )
+            }
+            setNegativeButton("Cancel"
+            ) { dialog, id ->
+                dialog.cancel()
+            }
         }
         // Create the AlertDialog
         builder.create()

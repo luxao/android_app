@@ -19,8 +19,10 @@ import com.example.journey_dp.R
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.calculateDistanceAndDuration
+import com.example.journey_dp.utils.callIntent
 
 import com.example.journey_dp.utils.hideElements
+import com.example.journey_dp.utils.showWebPageIntent
 import com.google.android.gms.common.api.ApiException
 
 import com.google.android.gms.maps.model.Marker
@@ -72,6 +74,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
         idPosition = holder.adapterPosition
+
 
         holder.inputText.focusable = View.NOT_FOCUSABLE
 
@@ -235,9 +238,15 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                     }
                     if (holder.adapterPosition <= phoneList.size.minus(1)) {
                         phone.text = phoneList[holder.adapterPosition]
+                        phone.setOnClickListener {
+                            callIntent(phone.text.toString(), viewMap.context)
+                        }
                     }
                     if (holder.adapterPosition <= websiteList.size.minus(1)) {
                         uriOfPage.text = websiteList[holder.adapterPosition]
+                        uriOfPage.setOnClickListener {
+                            showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
+                        }
                     }
                 }
 
@@ -259,6 +268,9 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                             }
                             if (place.phoneNumber != null) {
                                 phone.text = place.phoneNumber
+                                phone.setOnClickListener {
+                                    callIntent(phone.text.toString(), viewMap.context)
+                                }
                                 phoneList.add(holder.adapterPosition, place.phoneNumber!!)
                             }
                             else {
@@ -267,6 +279,9 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
                             if (place.websiteUri != null) {
                                 uriOfPage.text = place.websiteUri!!.toString()
+                                uriOfPage.setOnClickListener {
+                                    showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
+                                }
                                 websiteList.add(holder.adapterPosition, place.websiteUri!!.toString())
                             }
                             else {
@@ -302,6 +317,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                                         }
                                     }
                             }
+
                             loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
                                 override fun onAnimationStart(animation: Animator) {
                                     Log.i("MYTEST", "animation start")
