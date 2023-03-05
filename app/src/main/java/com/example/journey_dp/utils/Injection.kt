@@ -10,10 +10,12 @@ import com.example.journey_dp.utils.factory.ViewModelFactory
 
 object Injection {
     //TODO: not yet implemented
-//    private fun provideCache(context: Context): LocalCache {
-//        val database = AppDatabase.getDatabase(context)
-//        return LocalCache(database.dao())
+//    private fun provideCache(context: Context): AppDatabase {
+//        val database by lazy { AppDatabase.getDatabase(context)}
+//        return database
 //    }
+//
+//    val database = provideCache()
 
     private fun provideDataRepository(): Repository {
         return Repository.getInstance(ApiService.create())

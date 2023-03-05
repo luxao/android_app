@@ -5,11 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+import com.example.journey_dp.data.room.dao.JourneyDao
+import com.example.journey_dp.data.room.dao.RouteDao
 
 
-//@Database(entities = [RouteEntity::class], version = 1, exportSchema = false)
+
+//@Database(entities = [JourneyEntity::class, RouteEntity::class], version = 1, exportSchema = false)
 //abstract class AppDatabase : RoomDatabase() {
-//    abstract fun dao(): AppDao
+//    abstract fun daoJourney(): JourneyDao
+//    abstract fun daoRoute(): RouteDao
 //
 //    companion object {
 //        @Volatile

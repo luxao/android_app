@@ -1,46 +1,46 @@
 package com.example.journey_dp.data.room.model
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 
-// TODO:
-//@Entity(tableName = "journeys")
-//data class Journey(
-//    @PrimaryKey val journeyId: Long,
+
+//@Entity(tableName = "journey")
+//data class JourneyEntity(
+//    @PrimaryKey(autoGenerate = true)
+//    val id: Long = 0L,
 //    val name: String,
-//    val distance: String,
-//    val duration: String,
+//    val totalDistance: Double,
+//    val totalDuration: Double
 //)
 //
-//@Entity(tableName = "destinations",
+//@Entity(
+//    tableName = "route",
 //    foreignKeys = [
-//        ForeignKey(entity = Journey::class,
-//            parentColumns = ["journeyId"],
+//        ForeignKey(
+//            entity = JourneyEntity::class,
+//            parentColumns = ["id"],
 //            childColumns = ["journeyId"],
-//            onDelete = ForeignKey.CASCADE)
-//    ])
-//data class Destination(
-//    @PrimaryKey val destinationId: Long,
-//    val journeyId: Long,
-//    val name: String,
+//            onDelete = ForeignKey.CASCADE
+//        )
+//    ],
+//    indices = [
+//        Index(value = ["journeyId"])
+//    ]
+//)
+//data class RouteEntity(
+//    @PrimaryKey(autoGenerate = true)
+//    val id: Long = 0L,
+//    var journeyId: Long,
+//    val origin: String,
+//    val destination: String,
+//    val travelMode: String,
 //    val note: String
 //)
 //
-//@Entity(tableName = "legs",
-//    foreignKeys = [
-//        ForeignKey(entity = Destination::class,
-//            parentColumns = ["destinationId"],
-//            childColumns = ["originId"],
-//            onDelete = ForeignKey.CASCADE),
-//        ForeignKey(entity = Destination::class,
-//            parentColumns = ["destinationId"],
-//            childColumns = ["destinationId"],
-//            onDelete = ForeignKey.CASCADE)
-//    ])
-//data class Leg(
-//    @PrimaryKey val legId: Long,
-//    val originId: Long,
-//    val destinationId: Long,
-//    val travelMode: String
+//data class JourneyWithRoutes(
+//    @Embedded val journey: JourneyEntity,
+//    @Relation(
+//        parentColumn = "journeyId",
+//        entityColumn = "journey_id"
+//    )
+//    val routes: List<RouteEntity>
 //)

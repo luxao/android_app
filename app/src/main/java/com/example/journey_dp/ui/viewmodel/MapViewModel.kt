@@ -11,6 +11,7 @@ import com.example.journey_dp.utils.Errors
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.Polyline
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
 
@@ -47,6 +48,27 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     private var _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
 
+//
+//    val journeysWithDestinations: LiveData<List<JourneyWithRoutes>> =
+//        repository.getAllJourneys().asLiveData()
+//
+//    fun insertJourneyWithDestinations(journey: JourneyEntity, routes: List<RouteEntity>) {
+//        viewModelScope.launch {
+//            repository.insertJourneyAndRoutes(journey, routes)
+//        }
+//    }
+//
+//    fun updateJourneyWithDestinations(journey: JourneyEntity, routes: List<RouteEntity>) {
+//        viewModelScope.launch {
+//            repository.updateJourneyAndRoutes(journey, routes)
+//        }
+//    }
+//
+//    fun deleteJourneyWithDestinations(journey: JourneyEntity) {
+//        viewModelScope.launch {
+//            repository.deleteJourneyAndRoutes(journey)
+//        }
+//    }
 
 
 
