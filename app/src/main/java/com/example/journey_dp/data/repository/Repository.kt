@@ -2,15 +2,8 @@ package com.example.journey_dp.data.repository
 
 import android.util.Log
 import com.example.journey_dp.data.domain.DirectionsResponse
-import com.example.journey_dp.data.domain.Route
-import com.example.journey_dp.data.room.dao.JourneyDao
-import com.example.journey_dp.data.room.dao.RouteDao
 
 import com.example.journey_dp.data.service.ApiService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
 import java.io.IOException
 
 class Repository private constructor(

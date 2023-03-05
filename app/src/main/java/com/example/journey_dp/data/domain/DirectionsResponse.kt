@@ -1,7 +1,5 @@
 package com.example.journey_dp.data.domain
 
-import android.net.Uri
-
 import com.google.gson.annotations.SerializedName
 
 

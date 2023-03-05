@@ -9,7 +9,8 @@ import androidx.room.*
 //    val id: Long = 0L,
 //    val name: String,
 //    val totalDistance: Double,
-//    val totalDuration: Double
+//    val totalDuration: Double,
+//    val sharedUrl: String
 //)
 //
 //@Entity(
