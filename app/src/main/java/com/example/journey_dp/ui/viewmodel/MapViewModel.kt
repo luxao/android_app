@@ -32,10 +32,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var checkLine: String = ""
     var changeUserLocation = false
 
-    var totalDistance = 0.0
-    var totalDuration = 0.0
-
-    var counter = 0
 
     var stepsList = mutableListOf<List<Step>>()
 
@@ -78,14 +74,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         _iconType.value = iconType
     }
 
-    fun setModelDistanceAndDuration(distance: Double, duration: Double) {
-        this.totalDistance = distance
-        this.totalDuration = duration
-    }
 
-    fun setCounterValue(counterValue: Int) {
-        this.counter = counterValue
-    }
 
     fun setLine(lineValue: String) {
         this.checkLine = lineValue

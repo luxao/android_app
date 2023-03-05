@@ -26,6 +26,7 @@ import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.calculateDistanceAndDuration
+import com.example.journey_dp.utils.journeyNameDialog
 import com.example.journey_dp.utils.setMapMenu
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -48,9 +49,6 @@ import java.util.*
 
 
 // TODO: """
-//  Otestovat najnovsie implementacie, osetrit list index out of range ak nejaky nastane este a zacat rozumne ukladat
-//  poznamky k destinacii, zacat pomaly uz s profilom a dokoncenim, avsak najskor treba spravit modal
-//  modal okno po finish planu na ziskanie pomenovania vyletu
 //  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
@@ -138,17 +136,20 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             Log.i("MYTEST", "USER LOC: $changedOrigin and $firstDestination")
                             mapViewModel.getDirections(changedOrigin, firstDestination, "driving", "", BuildConfig.GOOGLE_MAPS_API_KEY)
                             mapViewModel.directions.observe(viewLifecycleOwner) { result ->
-                                if ((result != null).and(result?.routes!!.isNotEmpty())) {
-                                    val comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
-                                    if (!comparison) {
-                                        recyclerViewSteps.adapter = stepsAdapter
-                                        binding.stepsScrollView.visibility = View.VISIBLE
-                                        mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
-                                        stepsAdapter.submitList(result.routes[0].legs[0].steps)
-                                        showRouteOnMap(result.routes[0].overviewPolyline.points, result.routes[0].legs[0].distance.text,
-                                            result.routes[0].legs[0].duration.text, mapViewModel.iconType.value!!,0)
-                                        mapViewModel.changeUserLocation = false
+                                if (result != null) {
+                                    if (result.routes!!.isNotEmpty()) {
+                                        val comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
+                                        if (!comparison) {
+                                            recyclerViewSteps.adapter = stepsAdapter
+                                            binding.stepsScrollView.visibility = View.VISIBLE
+                                            mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
+                                            stepsAdapter.submitList(result.routes[0].legs[0].steps)
+                                            showRouteOnMap(result.routes[0].overviewPolyline.points, result.routes[0].legs[0].distance.text,
+                                                result.routes[0].legs[0].duration.text, mapViewModel.iconType.value!!,0)
+                                            mapViewModel.changeUserLocation = false
+                                        }
                                     }
+
                                 }
                             }
                         }
@@ -185,22 +186,29 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         mapViewModel.getDirections(origin, destination, mode, transit, key)
 
                         mapViewModel.directions.observe(viewLifecycleOwner) { result ->
-                            if ((result != null).and(result?.routes!!.isNotEmpty())) {
-                                comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
-                                if (!comparison) {
-                                    Log.i("MYTEST", "SPUSTAM DIRECTIONS")
-                                    points = result.routes[0].overviewPolyline.points
-                                    distance = result.routes[0].legs[0].distance.text
-                                    duration = result.routes[0].legs[0].duration.text
-                                    iconType = mapViewModel.iconType.value!!
-                                    position = inputAdapter.getID()
-                                    recyclerViewSteps.adapter = stepsAdapter
-                                    binding.stepsScrollView.visibility = View.VISIBLE
-                                    mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
-                                    stepsAdapter.submitList(result.routes[0].legs[0].steps)
-                                    showRouteOnMap(points, distance, duration, iconType,position)
-                                }
+                            try {
+                                if (result != null) {
+                                    if (result.routes!!.isNotEmpty()) {
+                                        comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
+                                        if (!comparison) {
+                                            Log.i("MYTEST", "SPUSTAM DIRECTIONS")
+                                            points = result.routes[0].overviewPolyline.points
+                                            distance = result.routes[0].legs[0].distance.text
+                                            duration = result.routes[0].legs[0].duration.text
+                                            iconType = mapViewModel.iconType.value!!
+                                            position = inputAdapter.getID()
+                                            recyclerViewSteps.adapter = stepsAdapter
+                                            binding.stepsScrollView.visibility = View.VISIBLE
+                                            mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
+                                            stepsAdapter.submitList(result.routes[0].legs[0].steps)
+                                            showRouteOnMap(points, distance, duration, iconType,position)
+                                        }
+                                    }
 
+                                }
+                            }
+                            catch (e: Exception) {
+                                Log.e("MYTEST", "ERROR : ${e.message}")
                             }
                         }
 
@@ -407,6 +415,12 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             mapViewModel.changeUserLocation = true
             resultLauncher.launch(intent)
         }
+
+        val nameDialog = journeyNameDialog(requireActivity())
+        binding.finishButton.setOnClickListener {
+            nameDialog.show()
+        }
+
     }
 
 

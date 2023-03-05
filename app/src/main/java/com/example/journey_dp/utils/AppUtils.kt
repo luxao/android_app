@@ -2,6 +2,7 @@ package com.example.journey_dp.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.textfield.TextInputEditText
 import okio.ByteString.Companion.encodeUtf8
 import org.jsoup.Jsoup
 import java.net.URLDecoder
@@ -183,6 +185,28 @@ fun setMapMenu(
     }, lifecycleOwner, Lifecycle.State.RESUMED)
 }
 
+
+fun journeyNameDialog(activity: FragmentActivity): Dialog {
+    return activity.let {
+        val builder = AlertDialog.Builder(it)
+        val inflater = activity.layoutInflater;
+        val view = inflater.inflate(R.layout.journey_name_dialog, null)
+
+        val journeyName = view.findViewById<TextInputEditText>(R.id.journey_name)
+
+        builder.setView(view)
+            .setPositiveButton(R.string.confirm
+            ) { dialog, id ->
+                Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
+            }
+            .setNegativeButton(R.string.cancel
+            ) { dialog, id ->
+                Log.i("MYTEST", "DIALOGA WAS CANCELED : ${dialog.cancel()}")
+                dialog.cancel()
+            }
+        builder.create()
+    }
+}
 
 
 

@@ -150,10 +150,21 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
                 newOrigin.removeAt(holder.adapterPosition)
                 placeIds.removeAt(holder.adapterPosition)
-                bitmapList.removeAt(holder.adapterPosition)
-                addressList.removeAt(holder.adapterPosition)
-                phoneList.removeAt(holder.adapterPosition)
-                websiteList.removeAt(holder.adapterPosition)
+
+                if (holder.adapterPosition <= bitmapList.size.minus(1)) {
+                    bitmapList.removeAt(holder.adapterPosition)
+                }
+
+                if (holder.adapterPosition <= addressList.size.minus(1)) {
+                    addressList.removeAt(holder.adapterPosition)
+                }
+                if (holder.adapterPosition <= phoneList.size.minus(1)) {
+                    phoneList.removeAt(holder.adapterPosition)
+                }
+                if (holder.adapterPosition <= websiteList.size.minus(1)) {
+                    websiteList.removeAt(holder.adapterPosition)
+                }
+
                 Log.i("MYTEST", "MARKERS: $markers")
                 Log.i("MYTEST", "INFOMARKERS: $infoMarkers")
                 Log.i("MYTEST", "POLYLINES: $polylines")
@@ -229,6 +240,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                         uriOfPage.text = websiteList[holder.adapterPosition]
                     }
                 }
+
                 else {
                     val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
 
