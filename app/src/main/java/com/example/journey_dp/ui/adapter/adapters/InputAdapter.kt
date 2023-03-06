@@ -112,9 +112,16 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                     model.polylines.removeAt(holder.adapterPosition)
                 }
 
-                newOrigin.removeAt(holder.adapterPosition)
+                if (newOrigin.isNotEmpty()) {
+                    newOrigin.removeAt(holder.adapterPosition)
+                }
+
                 placeIds.removeAt(holder.adapterPosition)
-                model.notes.removeAt(holder.adapterPosition)
+
+                if (model.notes.isNotEmpty()) {
+                    model.notes.removeAt(holder.adapterPosition)
+                }
+
 
                 bitmapList.removeAt(holder.adapterPosition)
                 addressList.removeAt(holder.adapterPosition)
@@ -160,10 +167,17 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                     model.polylines.removeAt(holder.adapterPosition)
                 }
 
-                newOrigin.removeAt(holder.adapterPosition)
+                if (newOrigin.isNotEmpty()) {
+                    newOrigin.removeAt(holder.adapterPosition)
+                }
+
                 placeIds.removeAt(holder.adapterPosition)
-                model.notes.removeAt(holder.adapterPosition)
-                model.travelMode.removeAt(holder.adapterPosition)
+                if (model.notes.isNotEmpty()) {
+                    model.notes.removeAt(holder.adapterPosition)
+                }
+                if (model.travelMode.isNotEmpty()) {
+                    model.travelMode.removeAt(holder.adapterPosition)
+                }
 
                 bitmapList.removeAt(holder.adapterPosition)
                 addressList.removeAt(holder.adapterPosition)
