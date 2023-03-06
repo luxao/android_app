@@ -11,7 +11,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
-import com.example.journey_dp.data.domain.Journey
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter

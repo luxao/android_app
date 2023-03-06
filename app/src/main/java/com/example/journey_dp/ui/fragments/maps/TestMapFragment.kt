@@ -52,12 +52,9 @@ import java.util.*
 // TODO: """
 //  FIXNUT ZMENU DESTINACIE NIEKDE V STREDE ABY SA SPRAVNE PREKRESLILI POLYLINES
 //  -----------------------------------------------------------------------------------
-//  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
-//  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
 //  po kliknuti na karticku vyletu vytiahnut z databazy tieto informacie, prejst loopom cez ne a vykreslit na mapu pricom
-//  po kliknuti na karticku zobrazit najskôr ikonku loadovania a potom zobrazit danu trasu uz.
-//  Po finish buttone automaticky ulozit tieto info do DB - mozno zobrazit animaciu loadovania a nasledne presmerovanie
-//  do profilu na karticku pricom pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
+//  po kliknuti na karticku zobrazit najskôr ikonku loadovania a potom zobrazit danu trasu uz
+//  pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
 //  _______________________________________________________________________________________
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  ________________________________________________________________________________________

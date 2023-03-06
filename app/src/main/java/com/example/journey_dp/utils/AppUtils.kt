@@ -26,8 +26,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
-import com.example.journey_dp.data.domain.Journey
-import com.example.journey_dp.data.domain.RouteData
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
 
