@@ -12,9 +12,9 @@
         />
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/ic_baseline_person_outline_24"
-        android:iconTint="@color/white"
+        android:icon="@drawable/me"
         android:title="@string/profile"
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         android:contentDescription="@string/profile"
         app:showAsAction="ifRoom"
         />

@@ -54,5 +54,8 @@
         <action
             android:id="@+id/action_profileFragment2_to_planJourneyFragment"
             app:destination="@id/planJourneyFragment" />
+        <action
+            android:id="@+id/action_profileFragment2_to_testMapFragment"
+            app:destination="@id/testMapFragment" />
     </fragment>
 </navigation>

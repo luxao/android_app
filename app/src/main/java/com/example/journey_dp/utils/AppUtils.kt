@@ -28,10 +28,12 @@ import androidx.navigation.findNavController
 import com.example.journey_dp.R
 
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
+import com.example.journey_dp.ui.fragments.journey.ProfileFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 
 import com.google.android.gms.maps.model.Marker
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 
@@ -172,6 +174,9 @@ fun setMapMenu(
         }
     }, lifecycleOwner, Lifecycle.State.RESUMED)
 }
+
+
+
 
 fun callIntent(uriWeb: String, context: Context) {
     if (uriWeb.startsWith("https://") || uriWeb.startsWith("http://")) {
