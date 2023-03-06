@@ -26,11 +26,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
+import com.example.journey_dp.data.domain.Journey
+import com.example.journey_dp.data.domain.RouteData
+import com.example.journey_dp.data.room.model.JourneyEntity
+import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.journey.ProfileFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
+import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -197,7 +202,9 @@ fun showWebPageIntent(uriWeb: String, context: Context) {
 }
 
 
-fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestinations: MutableList<String>, mapView: View): Dialog {
+fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
+                      profileViewModel: ProfileViewModel,
+                      allDestinations: MutableList<String>, mapView: View): Dialog {
     return activity.let {
         val builder = AlertDialog.Builder(it)
         val inflater = activity.layoutInflater;
@@ -224,6 +231,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestin
                     allDestinations.removeAll {destination -> destination.isBlank() }
                     model.travelMode.removeAll { travel -> travel.isBlank() }
                     model.notes.removeAll { note -> note.isBlank() }
+                    allDestinations.add(0,model.location.value.toString())
                     Log.i("MYTEST", "-----------------------------------------------")
                     Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
                     Log.i("MYTEST", "FIRST ORIGIN : ${model.location.value.toString()}")
@@ -233,6 +241,31 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestin
                     Log.i("MYTEST", "ALL TRAVEL MODES BEFORE CLEAR ${model.travelMode}")
                     Log.i("MYTEST", "ALL NOTES CLEAR : ${model.notes}")
                     Log.i("MYTEST", "-----------------------------------------------")
+                    val journey = JourneyEntity(
+                        name = journeyName.text.toString(),
+                        totalDistance = totalDistance.text.toString(),
+                        totalDuration = totalDuration.text.toString(),
+                        numberOfDestinations = allDestinations.size,
+                        sharedUrl = "https://is.stuba.sk/"
+                    )
+                    val routes = mutableListOf<RouteEntity>()
+                    for (item in 0 until allDestinations.size.minus(1)) {
+                        if (item != allDestinations.size.minus(1)) {
+                            val route = RouteEntity(
+                                journeyId = journey.id,
+                                origin = allDestinations[item],
+                                destination = allDestinations[item.plus(1)],
+                                travelMode = model.travelMode[item],
+                                note = model.notes[item]
+                            )
+                            routes.add(route)
+                        }
+                    }
+                    Log.i("MYTEST", "$journey")
+                    Log.i("MYTEST", "$routes")
+                    profileViewModel.insertJourneyWithDestinations(journey, routes)
+                    val action = TestMapFragmentDirections.actionTestMapFragmentToProfileFragment2()
+                    mapView.findNavController().navigate(action)
                 }
             }
             .setNegativeButton(R.string.cancel

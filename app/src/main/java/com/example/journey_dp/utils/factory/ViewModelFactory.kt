@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.journey_dp.data.repository.Repository
 
 import com.example.journey_dp.ui.viewmodel.MapViewModel
+import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 
 class ViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -13,6 +14,12 @@ class ViewModelFactory(private val repository: Repository) : ViewModelProvider.F
             @Suppress("UNCHECKED_CAST")
             return MapViewModel(repository) as T
         }
+
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ProfileViewModel(repository) as T
+        }
+
 
 
         throw IllegalArgumentException("Unknown ViewModel class")

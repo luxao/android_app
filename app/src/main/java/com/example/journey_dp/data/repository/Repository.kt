@@ -2,16 +2,22 @@ package com.example.journey_dp.data.repository
 
 import android.util.Log
 import com.example.journey_dp.data.domain.DirectionsResponse
+import com.example.journey_dp.data.room.AppDatabase
+import com.example.journey_dp.data.room.model.JourneyEntity
+import com.example.journey_dp.data.room.model.JourneyWithRoutes
+import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.data.service.ApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 
 class Repository private constructor(
-    private val service: ApiService
+    private val service: ApiService,
+    private val database: AppDatabase
 ) {
 
-//    private val journeyDao: JourneyDao,
-//    private val routeDao: RouteDao,
 
     suspend fun getDirections(
         origin: String,
@@ -48,44 +54,44 @@ class Repository private constructor(
         return directions
     }
 
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    fun getAllJourneys(): Flow<List<JourneyWithRoutes>> =
-//        journeyDao.getAllJourneys().flatMapLatest { journeys ->
-//            combine(journeys.map { journey ->
-//                journeyDao.getJourneyById(journey.id).map { newJourney ->
-//                    JourneyWithRoutes(newJourney, routeDao.getRoutesByJourneyId(newJourney.id).firstOrNull() ?: emptyList())
-//                }
-//            }) { results ->
-//                results.toList()
-//            }
-//        }.flowOn(Dispatchers.Default)
-//
-//    suspend fun insertJourneyAndRoutes(journey: JourneyEntity, routes: List<RouteEntity>) {
-//        journeyDao.insert(journey).also { journeyId ->
-//            routes.forEach { it.journeyId = journeyId }
-//            routeDao.insert(routes)
-//        }
-//    }
-//
-//    suspend fun updateJourneyAndRoutes(journey: JourneyEntity, routes: List<RouteEntity>) {
-//        journeyDao.update(journey)
-//        routeDao.insert(routes)
-//    }
-//
-//    suspend fun deleteJourneyAndRoutes(journey: JourneyEntity) {
-//        routeDao.deleteRoutesByJourneyId(journey.id)
-//        journeyDao.delete(journey)
-//    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getAllJourneys(): Flow<MutableList<JourneyWithRoutes>> =
+        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
+            combine(journeys.map { journey ->
+                database.daoJourney().getJourneyById(journey.id).map { newJourney ->
+                    JourneyWithRoutes(newJourney, database.daoRoute().getRoutesByJourneyId(newJourney.id).firstOrNull() ?: mutableListOf())
+                }
+            }) { results ->
+                results.toMutableList()
+            }
+        }.flowOn(Dispatchers.Default)
+
+    suspend fun insertJourneyAndRoutes(journey: JourneyEntity, routes: MutableList<RouteEntity>) {
+        database.daoJourney().insert(journey).also { journeyId ->
+            routes.forEach { it.journeyId = journeyId }
+            database.daoRoute().insert(routes)
+        }
+    }
+
+    suspend fun updateJourneyAndRoutes(journey: JourneyEntity, routes: MutableList<RouteEntity>) {
+        database.daoJourney().update(journey)
+        database.daoRoute().insert(routes)
+    }
+
+    suspend fun deleteJourneyAndRoutes(journey: JourneyEntity) {
+        database.daoRoute().deleteRoutesByJourneyId(journey.id)
+        database.daoJourney().delete(journey)
+    }
 
 
     companion object {
         @Volatile
         private var INSTANCE: Repository? = null
 
-        fun getInstance(service: ApiService): Repository =
+        fun getInstance(service: ApiService, database: AppDatabase): Repository =
             INSTANCE ?: synchronized(this) {
                 INSTANCE
-                    ?: Repository(service).also { INSTANCE = it }
+                    ?: Repository(service,database).also { INSTANCE = it }
             }
     }
 }

@@ -24,6 +24,7 @@ import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
+import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.calculateDistanceAndDuration
 import com.example.journey_dp.utils.journeyNameDialog
@@ -78,6 +79,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var inputAdapter: InputAdapter
     private lateinit var mapViewModel: MapViewModel
+    private lateinit var profileViewModel: ProfileViewModel
     private lateinit var stepsAdapter: StepsAdapter
 
     // Declaration of binding google map
@@ -307,8 +309,13 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         mapViewModel = ViewModelProvider(
             this,
-            Injection.provideViewModelFactory()
+            Injection.provideViewModelFactory(requireContext())
         )[MapViewModel::class.java]
+
+        profileViewModel = ViewModelProvider(
+            this,
+            Injection.provideViewModelFactory(requireContext())
+        )[ProfileViewModel::class.java]
     }
 
 
@@ -428,7 +435,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             resultLauncher.launch(intent)
         }
 
-        val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, inputAdapter.getAllDestinations(), binding.root)
+        val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, profileViewModel,inputAdapter.getAllDestinations(), binding.root)
         binding.finishButton.setOnClickListener {
             nameDialog.show()
         }
