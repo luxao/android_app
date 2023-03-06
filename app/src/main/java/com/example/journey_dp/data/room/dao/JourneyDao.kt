@@ -18,6 +18,7 @@ interface JourneyDao {
     @Query("SELECT * FROM journey")
     fun getAllJourneys(): Flow<MutableList<JourneyEntity>>
 
+
     @Query("SELECT * FROM journey WHERE id = :journeyId")
     fun getJourneyById(journeyId: Long): Flow<JourneyEntity>
 }

@@ -78,7 +78,7 @@
     <string name="test_journey_name">Journey 1</string>
     <string name="totalDistance_test">Total Distance: 650,59 km</string>
     <string name="totalDuration_test">Total Duration: 20 h 45 m</string>
-    <string name="total_destinations">Total Destinations</string>
+    <string name="total_destinations">Total Journeys: </string>
     <string name="total_destinations_test">Total Destinations: 10</string>
     <string name="show">Show</string>
     <string name="share">Share</string>

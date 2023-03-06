@@ -50,6 +50,7 @@ import java.util.*
 
 
 // TODO: """
+//  FIXNUT ZMENU DESTINACIE NIEKDE V STREDE ABY SA SPRAVNE PREKRESLILI POLYLINES
 //  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne

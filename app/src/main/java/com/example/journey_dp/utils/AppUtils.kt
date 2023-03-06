@@ -230,7 +230,6 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                 else {
                     allDestinations.removeAll {destination -> destination.isBlank() }
                     model.travelMode.removeAll { travel -> travel.isBlank() }
-                    model.notes.removeAll { note -> note.isBlank() }
                     allDestinations.add(0,model.location.value.toString())
                     Log.i("MYTEST", "-----------------------------------------------")
                     Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
@@ -256,7 +255,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                                 origin = allDestinations[item],
                                 destination = allDestinations[item.plus(1)],
                                 travelMode = model.travelMode[item],
-                                note = model.notes[item]
+                                note = if (model.notes.isEmpty()) "" else model.notes[item]
                             )
                             routes.add(route)
                         }

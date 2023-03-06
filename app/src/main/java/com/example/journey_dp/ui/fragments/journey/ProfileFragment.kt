@@ -7,17 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
+import com.example.journey_dp.data.domain.Journey
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
+import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.launch
 
 
 class ProfileFragment : Fragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var journeysAdapter: JourneysAdapter
     private var _binding : FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
@@ -42,6 +49,9 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.lifecycleOwner = this@ProfileFragment.viewLifecycleOwner
+        binding.model = this@ProfileFragment.profileViewModel
+
         binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.homeJourney -> {
@@ -65,9 +75,17 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        profileViewModel.journeysWithDestinations.observe(viewLifecycleOwner) {
-            Log.i("MYTEST", "FROM PROFILE : $it")
+        journeysAdapter = JourneysAdapter()
+        binding.journeysListRecyclerview.adapter = journeysAdapter
+
+
+        profileViewModel.viewModelScope.launch {
+            profileViewModel.journeysWithDestinations.observe(viewLifecycleOwner) {
+                binding.numberOfJourneys.text = it.size.toString()
+            }
         }
+
+
     }
 
 }
