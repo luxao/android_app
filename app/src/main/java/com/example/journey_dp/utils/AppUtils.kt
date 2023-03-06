@@ -1,17 +1,14 @@
 package com.example.journey_dp.utils
 
-import android.Manifest
-import android.annotation.SuppressLint
+
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
+
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
+
 import android.graphics.Color
 import android.net.Uri
-import android.text.Html
+
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -21,9 +18,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.text.htmlEncode
+
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.FragmentActivity
@@ -36,16 +31,13 @@ import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 
-import com.google.android.gms.location.CurrentLocationRequest
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
-import okio.ByteString.Companion.encodeUtf8
+
 import org.jsoup.Jsoup
 import java.net.URLDecoder
+import java.util.*
 
 
 fun isLightColor(color: Int): Boolean {
@@ -200,22 +192,43 @@ fun showWebPageIntent(uriWeb: String, context: Context) {
 }
 
 
-fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestinations: List<String>): Dialog {
+fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestinations: MutableList<String>, mapView: View): Dialog {
     return activity.let {
         val builder = AlertDialog.Builder(it)
         val inflater = activity.layoutInflater;
-        val view = inflater.inflate(R.layout.journey_name_dialog, null)
 
+
+        val totalDistance = mapView.findViewById<TextView>(R.id.totalDistance)
+        val totalDuration = mapView.findViewById<TextView>(R.id.totalDuration)
+
+        val view = inflater.inflate(R.layout.journey_name_dialog, null)
         val journeyName = view.findViewById<TextInputEditText>(R.id.journey_name)
+
 
         builder.setView(view)
             .setPositiveButton(R.string.confirm
             ) { dialog, id ->
-                Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
-                Log.i("MYTEST", "FIRST ORIGIN : ${model.location.value.toString()}")
-                Log.i("MYTEST", "ALL DESTINATIONS : $allDestinations")
-                Log.i("MYTEST", "ALL TRAVEL MODES : ${model.travelMode}")
-                Log.i("MYTEST", "ALL NOTES : ${model.notes}")
+                val journeyGeneratedName = "Journey-" + Random().nextInt(1000).toString()
+                if (journeyName.text.toString().isBlank()) {
+                    journeyName.setText(journeyGeneratedName)
+                }
+                if (allDestinations.isEmpty().and(model.travelMode.isEmpty()).and(model.notes.isEmpty())) {
+                    dialog.cancel()
+                }
+                else {
+                    allDestinations.removeAll {destination -> destination.isBlank() }
+                    model.travelMode.removeAll { travel -> travel.isBlank() }
+                    model.notes.removeAll { note -> note.isBlank() }
+                    Log.i("MYTEST", "-----------------------------------------------")
+                    Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
+                    Log.i("MYTEST", "FIRST ORIGIN : ${model.location.value.toString()}")
+                    Log.i("MYTEST", "TOTAL DISTANCE : ${totalDistance.text}")
+                    Log.i("MYTEST", "TOTAL DURATION : ${totalDuration.text}")
+                    Log.i("MYTEST", "ALL DESTINATIONS BEFORE CLEAR: $allDestinations")
+                    Log.i("MYTEST", "ALL TRAVEL MODES BEFORE CLEAR ${model.travelMode}")
+                    Log.i("MYTEST", "ALL NOTES CLEAR : ${model.notes}")
+                    Log.i("MYTEST", "-----------------------------------------------")
+                }
             }
             .setNegativeButton(R.string.cancel
             ) { dialog, id ->
@@ -226,7 +239,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel, allDestin
     }
 }
 
-fun saveJourney(userLocation: String, destinations: List<String>) {
+fun saveJourney() {
     // TODO: will be implemented
 }
 

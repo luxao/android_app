@@ -49,8 +49,6 @@ import java.util.*
 
 
 // TODO: """
-//  Saving travel mode to list by position, saving notes by position
-//  odstranit zbytocne vela parametrov z inputadaptera ked staci jeden viewModel poslat
 //  -----------------------------------------------------------------------------------
 //  Pre zobrazovanie ulozenych trás v profile vytvorit DB - ENTITIES, staci jedna? a to :
 //  Nazov vyletu - vsetky destinacie a to cca typom - [origin, travel mode, destination].. plus poznamky ku kazdej trase, .. nasledne
@@ -430,7 +428,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             resultLauncher.launch(intent)
         }
 
-        val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, inputAdapter.getAllDestinations())
+        val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, inputAdapter.getAllDestinations(), binding.root)
         binding.finishButton.setOnClickListener {
             nameDialog.show()
         }

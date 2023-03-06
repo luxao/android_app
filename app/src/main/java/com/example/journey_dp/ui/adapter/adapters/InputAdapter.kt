@@ -16,7 +16,6 @@ import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.example.journey_dp.R
-import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.utils.calculateDistanceAndDuration
 import com.example.journey_dp.utils.callIntent
@@ -25,9 +24,6 @@ import com.example.journey_dp.utils.hideElements
 import com.example.journey_dp.utils.showWebPageIntent
 import com.google.android.gms.common.api.ApiException
 
-import com.google.android.gms.maps.model.Marker
-
-import com.google.android.gms.maps.model.Polyline
 
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.*
@@ -131,7 +127,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
             result.launch(intent)
         }
-        // TODO:
+
+
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
             newOrigin.add(holder.adapterPosition,destination)
             holder.inputText.setText(name)
@@ -447,7 +444,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
     }
     
-    fun getAllDestinations(): List<String> {
+    fun getAllDestinations(): MutableList<String> {
         return this.newOrigin
     }
 
