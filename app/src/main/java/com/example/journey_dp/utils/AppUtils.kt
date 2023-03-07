@@ -146,15 +146,7 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
             totalDurationHours += h
             totalDurationMinutes = m
         }
-
-        Log.i("MYTEST", "___________________________________")
-        Log.i("MYTEST", "DISTANCE : $distanceItem")
-        Log.i("MYTEST", "DURATION : $durationItemHour h  $durationItemMinutes m")
-        Log.i("MYTEST", "___________________________________")
     }
-    Log.i("MYTEST", "___________________________________")
-    Log.i("MYTEST", "TOTAL DISTANCE : $totalDistance")
-    Log.i("MYTEST", "TOTAL DURATION : $totalDurationHours h  $totalDurationMinutes m")
     val distanceView = view.findViewById<TextView>(R.id.totalDistance)
     val durationView = view.findViewById<TextView>(R.id.totalDuration)
     distanceView.text = helperDistanceText.plus(String.format("%.2f", totalDistance)).plus(" km")
@@ -245,15 +237,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                     allDestinations.removeAll {destination -> destination.isBlank() }
                     model.travelMode.removeAll { travel -> travel.isBlank() }
                     allDestinations.add(0,model.location.value.toString())
-                    Log.i("MYTEST", "-----------------------------------------------")
-                    Log.i("MYTEST", "NAME WAS ADDED : ${journeyName.text.toString()}")
-                    Log.i("MYTEST", "FIRST ORIGIN : ${model.location.value.toString()}")
-                    Log.i("MYTEST", "TOTAL DISTANCE : ${totalDistance.text}")
-                    Log.i("MYTEST", "TOTAL DURATION : ${totalDuration.text}")
-                    Log.i("MYTEST", "ALL DESTINATIONS BEFORE CLEAR: $allDestinations")
-                    Log.i("MYTEST", "ALL TRAVEL MODES BEFORE CLEAR ${model.travelMode}")
-                    Log.i("MYTEST", "ALL NOTES CLEAR : ${model.notes}")
-                    Log.i("MYTEST", "-----------------------------------------------")
+
                     val journey = JourneyEntity(
                         name = journeyName.text.toString(),
                         totalDistance = totalDistance.text.toString(),

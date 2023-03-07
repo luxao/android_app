@@ -13,6 +13,7 @@ import com.example.journey_dp.R
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
+import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
 import kotlinx.coroutines.launch
@@ -72,8 +73,22 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        journeysAdapter = JourneysAdapter()
+        journeysAdapter = JourneysAdapter(
+            journeyEventListener = JourneyEventListener { journeyId: Long ->
+                Log.i("MYTEST", "CLICKED: $journeyId")
+                profileViewModel.journeyId.postValue(journeyId)
+            }
+        )
         binding.journeysListRecyclerview.adapter = journeysAdapter
+
+
+        profileViewModel.journeyWithRoutes.observe(viewLifecycleOwner) {
+            Log.i("MYTEST", "IT  $it")
+            if (it != null) {
+                Log.i("MYTEST", "CHOOSED JOURNEY: ${it.journey}")
+                Log.i("MYTEST", "CHOOSED ROUTES: ${it.routes}")
+            }
+        }
 
 
         profileViewModel.viewModelScope.launch {
@@ -106,6 +121,7 @@ class ProfileFragment : Fragment() {
                 binding.calculatedDuration.text = durationDetails
 
             }
+
         }
 
 

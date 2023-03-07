@@ -154,6 +154,7 @@
                     android:backgroundTint="@color/cardview_dark_background"
                     style="?attr/materialButtonStyle"
                     android:layout_marginRight="8dp"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id)}"
                     />
 
 
