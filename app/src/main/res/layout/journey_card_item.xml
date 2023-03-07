@@ -9,6 +9,11 @@
             name="journey"
             type="com.example.journey_dp.data.room.model.JourneyWithRoutes" />
 
+
+        <variable
+            name="journeyEventListener"
+            type="com.example.journey_dp.ui.adapter.events.JourneyEventListener" />
+
         <import type="android.view.View" />
 
     </data>

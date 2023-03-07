@@ -52,8 +52,6 @@
     <string name="test">test</string>
     <string name="test_total_duration_25_h">Total Duration : 0.0 h</string>
     <string name="test_total_distance_500_km">Total Distance : 0.0 km</string>
-    <string name="totalDistance">Total Distance : </string>
-    <string name="totalDuration">Total Duration : </string>
     <string name="back_to_plan">back to plan</string>
     <string name="my_location_icon">my location icon</string>
     <string name="holder_bottom_sheet">holder for manipulating bottom sheet</string>
@@ -66,8 +64,8 @@
     <string name="from">from</string>
     <string name="to">to</string>
     <string name="payment_value">0.00</string>
-    <string name="confirm">confirm</string>
-    <string name="cancel">cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
     <string name="name_journey">Add name to your journey</string>
     <string name="name_your_journey">Name your journey</string>
     <string name="journey_for_adventure">Journey for adventure</string>
@@ -79,7 +77,12 @@
     <string name="totalDistance_test">Total Distance: 650,59 km</string>
     <string name="totalDuration_test">Total Duration: 20 h 45 m</string>
     <string name="total_destinations">Total Journeys: </string>
+    <string name="total_distance">Total Distance: </string>
     <string name="total_destinations_test">Total Destinations: 10</string>
     <string name="show">Show</string>
     <string name="share">Share</string>
+    <string name="days">Days: </string>
+    <string name="hours">Hours: </string>
+    <string name="minutes">Min: </string>
+
 </resources>

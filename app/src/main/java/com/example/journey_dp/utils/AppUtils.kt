@@ -102,13 +102,31 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
     var totalDistance = 0.0
     var totalDurationHours = 0
     var totalDurationMinutes = 0
-    val helperDistanceText = "Total Distance : "
-    val helperDurationText = "Total Duration : "
+    val helperDistanceText = "Journey Distance : "
+    val helperDurationText = "Journey Duration : "
     infoMarkers.map {
         val distanceItem = it.title!!.split("km")[0].trim().toDouble()
         var durationItemHour = 0
         var durationItemMinutes = ""
-        if (it.snippet!!.contains("hour")) {
+
+        if (it.snippet!!.contains("day").or(it.snippet!!.contains("days"))) {
+            val tmp = it.snippet!!.split(" ")
+            totalDurationHours += tmp[0].toInt().times(24)
+            if (tmp.size == 4) {
+                if ((tmp[3] == "hours").or(tmp[3] == "hour")) {
+                    totalDurationHours += tmp[2].toInt()
+                }
+                if ((tmp[3] == "mins").or(tmp[3] == "min")) {
+                    totalDurationMinutes += tmp[2].toInt()
+                }
+            }
+            if (tmp.size > 4) {
+                totalDurationHours += tmp[2].toInt()
+                totalDurationMinutes += tmp[4].toInt()
+            }
+        }
+
+        else if (it.snippet!!.contains("hour")) {
             durationItemHour = it.snippet!!.split("hour")[0].trim().toInt()
             durationItemMinutes = it.snippet!!.split("hour")[1].split("mins")[0]
             if (durationItemMinutes.contains("s")) {

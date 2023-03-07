@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginStart="110dp"
                 android:layout_marginEnd="20dp"
                 android:layout_gravity="top|left"
@@ -54,37 +54,45 @@
                     android:id="@+id/name_of_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:text="@string/test_name_of_user"
                     android:textStyle="bold"
                     />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/number_of_journeys"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:id="@+id/number_of_journeys_label"
-                        android:layout_width="190dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/total_destinations"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:drawablePadding="4dp"
-                        app:drawableLeftCompat="@drawable/ic_baseline_route_24" />
-
-                    <TextView
-                        android:id="@+id/number_of_journeys"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        />
+                    android:padding="2dp"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:drawablePadding="4dp"
+                    app:drawableLeftCompat="@drawable/ic_baseline_map_24"
+                    app:drawableTint="@color/black" />
 
 
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/calculated_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:drawablePadding="4dp"
+                    app:drawableLeftCompat="@drawable/ic_baseline_route_24" />
+
+
+                <TextView
+                    android:id="@+id/calculated_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:drawablePadding="4dp"
+                    app:drawableLeftCompat="@drawable/ic_baseline_calendar_month_24" />
+
+
             </LinearLayout>
 
 
