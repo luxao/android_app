@@ -50,6 +50,7 @@ import java.util.*
 
 
 // TODO: """
+//  Osetrit calculate duration ked pride nahodou cas v dnoch
 //  FIXNUT ZMENU DESTINACIE NIEKDE V STREDE ABY SA SPRAVNE PREKRESLILI POLYLINES
 //  -----------------------------------------------------------------------------------
 //  po kliknuti na karticku vyletu vytiahnut z databazy tieto informacie, prejst loopom cez ne a vykreslit na mapu pricom

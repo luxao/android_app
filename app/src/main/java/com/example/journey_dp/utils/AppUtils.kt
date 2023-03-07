@@ -30,13 +30,11 @@ import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
-import com.example.journey_dp.ui.fragments.journey.ProfileFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 
 import com.google.android.gms.maps.model.Marker
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 

@@ -13,7 +13,17 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val repository: Repository): ViewModel() {
 
+    private val _journeyWithRoutes = MutableLiveData<JourneyWithRoutes>()
+    val journeyWithRoutes: LiveData<JourneyWithRoutes>
+        get() = _journeyWithRoutes
 
+
+    fun getJourneyWithRoutesById(journeyId: Long) {
+        viewModelScope.launch {
+            val journey = repository.getJourneyWithRoutesById(journeyId).asLiveData()
+            _journeyWithRoutes.value = journey.value
+        }
+    }
 
     val journeysWithDestinations: LiveData<MutableList<JourneyWithRoutes>> =
         repository.getAllJourneys().asLiveData()

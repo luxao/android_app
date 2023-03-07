@@ -84,6 +84,15 @@ class Repository private constructor(
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getJourneyWithRoutesById(journeyId: Long): Flow<JourneyWithRoutes> =
+        database.daoJourney().getJourneyById(journeyId).flatMapLatest { journey ->
+            database.daoRoute().getRoutesByJourneyId(journeyId).map { routes ->
+                JourneyWithRoutes(journey, routes)
+            }
+        }
+
+
     companion object {
         @Volatile
         private var INSTANCE: Repository? = null
