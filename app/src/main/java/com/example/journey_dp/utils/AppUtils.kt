@@ -30,7 +30,8 @@ import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
-import com.example.journey_dp.ui.fragments.maps.TestMapFragmentDirections
+import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
+
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 
@@ -169,12 +170,12 @@ fun setMapMenu(
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             return when (menuItem.itemId) {
                 R.id.home -> {
-                    val action = TestMapFragmentDirections.actionTestMapFragmentToPlanJourneyFragment()
+                    val action = PlanMapFragmentDirections.actionPlanMapFragmentToPlanJourneyFragment()
                     view.findNavController().navigate(action)
                     true
                 }
                 R.id.profile -> {
-                    val action = TestMapFragmentDirections.actionTestMapFragmentToProfileFragment2()
+                    val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                     view.findNavController().navigate(action)
                     true
                 }
@@ -261,7 +262,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                     Log.i("MYTEST", "$journey")
                     Log.i("MYTEST", "$routes")
                     profileViewModel.insertJourneyWithDestinations(journey, routes)
-                    val action = TestMapFragmentDirections.actionTestMapFragmentToProfileFragment2()
+                    val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                     mapView.findNavController().navigate(action)
                 }
             }

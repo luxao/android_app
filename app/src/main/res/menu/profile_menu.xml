@@ -7,7 +7,7 @@
     <item
         android:id="@+id/planJourney"
         android:icon="@drawable/ic_baseline_map_24"
-        android:title="@string/map" />
+        android:title="@string/plan" />
     <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_baseline_settings_24"

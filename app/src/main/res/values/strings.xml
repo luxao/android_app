@@ -21,6 +21,7 @@
     <string name="register_user">Register</string>
     <string name="login">Login</string>
     <string name="map">Map</string>
+    <string name="plan">New Journey</string>
     <string name="profile">Profile</string>
     <string name="log_out">log out</string>
     <string name="lat">0.0</string>
@@ -84,5 +85,6 @@
     <string name="days">Days: </string>
     <string name="hours">Hours: </string>
     <string name="minutes">Min: </string>
+
 
 </resources>

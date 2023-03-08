@@ -19,7 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
-import com.example.journey_dp.databinding.FragmentTestMapBinding
+import com.example.journey_dp.databinding.FragmentPlanMapBinding
+
 import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
@@ -63,10 +64,10 @@ import java.util.*
 //  STYLOVANIE
 //  """
 
-class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener {
+class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
     // Declaration of binding fragment
-    private var _binding : FragmentTestMapBinding? = null
+    private var _binding : FragmentPlanMapBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var recyclerViewImage: RecyclerView
@@ -322,7 +323,7 @@ class TestMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTestMapBinding.inflate(inflater, container, false)
+        _binding = FragmentPlanMapBinding.inflate(inflater, container, false)
         setMapMenu(
             activity = requireActivity() ,
             lifecycleOwner = viewLifecycleOwner,

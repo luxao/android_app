@@ -7,22 +7,22 @@
     app:startDestination="@id/planJourneyFragment">
 
     <fragment
-        android:id="@+id/testMapFragment"
-        android:name="com.example.journey_dp.ui.fragments.maps.TestMapFragment"
-        android:label="fragment_test_map"
-        tools:layout="@layout/fragment_test_map" >
+        android:id="@+id/planMapFragment"
+        android:name="com.example.journey_dp.ui.fragments.maps.PlanMapFragment"
+        android:label="fragment_plan_map"
+        tools:layout="@layout/fragment_plan_map" >
         <action
-            android:id="@+id/action_testMapFragment_to_planJourneyFragment"
+            android:id="@+id/action_planMapFragment_to_planJourneyFragment"
             app:destination="@id/planJourneyFragment"
-            app:popUpTo="@id/testMapFragment"
+            app:popUpTo="@id/planMapFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_testMapFragment_to_loginFragment"
+            android:id="@+id/action_planMapFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_testMapFragment_to_profileFragment2"
+            android:id="@+id/action_planMapFragment_to_profileFragment2"
             app:destination="@id/profileFragment2" />
     </fragment>
     <fragment
@@ -40,8 +40,8 @@
         android:label="fragment_plan_journey"
         tools:layout="@layout/fragment_plan_journey" >
         <action
-            android:id="@+id/action_planJourneyFragment_to_testMapFragment"
-            app:destination="@id/testMapFragment" />
+            android:id="@+id/action_planJourneyFragment_to_planMapFragment"
+            app:destination="@id/planMapFragment" />
         <action
             android:id="@+id/action_planJourneyFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -55,7 +55,26 @@
             android:id="@+id/action_profileFragment2_to_planJourneyFragment"
             app:destination="@id/planJourneyFragment" />
         <action
-            android:id="@+id/action_profileFragment2_to_testMapFragment"
-            app:destination="@id/testMapFragment" />
+            android:id="@+id/action_profileFragment2_to_planMapFragment"
+            app:destination="@id/planMapFragment" />
+        <action
+            android:id="@+id/action_profileFragment2_to_showJourneyFragment"
+            app:destination="@id/showJourneyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/showJourneyFragment"
+        android:name="com.example.journey_dp.ui.fragments.maps.ShowJourneyFragment"
+        android:label="fragment_show_journey"
+        tools:layout="@layout/fragment_show_journey" >
+        <argument
+            android:name="id"
+            app:argType="long"
+            />
+        <action
+            android:id="@+id/action_showJourneyFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
+        <action
+            android:id="@+id/action_showJourneyFragment_to_planJourneyFragment"
+            app:destination="@id/planJourneyFragment" />
     </fragment>
 </navigation>

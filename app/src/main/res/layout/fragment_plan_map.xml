@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.fragments.maps.TestMapFragment">
+    tools:context=".ui.fragments.maps.PlanMapFragment">
 
     <data>
         <variable
@@ -144,7 +144,7 @@
                 android:layout_marginTop="90dp"
                 android:nestedScrollingEnabled="true"
                 android:visibility="visible"
-                tools:context=".ui.fragments.maps.TestFragment">
+                tools:context=".ui.fragments.maps.PlanMapFragment">
 
                 <ScrollView
                     android:id="@+id/scrollView"
@@ -402,7 +402,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="true"
                 android:visibility="gone"
-                tools:context=".ui.fragments.maps.TestFragment">
+                tools:context=".ui.fragments.maps.PlanMapFragment">
 
                 <ImageView
                     android:id="@+id/back_button"
@@ -547,7 +547,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                tools:context=".ui.fragments.maps.TestFragment"
+                tools:context=".ui.fragments.maps.PlanMapFragment"
                 >
 
                 <ImageView
@@ -812,14 +812,3 @@
 
 </layout>
 
-
-<!--<LinearLayout-->
-<!--android:id="@+id/wrapper"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:visibility="visible"-->
-<!--android:layout_marginTop="60dp"-->
-<!--android:orientation="vertical"-->
-<!--app:layout_constraintStart_toStartOf="parent"-->
-<!--app:layout_constraintTop_toTopOf="@+id/chip_group_directions"-->
-<!--    >-->

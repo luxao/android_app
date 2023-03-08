@@ -42,7 +42,7 @@ class PlanJourneyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.startPlan.setOnClickListener {
-            val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToTestMapFragment()
+            val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment()
             view.findNavController().navigate(action)
         }
     }

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.journey_dp.R
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
@@ -59,7 +60,7 @@ class ProfileFragment : Fragment() {
                     true
                 }
                 R.id.planJourney -> {
-                    val action = ProfileFragmentDirections.actionProfileFragment2ToTestMapFragment()
+                    val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment()
                     view.findNavController().navigate(action)
                     true
                 }
@@ -76,19 +77,16 @@ class ProfileFragment : Fragment() {
         journeysAdapter = JourneysAdapter(
             journeyEventListener = JourneyEventListener { journeyId: Long ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
-                profileViewModel.journeyId.postValue(journeyId)
+                findNavController()
+                    .navigate(
+                        ProfileFragmentDirections.actionProfileFragment2ToShowJourneyFragment(
+                            id = journeyId
+                        )
+                    )
             }
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
 
-
-        profileViewModel.journeyWithRoutes.observe(viewLifecycleOwner) {
-            Log.i("MYTEST", "IT  $it")
-            if (it != null) {
-                Log.i("MYTEST", "CHOOSED JOURNEY: ${it.journey}")
-                Log.i("MYTEST", "CHOOSED ROUTES: ${it.routes}")
-            }
-        }
 
 
         profileViewModel.viewModelScope.launch {
