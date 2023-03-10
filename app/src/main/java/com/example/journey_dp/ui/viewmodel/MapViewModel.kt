@@ -2,6 +2,7 @@ package com.example.journey_dp.ui.viewmodel
 
 
 
+import android.graphics.Bitmap
 import android.widget.LinearLayout
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
@@ -32,8 +33,20 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var notes = mutableListOf<String>()
 
 
+    var newOrigin = mutableListOf<String>()
+    var placeIds = mutableListOf<String>()
+    var bitmapList = mutableListOf<List<Bitmap>>()
+    var addressList = mutableListOf<String>()
+    var phoneList = mutableListOf<String>()
+    var websiteList = mutableListOf<String>()
+
+
     var checkLine: String = ""
     var changeUserLocation = false
+
+    var changeBetweenWaypoints = false
+    var callNewDirections = false
+    var nextDestination = ""
 
 
     var stepsList = mutableListOf<List<Step>>()

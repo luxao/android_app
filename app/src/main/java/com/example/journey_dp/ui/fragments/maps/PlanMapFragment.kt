@@ -51,13 +51,12 @@ import java.util.*
 
 
 // TODO: """
-//  FIXNUT ZMENU DESTINACIE NIEKDE V STREDE ABY SA SPRAVNE PREKRESLILI POLYLINES
+//  FIXES: THIS WILL BE FIXED IN THE END
+//  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  -----------------------------------------------------------------------------------
 //  po kliknuti na karticku vyletu vytiahnut z databazy tieto informacie, prejst loopom cez ne a vykreslit na mapu pricom
 //  po kliknuti na karticku zobrazit najskôr ikonku loadovania a potom zobrazit danu trasu uz
 //  pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
-//  _______________________________________________________________________________________
-//  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  ________________________________________________________________________________________
 //  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
 //  OTESTOVANIE a OSETRENIE
@@ -102,7 +101,51 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             Activity.RESULT_OK -> {
                 result.data?.let {
                     placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
+                    var position = inputAdapter.getID()
+                    Log.i("MYTEST", "PLACE FROM SEARCH ${placeFromSearch.name}")
 
+                    if (mapViewModel.changeBetweenWaypoints) {
+                        val marker = mapViewModel.markers.getOrNull(position.plus(1))
+                        marker?.remove()
+                        mapViewModel.markers.removeAt(position.plus(1))
+                        if (mapViewModel.polylines.isNotEmpty()) {
+                            var counter = 0
+                            for (line in mapViewModel.polylines) {
+                                if (counter == position) {
+                                    line.remove()
+                                }
+                                counter+=1
+                            }
+                            val infoMark = mapViewModel.infoMarkers.getOrNull(position)
+                            infoMark?.remove()
+                            mapViewModel.infoMarkers.removeAt(position)
+                            mapViewModel.polylines.removeAt(position)
+                        }
+
+                        if (mapViewModel.newOrigin[position.plus(1)].isNotEmpty()) {
+                            mapViewModel.callNewDirections = true
+                            mapViewModel.nextDestination = mapViewModel.newOrigin[position.plus(1)]
+                        }
+
+                        if (mapViewModel.newOrigin.isNotEmpty()) {
+                            mapViewModel.newOrigin.removeAt(position)
+                        }
+
+                        mapViewModel.placeIds.removeAt(position)
+
+                        if (mapViewModel.notes[position].isNotEmpty()) {
+                            mapViewModel.notes.removeAt(position)
+                        }
+
+
+                        mapViewModel.bitmapList.removeAt(position)
+                        mapViewModel.addressList.removeAt(position)
+                        mapViewModel.phoneList.removeAt(position)
+                        mapViewModel.websiteList.removeAt(position)
+
+                        calculateDistanceAndDuration(mapViewModel.infoMarkers, binding.root)
+                        mapViewModel.changeBetweenWaypoints = false
+                    }
 
                     if (mapViewModel.changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
@@ -157,7 +200,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     }
 
                     var destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
-                    var position = inputAdapter.getID()
+                    position = inputAdapter.getID()
                     Log.i("MYTEST", "FIRST POSITION : $position")
                     if ((!mapViewModel.changeUserLocation).and(position >= 0)) {
                         inputAdapter.setName(placeFromSearch.name!!, destination)
@@ -279,8 +322,30 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 }
 
                             }
-                        }
 
+                            if (mapViewModel.callNewDirections) {
+                                if (mapViewModel.polylines.isNotEmpty()) {
+                                    var counter = 0
+                                    for (line in mapViewModel.polylines) {
+                                        if (counter == position) {
+                                            line.remove()
+                                        }
+                                        counter+=1
+                                    }
+                                    val infoMark = mapViewModel.infoMarkers.getOrNull(position)
+                                    infoMark?.remove()
+                                    mapViewModel.infoMarkers.removeAt(position)
+                                    mapViewModel.polylines.removeAt(position)
+                                }
+
+                                calculateDistanceAndDuration(mapViewModel.infoMarkers, binding.root)
+
+
+                                mapViewModel.getDirections(destination, mapViewModel.nextDestination, "driving", "", BuildConfig.GOOGLE_MAPS_API_KEY)
+                            }
+
+
+                        }
 
                         binding.chipGroupDirections.visibility = View.VISIBLE
                         mapViewModel.changeUserLocation = false
@@ -296,6 +361,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             }
             Activity.RESULT_CANCELED -> {
                 // The user canceled the operation.
+                Log.e("MYTEST", "USER CANCELNUL VYHLADAVANIE")
             }
         }
 
@@ -446,6 +512,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         val marker = googleMap.addMarker(MarkerOptions().position(coordinates).title(locationName).icon(
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
+
+        Log.i("MYTEST", "LOCATION : MARKERS BEFORE ADD $locationName : ${mapViewModel.markers}")
         mapViewModel.markers.add(position,marker!!)
 
         standardBottomSheetBehavior.peekHeight = 80
@@ -457,6 +525,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 15F
             )
         )
+        Log.i("MYTEST", "MARKERS AFTER ADD ${mapViewModel.markers}")
     }
 
 
