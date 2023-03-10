@@ -439,24 +439,26 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 var mode = ""
                 var origin = ""
 
-                for (i in 0 until  it.routes.size) {
-                    if ((it.routes[i].travelMode == "bus").or(it.routes[i].travelMode == "train")) {
+                Log.i("MYTEST", "ROUTES SIZE : ${it.routes.size}")
+
+                for (route in it.routes) {
+                    if ((route.travelMode == "bus").or(route.travelMode == "train")) {
                         mode = "transit"
-                        transit = it.routes[i].travelMode
-
+                        transit = route.travelMode
                     } else {
-                        mode = it.routes[i].travelMode
+                        mode = route.travelMode
                         transit = ""
-
                     }
-                    origin = if (it.routes[i].origin.contains("lat/lng: (48.14838109999999,17.1080601)")) {
-                        Log.i("MYTEST", "PARSED ORIGIN : ${it.routes[i].origin.split("(")[1].split(")")[0]}")
-                        it.routes[i].origin.split("(")[1].split(")")[0]
+                    origin = if (route.origin.contains("lat/lng:")) {
+                        Log.i("MYTEST", "PARSED ORIGIN : ${route.origin.split("(")[1].split(")")[0]}")
+                        route.origin.split("(")[1].split(")")[0]
                     } else {
-                        it.routes[i].origin
+                        route.origin
                     }
-                    Log.i("MYTEST", "GETUJEM $i , $origin, ${it.routes[i].destination}, $mode , $transit")
-                    mapViewModel.getDirections(origin, it.routes[i].destination, mode, transit, key)
+                    Log.i("MYTEST", "GETUJEM  , $origin, ${route.destination}, $mode , $transit")
+
+
+                    mapViewModel.getDirections(origin, route.destination, mode, transit, key)
 
                     mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                         try {
@@ -464,7 +466,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 if (result.routes!!.isNotEmpty()) {
                                     comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
                                     if (!comparison) {
-                                        Log.i("MYTEST", "SPUSTAM DIRECTIONS and $i")
+                                        Log.i("MYTEST", "SPUSTAM DIRECTIONS")
                                         val points = result.routes[0].overviewPolyline.points
                                         val distance = result.routes[0].legs[0].distance.text
                                         val duration = result.routes[0].legs[0].duration.text
@@ -473,14 +475,13 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
                                         val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
                                         val destinationName = result.routes[0].legs[0].endAddress
-                                        Log.i("MYTEST", "VYKRESLUJEM $i , $originName, $destinationName, $mode , $transit")
+                                        Log.i("MYTEST", "VYKRESLUJEM  , $originName, $destinationName, $mode , $transit")
                                         showMarkerOnChoosePlace(originName!!,originLatLng, 0)
                                         showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
                                         Log.i("MYTEST","POINTS : $points")
                                         Log.i("MYTEST","DIST AND DUR : $distance and $duration")
-                                        Log.i("MYTEST","ICON : ${it.routes[i].travelMode}")
-                                        showRouteOnMap(points, distance, duration,  it.routes[i].travelMode, 0)
-
+                                        Log.i("MYTEST","ICON : ${mapViewModel.iconType.value!!}")
+                                        showRouteOnMap(points, distance, duration,  mapViewModel.iconType.value!!, 0)
                                     }
                                 }
                             }
@@ -490,6 +491,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         }
                     }
                 }
+
+
+
+
 
             }
 

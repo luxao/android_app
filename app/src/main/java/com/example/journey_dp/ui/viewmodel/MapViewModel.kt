@@ -63,7 +63,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     val location: LiveData<LatLng> get() = _location
 
 
-
     fun getDirections(
         origin: String, destination: String,
         mode: String, transit: String, key: String
@@ -76,6 +75,12 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
                 )
             }
             if (result != null) {
+                if (mode == "transit") {
+                    _iconType.value = transit
+                }
+                else {
+                    _iconType.value = mode
+                }
                 _directions.value = result
             }
             _loading.postValue(false)
