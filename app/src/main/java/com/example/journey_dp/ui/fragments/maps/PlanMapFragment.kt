@@ -443,11 +443,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     if ((it.routes[i].travelMode == "bus").or(it.routes[i].travelMode == "train")) {
                         mode = "transit"
                         transit = it.routes[i].travelMode
-                        mapViewModel.setIconType(transit)
+
                     } else {
                         mode = it.routes[i].travelMode
                         transit = ""
-                        mapViewModel.setIconType(mode)
+
                     }
                     origin = if (it.routes[i].origin.contains("lat/lng: (48.14838109999999,17.1080601)")) {
                         Log.i("MYTEST", "PARSED ORIGIN : ${it.routes[i].origin.split("(")[1].split(")")[0]}")
@@ -455,6 +455,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     } else {
                         it.routes[i].origin
                     }
+                    Log.i("MYTEST", "GETUJEM $i , $origin, ${it.routes[i].destination}, $mode , $transit")
                     mapViewModel.getDirections(origin, it.routes[i].destination, mode, transit, key)
 
                     mapViewModel.directions.observe(viewLifecycleOwner) { result ->
@@ -462,8 +463,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             if (result != null) {
                                 if (result.routes!!.isNotEmpty()) {
                                     comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
-                                    Log.i("MYTEST", "SPUSTAM DIRECTIONS")
                                     if (!comparison) {
+                                        Log.i("MYTEST", "SPUSTAM DIRECTIONS and $i")
                                         val points = result.routes[0].overviewPolyline.points
                                         val distance = result.routes[0].legs[0].distance.text
                                         val duration = result.routes[0].legs[0].duration.text
@@ -472,10 +473,14 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
                                         val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
                                         val destinationName = result.routes[0].legs[0].endAddress
-
+                                        Log.i("MYTEST", "VYKRESLUJEM $i , $originName, $destinationName, $mode , $transit")
                                         showMarkerOnChoosePlace(originName!!,originLatLng, 0)
                                         showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
-                                        showRouteOnMap(points, distance, duration,  mapViewModel.iconType.value!!, 0)
+                                        Log.i("MYTEST","POINTS : $points")
+                                        Log.i("MYTEST","DIST AND DUR : $distance and $duration")
+                                        Log.i("MYTEST","ICON : ${it.routes[i].travelMode}")
+                                        showRouteOnMap(points, distance, duration,  it.routes[i].travelMode, 0)
+
                                     }
                                 }
                             }
