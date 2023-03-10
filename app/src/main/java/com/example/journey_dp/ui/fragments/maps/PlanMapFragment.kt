@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,6 +50,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.maps.android.PolyUtil
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -408,7 +410,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
         places = activity?.applicationContext?.let { Places.createClient(it) }!!
@@ -428,30 +431,80 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             binding.planWrapper.visibility = View.GONE
             binding.placeWrapperInfo.visibility = View.VISIBLE
 
-
+            var comparison: Boolean
             profileViewModel.journeyWithRoutes.observe(viewLifecycleOwner) {
                 Log.i("MYTEST", "IT  $it")
-                if (it != null) {
-                    Log.i("MYTEST", "CHOOSED JOURNEY: ${it.journey}")
-                    Log.i("MYTEST", "CHOOSED ROUTES: ${it.routes}")
+                val key = BuildConfig.GOOGLE_MAPS_API_KEY
+                var transit = ""
+                var mode = ""
+                var origin = ""
+
+                for (i in 0 until  it.routes.size) {
+                    if ((it.routes[i].travelMode == "bus").or(it.routes[i].travelMode == "train")) {
+                        mode = "transit"
+                        transit = it.routes[i].travelMode
+                        mapViewModel.setIconType(transit)
+                    } else {
+                        mode = it.routes[i].travelMode
+                        transit = ""
+                        mapViewModel.setIconType(mode)
+                    }
+                    origin = if (it.routes[i].origin.contains("lat/lng: (48.14838109999999,17.1080601)")) {
+                        Log.i("MYTEST", "PARSED ORIGIN : ${it.routes[i].origin.split("(")[1].split(")")[0]}")
+                        it.routes[i].origin.split("(")[1].split(")")[0]
+                    } else {
+                        it.routes[i].origin
+                    }
+                    mapViewModel.getDirections(origin, it.routes[i].destination, mode, transit, key)
+
+                    mapViewModel.directions.observe(viewLifecycleOwner) { result ->
+                        try {
+                            if (result != null) {
+                                if (result.routes!!.isNotEmpty()) {
+                                    comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
+                                    Log.i("MYTEST", "SPUSTAM DIRECTIONS")
+                                    if (!comparison) {
+                                        val points = result.routes[0].overviewPolyline.points
+                                        val distance = result.routes[0].legs[0].distance.text
+                                        val duration = result.routes[0].legs[0].duration.text
+
+                                        val originName = result.routes[0].legs[0].startAddress
+                                        val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
+                                        val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
+                                        val destinationName = result.routes[0].legs[0].endAddress
+
+                                        showMarkerOnChoosePlace(originName!!,originLatLng, 0)
+                                        showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
+                                        showRouteOnMap(points, distance, duration,  mapViewModel.iconType.value!!, 0)
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.e("MYTEST", "ERROR : ${e.localizedMessage}")
+                            Log.e("MYTEST", "ERROR : ${e.message}")
+                        }
+                    }
                 }
+
             }
+
+
 
             binding.backToProfileBtn.setOnClickListener {
                 profileViewModel.showMapFlag = false
                 val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                 view.findNavController().navigate(action)
             }
-        }
-
-        else {
+        } else {
             standardBottomSheetBehavior.apply {
                 peekHeight = 80
                 this.state = BottomSheetBehavior.STATE_COLLAPSED
             }
 
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
-            val search = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, listFields)
+                .build(requireContext())
+            val search =
+                childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
             search.setPlaceFields(listFields)
 
             searchView = search
@@ -469,10 +522,14 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         mapViewModel.markers.removeAt(0)
                     }
                     googleMap.apply {
-                        val marker = addMarker(MarkerOptions().position(place.latLng!!).title(place.name!!).icon(
-                            BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
-                        ))
-                        mapViewModel.markers.add(0,marker!!)
+                        val marker = addMarker(
+                            MarkerOptions().position(place.latLng!!).title(place.name!!).icon(
+                                BitmapDescriptorFactory.defaultMarker(
+                                    Random().nextInt(360).toFloat()
+                                )
+                            )
+                        )
+                        mapViewModel.markers.add(0, marker!!)
                         mapViewModel.setLocation(place.latLng!!)
                         animateCamera(
                             CameraUpdateFactory.newLatLngZoom(
@@ -485,8 +542,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     binding.apply {
                         if (myLocationInput.text.toString().isNotBlank()) {
                             myLocationInput.setText(place.name)
-                        }
-                        else {
+                        } else {
                             myLocationInput.setText(place.name)
                         }
                     }
@@ -495,7 +551,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                 override fun onError(status: Status) {
                     Log.i("Place", "An error occurred: $status")
-                    Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT ).show()
+                    Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT)
+                        .show()
                 }
             })
 
@@ -503,18 +560,30 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             stepsAdapter = StepsAdapter()
 
             imageAdapter = ImageAdapter()
-            recyclerViewImage.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            recyclerViewImage.layoutManager =
+                LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 
             recyclerView.layoutManager = LinearLayoutManager(context)
-            inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, imageAdapter,recyclerViewImage,"","",
-                mapViewModel,standardBottomSheetBehavior,places,resultLauncher)
+            inputAdapter = InputAdapter(
+                binding.root,
+                stepsAdapter,
+                recyclerViewSteps,
+                imageAdapter,
+                recyclerViewImage,
+                "",
+                "",
+                mapViewModel,
+                standardBottomSheetBehavior,
+                places,
+                resultLauncher
+            )
             recyclerView.adapter = inputAdapter
 
             val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
             val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
             binding.testButton.setOnClickListener {
-                inputAdapter.setName("","")
+                inputAdapter.setName("", "")
                 binding.chipGroupDirections.clearCheck()
                 binding.chipGroupDirections.visibility = View.GONE
                 mapViewModel.notes.add("")
@@ -534,16 +603,18 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 resultLauncher.launch(intent)
             }
 
-            val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, profileViewModel,inputAdapter.getAllDestinations(), binding.root)
+            val nameDialog = journeyNameDialog(
+                requireActivity(),
+                mapViewModel,
+                profileViewModel,
+                inputAdapter.getAllDestinations(),
+                binding.root
+            )
             binding.finishButton.setOnClickListener {
                 nameDialog.show()
             }
+
         }
-
-
-
-
-
     }
 
 
@@ -552,8 +623,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
 
-        Log.i("MYTEST", "LOCATION : MARKERS BEFORE ADD $locationName : ${mapViewModel.markers}")
-        mapViewModel.markers.add(position,marker!!)
+        if (navigationArgs.id == 0L) {
+            mapViewModel.markers.add(position,marker!!)
+        }
 
         standardBottomSheetBehavior.peekHeight = 80
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -564,7 +636,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 15F
             )
         )
-        Log.i("MYTEST", "MARKERS AFTER ADD ${mapViewModel.markers}")
+
     }
 
 
@@ -609,9 +681,35 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             else -> Color.BLUE
         }
 
-        mapViewModel.checkLine = line
-        if (line.isNotBlank()) {
-            Log.i("MYTEST", "CREATE POLYLINE line is : $line")
+        if (navigationArgs.id == 0L) {
+            mapViewModel.checkLine = line
+            if (line.isNotBlank()) {
+                Log.i("MYTEST", "CREATE POLYLINE line is : $line")
+                val polyline: List<LatLng> = PolyUtil.decode(line)
+
+                val options = PolylineOptions()
+                options.width(10F)
+                options.color(color)
+                options.addAll(polyline)
+                val addedPolyline = googleMap.addPolyline(options)
+                addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
+
+                Log.i("MYTEST", "POLYLINES BEFORE ADD: ${mapViewModel.polylines}")
+                mapViewModel.polylines.add(addedPolyline)
+                Log.i("MYTEST", "POLYLINES AFTER ADD: ${mapViewModel.polylines}")
+
+
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        mapViewModel.markers[position.plus(1)].position,
+                        10F
+                    )
+                )
+                calculateDistanceAndDuration(mapViewModel.infoMarkers, binding.root)
+            }
+        }
+        else {
+            mapViewModel.checkLine = line
             val polyline: List<LatLng> = PolyUtil.decode(line)
 
             val options = PolylineOptions()
@@ -621,19 +719,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             val addedPolyline = googleMap.addPolyline(options)
             addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
 
-            Log.i("MYTEST", "POLYLINES BEFORE ADD: ${mapViewModel.polylines}")
-            mapViewModel.polylines.add(addedPolyline)
-            Log.i("MYTEST", "POLYLINES AFTER ADD: ${mapViewModel.polylines}")
-
-
-            googleMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    mapViewModel.markers[position.plus(1)].position,
-                    10F
-                )
-            )
-            calculateDistanceAndDuration(mapViewModel.infoMarkers, binding.root)
         }
+
     }
 
 
@@ -659,7 +746,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 .anchor(0f, 0f)
         )
         info?.showInfoWindow()
-        mapViewModel.infoMarkers.add(info!!)
+
+        if (navigationArgs.id == 0L) {
+            mapViewModel.infoMarkers.add(info!!)
+        }
     }
 
     private fun  bitmapDescriptorFromVector(vectorResId:Int): BitmapDescriptor {
