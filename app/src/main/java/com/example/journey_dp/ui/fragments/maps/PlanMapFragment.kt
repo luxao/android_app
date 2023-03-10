@@ -15,6 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
@@ -68,6 +70,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Declaration of binding fragment
     private var _binding : FragmentPlanMapBinding? = null
     private val binding get() = _binding!!
+
+    private val navigationArgs: PlanMapFragmentArgs by navArgs()
 
     private lateinit var recyclerViewImage: RecyclerView
     private lateinit var imageAdapter: ImageAdapter
@@ -406,104 +410,139 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
         val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
-        val search = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-        search.setPlaceFields(listFields)
-
-        searchView = search
-        searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
-
-        binding.myLocationInput.focusable = View.NOT_FOCUSABLE
-
         places = activity?.applicationContext?.let { Places.createClient(it) }!!
 
         standardBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetBehavior)
-        standardBottomSheetBehavior.apply {
-            peekHeight = 80
-            this.state = BottomSheetBehavior.STATE_COLLAPSED
+
+
+
+        if (navigationArgs.id != 0L) {
+            standardBottomSheetBehavior.apply {
+                peekHeight = 120
+                this.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+            profileViewModel.journeyId.postValue(navigationArgs.id)
+            binding.searchWrapper.visibility = View.GONE
+            binding.layoutForAddStation.visibility = View.GONE
+            binding.planWrapper.visibility = View.GONE
+            binding.placeWrapperInfo.visibility = View.VISIBLE
+
+
+            profileViewModel.journeyWithRoutes.observe(viewLifecycleOwner) {
+                Log.i("MYTEST", "IT  $it")
+                if (it != null) {
+                    Log.i("MYTEST", "CHOOSED JOURNEY: ${it.journey}")
+                    Log.i("MYTEST", "CHOOSED ROUTES: ${it.routes}")
+                }
+            }
+
+            binding.backToProfileBtn.setOnClickListener {
+                profileViewModel.showMapFlag = false
+                val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
+            }
         }
 
+        else {
+            standardBottomSheetBehavior.apply {
+                peekHeight = 80
+                this.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
 
-        searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(requireContext())
+            val search = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+            search.setPlaceFields(listFields)
 
+            searchView = search
+            searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
+
+
+
+            binding.myLocationInput.focusable = View.NOT_FOCUSABLE
+            searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+                override fun onPlaceSelected(place: Place) {
+
+                    if (binding.myLocationInput.text.toString().isNotBlank()) {
+                        val marker = mapViewModel.markers.getOrNull(0)
+                        marker?.remove()
+                        mapViewModel.markers.removeAt(0)
+                    }
+                    googleMap.apply {
+                        val marker = addMarker(MarkerOptions().position(place.latLng!!).title(place.name!!).icon(
+                            BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
+                        ))
+                        mapViewModel.markers.add(0,marker!!)
+                        mapViewModel.setLocation(place.latLng!!)
+                        animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                place.latLng!!,
+                                15F
+                            )
+                        )
+                    }
+
+                    binding.apply {
+                        if (myLocationInput.text.toString().isNotBlank()) {
+                            myLocationInput.setText(place.name)
+                        }
+                        else {
+                            myLocationInput.setText(place.name)
+                        }
+                    }
+
+                }
+
+                override fun onError(status: Status) {
+                    Log.i("Place", "An error occurred: $status")
+                    Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT ).show()
+                }
+            })
+
+            recyclerViewSteps.layoutManager = LinearLayoutManager(context)
+            stepsAdapter = StepsAdapter()
+
+            imageAdapter = ImageAdapter()
+            recyclerViewImage.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, imageAdapter,recyclerViewImage,"","",
+                mapViewModel,standardBottomSheetBehavior,places,resultLauncher)
+            recyclerView.adapter = inputAdapter
+
+            val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
+            val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
+
+            binding.testButton.setOnClickListener {
+                inputAdapter.setName("","")
+                binding.chipGroupDirections.clearCheck()
+                binding.chipGroupDirections.visibility = View.GONE
+                mapViewModel.notes.add("")
+                mapViewModel.setIconType("driving")
+                mapViewModel.inputs.add(layout)
+                inputAdapter.notifyItemInserted(mapViewModel.inputs.size)
+            }
+
+            binding.myLocationInput.setOnClickListener {
                 if (binding.myLocationInput.text.toString().isNotBlank()) {
                     val marker = mapViewModel.markers.getOrNull(0)
                     marker?.remove()
                     mapViewModel.markers.removeAt(0)
                 }
-                googleMap.apply {
-                    val marker = addMarker(MarkerOptions().position(place.latLng!!).title(place.name!!).icon(
-                        BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
-                    ))
-                    mapViewModel.markers.add(0,marker!!)
-                    mapViewModel.setLocation(place.latLng!!)
-                    animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            place.latLng!!,
-                            15F
-                        )
-                    )
-                }
 
-                binding.apply {
-                    if (myLocationInput.text.toString().isNotBlank()) {
-                        myLocationInput.setText(place.name)
-                    }
-                    else {
-                        myLocationInput.setText(place.name)
-                    }
-                }
-
+                mapViewModel.changeUserLocation = true
+                resultLauncher.launch(intent)
             }
 
-            override fun onError(status: Status) {
-                Log.i("Place", "An error occurred: $status")
-                Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT ).show()
+            val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, profileViewModel,inputAdapter.getAllDestinations(), binding.root)
+            binding.finishButton.setOnClickListener {
+                nameDialog.show()
             }
-        })
-
-        recyclerViewSteps.layoutManager = LinearLayoutManager(context)
-        stepsAdapter = StepsAdapter()
-
-        imageAdapter = ImageAdapter()
-        recyclerViewImage.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        inputAdapter = InputAdapter(binding.root,stepsAdapter, recyclerViewSteps, imageAdapter,recyclerViewImage,"","",
-            mapViewModel,standardBottomSheetBehavior,places,resultLauncher)
-        recyclerView.adapter = inputAdapter
-
-        val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
-        val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
-
-        binding.testButton.setOnClickListener {
-            inputAdapter.setName("","")
-            binding.chipGroupDirections.clearCheck()
-            binding.chipGroupDirections.visibility = View.GONE
-            mapViewModel.notes.add("")
-            mapViewModel.setIconType("driving")
-            mapViewModel.inputs.add(layout)
-            inputAdapter.notifyItemInserted(mapViewModel.inputs.size)
         }
 
-        binding.myLocationInput.setOnClickListener {
-            if (binding.myLocationInput.text.toString().isNotBlank()) {
-                val marker = mapViewModel.markers.getOrNull(0)
-                marker?.remove()
-                mapViewModel.markers.removeAt(0)
-            }
 
-            mapViewModel.changeUserLocation = true
-            resultLauncher.launch(intent)
-        }
 
-        val nameDialog = journeyNameDialog(requireActivity(), mapViewModel, profileViewModel,inputAdapter.getAllDestinations(), binding.root)
-        binding.finishButton.setOnClickListener {
-            nameDialog.show()
-        }
+
 
     }
 
@@ -533,22 +572,26 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap = mapG
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        mapViewModel.setLocation(mapViewModel.defaultLocation)
+        if (navigationArgs.id == 0L) {
+            mapViewModel.setLocation(mapViewModel.defaultLocation)
 
-        val marker = googleMap.addMarker(
-            MarkerOptions()
-                .position(mapViewModel.defaultLocation)
-                .title(mapViewModel.defaultLocationName)
-        )
-        mapViewModel.markers.add(0,marker!!)
-        googleMap.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                mapViewModel.defaultLocation,
-                15F
-            ))
+            val marker = googleMap.addMarker(
+                MarkerOptions()
+                    .position(mapViewModel.defaultLocation)
+                    .title(mapViewModel.defaultLocationName)
+            )
+            mapViewModel.markers.add(0,marker!!)
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    mapViewModel.defaultLocation,
+                    15F
+                ))
+            binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+        }
+
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnPoiClickListener(this)
-        binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+
 
     }
 

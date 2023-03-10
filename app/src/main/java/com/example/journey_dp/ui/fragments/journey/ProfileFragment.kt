@@ -60,7 +60,10 @@ class ProfileFragment : Fragment() {
                     true
                 }
                 R.id.planJourney -> {
-                    val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment()
+                    profileViewModel.showMapFlag = false
+                    val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
+                        id = 0L
+                    )
                     view.findNavController().navigate(action)
                     true
                 }
@@ -77,9 +80,10 @@ class ProfileFragment : Fragment() {
         journeysAdapter = JourneysAdapter(
             journeyEventListener = JourneyEventListener { journeyId: Long ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
+                profileViewModel.showMapFlag = true
                 findNavController()
                     .navigate(
-                        ProfileFragmentDirections.actionProfileFragment2ToShowJourneyFragment(
+                        ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
                             id = journeyId
                         )
                     )

@@ -15,6 +15,8 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
 
     val journeyId = MutableLiveData<Long>()
 
+    var showMapFlag = false
+
     val journeyWithRoutes: LiveData<JourneyWithRoutes> = journeyId.switchMap {
         liveData {
             it?.let {
