@@ -10,6 +10,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 
 import com.example.journey_dp.databinding.ActivityMainBinding
+import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragment
+import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.journey.ProfileFragmentDirections
 
 
@@ -28,18 +30,16 @@ class MainActivity : AppCompatActivity() {
 
         if ((intent.action == Intent.ACTION_VIEW).and(intent.data != null)){
             val uri = intent?.data
-            if ((uri?.scheme == "https").and(uri?.host == "").and(uri?.path == "/map")){
+            if ((uri?.scheme == "https").and(uri?.host == "planjourney").and(uri?.path == "/map")){
                 val journeyId = uri?.getQueryParameter("id")?.toLong()
                 navController.navigate(
-                    ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
+                    PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
                         id = journeyId!!
                     )
                 )
             }
         }
-
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

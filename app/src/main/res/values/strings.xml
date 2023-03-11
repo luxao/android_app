@@ -88,5 +88,5 @@
     <string name="not_note">No note</string>
     <string name="note_to_destination"> Note to destination :</string>
     <string name="deep_link_title">shared journey link</string>
-    <string name="deep_link">https://planjourney.app/map?id=</string>
+    <string name="deep_link">https://planjourney/map?id=</string>
 </resources>
