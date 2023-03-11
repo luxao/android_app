@@ -426,7 +426,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         binding.model = this@PlanMapFragment.mapViewModel
         binding.viewmodel = this@PlanMapFragment.profileViewModel
 
-        if (navigationArgs.id != 0L) {
+        if ((navigationArgs.id == 0L).and(navigationArgs.shared.isNotBlank()).and(navigationArgs.flag == "share")) {
+            Log.i("MYTEST", "SHARED URL: ${navigationArgs.shared}")
+        }
+
+        if ((navigationArgs.id != 0L).and(navigationArgs.flag == "show")) {
             detailsJourneyAdapter = DetailsJourneyAdapter()
 
             standardBottomSheetBehavior.apply {
@@ -515,7 +519,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                 view.findNavController().navigate(action)
             }
-        } else {
+        }
+
+        if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             standardBottomSheetBehavior.apply {
                 peekHeight = 80
                 this.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -643,7 +649,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
 
-        if (navigationArgs.id == 0L) {
+        if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.markers.add(position,marker!!)
         }
 
@@ -664,7 +670,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap = mapG
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        if (navigationArgs.id == 0L) {
+        if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.setLocation(mapViewModel.defaultLocation)
 
             val marker = googleMap.addMarker(
@@ -701,7 +707,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             else -> Color.BLUE
         }
 
-        if (navigationArgs.id == 0L) {
+        if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.checkLine = line
             if (line.isNotBlank()) {
                 Log.i("MYTEST", "CREATE POLYLINE line is : $line")
@@ -767,7 +773,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         )
         info?.showInfoWindow()
 
-        if (navigationArgs.id == 0L) {
+        if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.infoMarkers.add(info!!)
         }
     }

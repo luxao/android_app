@@ -157,7 +157,7 @@
                     android:backgroundTint="@color/cardview_dark_background"
                     style="?attr/materialButtonStyle"
                     android:layout_marginRight="8dp"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, flagJourney.SHOW)}"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, journey.journey.sharedUrl, flagJourney.SHOW)}"
                     />
 
 
@@ -171,7 +171,7 @@
                     android:drawableLeft="@drawable/ic_baseline_share_24"
                     android:drawableTint="@color/white"
                     android:text="@string/share"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, flagJourney.SHARE)}"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, journey.journey.sharedUrl, flagJourney.SHARE)}"
                     tools:ignore="TextContrastCheck" />
 
             </LinearLayout>

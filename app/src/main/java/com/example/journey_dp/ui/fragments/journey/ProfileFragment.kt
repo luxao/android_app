@@ -64,7 +64,9 @@ class ProfileFragment : Fragment() {
                 }
                 R.id.planJourney -> {
                     val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
-                        id = 0L
+                        id = 0L,
+                        shared = "",
+                        flag = ""
                     )
                     view.findNavController().navigate(action)
                     true
@@ -80,21 +82,22 @@ class ProfileFragment : Fragment() {
         }
 
         journeysAdapter = JourneysAdapter(
-            journeyEventListener = JourneyEventListener { journeyId: Long, flag: JourneyEnum ->
+            journeyEventListener = JourneyEventListener { journeyId: Long, shared: String, flag: JourneyEnum ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
                 if (flag == JourneyEnum.SHOW) {
                     findNavController()
                         .navigate(
                             ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
-                                id = journeyId
+                                id = journeyId,
+                                shared = "",
+                                flag = "show"
                             )
                         )
                 }
                 if (flag == JourneyEnum.SHARE) {
-                    val deepLink = getString(R.string.deep_link).plus(journeyId)
                     val sendIntent: Intent = Intent().apply {
                         action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, deepLink)
+                        putExtra(Intent.EXTRA_TEXT, shared)
                         type = "text/html"
                     }
                     startActivity(Intent.createChooser(sendIntent,"Share"))

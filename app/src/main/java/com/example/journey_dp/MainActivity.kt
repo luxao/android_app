@@ -31,10 +31,12 @@ class MainActivity : AppCompatActivity() {
         if ((intent.action == Intent.ACTION_VIEW).and(intent.data != null)){
             val uri = intent?.data
             if ((uri?.scheme == "https").and(uri?.host == "planjourney").and(uri?.path == "/map")){
-                val journeyId = uri?.getQueryParameter("id")?.toLong()
+                val sharedUrl = uri?.getQueryParameter("details")
                 navController.navigate(
                     PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
-                        id = journeyId!!
+                        id = 0L,
+                        shared = sharedUrl!!,
+                        flag = "share"
                     )
                 )
             }

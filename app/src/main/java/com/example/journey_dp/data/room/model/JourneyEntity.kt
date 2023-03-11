@@ -11,7 +11,7 @@ data class JourneyEntity(
     val totalDistance: String,
     val totalDuration: String,
     val numberOfDestinations: Int,
-    val sharedUrl: String
+    var sharedUrl: String
 )
 
 @Entity(

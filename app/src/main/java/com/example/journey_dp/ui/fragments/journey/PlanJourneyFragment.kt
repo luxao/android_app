@@ -43,7 +43,9 @@ class PlanJourneyFragment : Fragment() {
 
         binding.startPlan.setOnClickListener {
             val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
-                id = 0L
+                id = 0L,
+                shared = "",
+                flag = ""
             )
             view.findNavController().navigate(action)
         }

@@ -25,6 +25,14 @@
             android:name="id"
             app:argType="long"
             />
+        <argument
+            android:name="shared"
+            app:argType="string"
+            />
+        <argument
+            android:name="flag"
+            app:argType="string"
+            />
         <action
             android:id="@+id/action_planMapFragment_to_profileFragment2"
             app:destination="@id/profileFragment2" />

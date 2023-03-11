@@ -243,16 +243,18 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                 else {
                     allDestinations.removeAll {destination -> destination.isBlank() }
                     model.travelMode.removeAll { travel -> travel.isBlank() }
-                    allDestinations.add(0,model.location.value.toString())
+                    val parsedOrigin = model.location.value?.latitude.toString().plus(",${model.location.value?.longitude.toString()}")
+                    allDestinations.add(0,parsedOrigin)
 
                     val journey = JourneyEntity(
                         name = journeyName.text.toString(),
                         totalDistance = totalDistance.text.toString(),
                         totalDuration = totalDuration.text.toString(),
                         numberOfDestinations = allDestinations.size,
-                        sharedUrl = "https://is.stuba.sk/"
+                        sharedUrl = ""
                     )
                     val routes = mutableListOf<RouteEntity>()
+                    var buildUrl = "https://planjourney/map?details="
                     for (item in 0 until allDestinations.size.minus(1)) {
                         if (item != allDestinations.size.minus(1)) {
                             val route = RouteEntity(
@@ -262,9 +264,11 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                                 travelMode = model.travelMode[item],
                                 note = if (model.notes.isEmpty()) "" else model.notes[item]
                             )
+                            buildUrl += allDestinations[item].plus(",${allDestinations[item.plus(1)].plus(",${model.travelMode[item]},")}")
                             routes.add(route)
                         }
                     }
+                    journey.sharedUrl = buildUrl
                     Log.i("MYTEST", "$journey")
                     Log.i("MYTEST", "$routes")
                     profileViewModel.insertJourneyWithDestinations(journey, routes)
