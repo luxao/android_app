@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentPlanMapBinding
+import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
 
 import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
@@ -58,8 +59,7 @@ import java.util.*
 //  FIXES: THIS WILL BE FIXED IN THE END
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  -----------------------------------------------------------------------------------
-//  po kliknuti na karticku vyletu vytiahnut z databazy tieto informacie, prejst loopom cez ne a vykreslit na mapu pricom
-//  po kliknuti na karticku zobrazit najskôr ikonku loadovania a potom zobrazit danu trasu uz
+//  SKUSIT UKLADAT ESTE POINTS, DURATION, DISTANCE
 //  pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
 //  ________________________________________________________________________________________
 //  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
@@ -74,6 +74,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private val binding get() = _binding!!
 
     private val navigationArgs: PlanMapFragmentArgs by navArgs()
+
+    private lateinit var detailsJourneyAdapter: DetailsJourneyAdapter
+    private lateinit var detailsRecyclerView: RecyclerView
 
     private lateinit var recyclerViewImage: RecyclerView
     private lateinit var imageAdapter: ImageAdapter
@@ -404,6 +407,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         recyclerView = binding.inputsList
         recyclerViewSteps = binding.recyclerViewSteps
         recyclerViewImage = binding.imageRecyclerView
+        detailsRecyclerView = binding.detailsListRecyclerview
         return binding.root
     }
 
@@ -418,9 +422,13 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         standardBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetBehavior)
 
-
+        binding.lifecycleOwner = this@PlanMapFragment.viewLifecycleOwner
+        binding.model = this@PlanMapFragment.mapViewModel
+        binding.viewmodel = this@PlanMapFragment.profileViewModel
 
         if (navigationArgs.id != 0L) {
+            detailsJourneyAdapter = DetailsJourneyAdapter()
+
             standardBottomSheetBehavior.apply {
                 peekHeight = 120
                 this.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -431,6 +439,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             binding.planWrapper.visibility = View.GONE
             binding.placeWrapperInfo.visibility = View.VISIBLE
 
+            detailsRecyclerView.layoutManager = LinearLayoutManager(context)
+
             var comparison: Boolean
             profileViewModel.journeyWithRoutes.observe(viewLifecycleOwner) {
                 Log.i("MYTEST", "IT  $it")
@@ -440,7 +450,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 var origin = ""
 
                 Log.i("MYTEST", "ROUTES SIZE : ${it.routes.size}")
-
+                detailsRecyclerView.adapter = detailsJourneyAdapter
+                detailsJourneyAdapter.submitList(it.routes)
                 for (route in it.routes) {
                     if ((route.travelMode == "bus").or(route.travelMode == "train")) {
                         mode = "transit"

@@ -187,6 +187,12 @@ fun setMapMenu(
     }, lifecycleOwner, Lifecycle.State.RESUMED)
 }
 
+var currentChar = 'A'
+fun nextABC(): Char {
+    val result = currentChar
+    currentChar = currentChar.plus(1)
+    return result
+}
 
 
 

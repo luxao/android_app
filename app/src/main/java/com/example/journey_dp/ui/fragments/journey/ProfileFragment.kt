@@ -18,6 +18,7 @@ import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
 import kotlinx.coroutines.launch
+import kotlin.math.round
 
 
 class ProfileFragment : Fragment() {
@@ -102,7 +103,7 @@ class ProfileFragment : Fragment() {
                 var days = 0
                 it.map { item ->
                     val tmp = item.journey.totalDistance.split("km")[0].split(":")[1].trim()
-                    distance = ((tmp.split(",")[0]).plus('.').plus(tmp.split(",")[1])).toDouble()
+                    distance += ((tmp.split(",")[0]).plus('.').plus(tmp.split(",")[1])).toDouble()
                     val hours = item.journey.totalDuration.split(" h")[0].split(":")[1].trim().toInt()
                     durationHours += hours
                     val minutes = item.journey.totalDuration.split("h")[1].split("m")[0].trim().toInt()
@@ -117,7 +118,7 @@ class ProfileFragment : Fragment() {
                     durationMinutes = durationMinutes.mod(60)
                 }
 
-                val distanceDetails = getString(R.string.total_distance).plus(" $distance").plus(" km")
+                val distanceDetails = getString(R.string.total_distance).plus(" ${round(distance)}").plus(" km")
                 val durationDetails = getString(R.string.days).plus(" $days").plus(" ").plus(getString(R.string.hours)).plus(" $durationHours  ").plus(getString(R.string.minutes)).plus("  $durationMinutes")
                 binding.calculatedDistance.text = distanceDetails
                 binding.calculatedDuration.text = durationDetails

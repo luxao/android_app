@@ -3,6 +3,8 @@ package com.example.journey_dp.utils.bindingadapter
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
+import com.example.journey_dp.data.room.model.RouteEntity
+import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
 
 
@@ -12,3 +14,10 @@ fun bindJourneysRecyclerView(recyclerView: RecyclerView, listData: MutableList<J
     adapter.submitList(null)
     adapter.submitList(listData)
 }
+
+//@BindingAdapter("details_list")
+//fun bindDetailsRecyclerView(recyclerView: RecyclerView, listData: MutableList<RouteEntity>?) {
+//    val adapter = recyclerView.adapter as DetailsJourneyAdapter
+//    adapter.submitList(null)
+//    adapter.submitList(listData)
+//}

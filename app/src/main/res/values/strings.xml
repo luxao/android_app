@@ -85,6 +85,7 @@
     <string name="days">Days: </string>
     <string name="hours">Hours: </string>
     <string name="minutes">Min: </string>
-
+    <string name="not_note">No note</string>
+    <string name="note_to_destination"> Note to destination :</string>
 
 </resources>
