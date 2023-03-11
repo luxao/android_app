@@ -428,6 +428,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isNotBlank()).and(navigationArgs.flag == "share")) {
             Log.i("MYTEST", "SHARED URL: ${navigationArgs.shared}")
+            binding.searchWrapper.visibility = View.GONE
+            binding.layoutForAddStation.visibility = View.GONE
+            binding.planWrapper.visibility = View.GONE
+            binding.placeWrapperInfo.visibility = View.VISIBLE
         }
 
         if ((navigationArgs.id != 0L).and(navigationArgs.flag == "show")) {
@@ -507,13 +511,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     }
                 }
 
-
-
-
-
             }
-
-
 
             binding.backToProfileBtn.setOnClickListener {
                 val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
