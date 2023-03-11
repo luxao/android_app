@@ -9,6 +9,9 @@
             name="journey"
             type="com.example.journey_dp.data.room.model.JourneyWithRoutes" />
 
+        <variable
+            name="flagJourney"
+            type="com.example.journey_dp.utils.JourneyEnum" />
 
         <variable
             name="journeyEventListener"
@@ -154,7 +157,7 @@
                     android:backgroundTint="@color/cardview_dark_background"
                     style="?attr/materialButtonStyle"
                     android:layout_marginRight="8dp"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id)}"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, flagJourney.SHOW)}"
                     />
 
 
@@ -168,6 +171,7 @@
                     android:drawableLeft="@drawable/ic_baseline_share_24"
                     android:drawableTint="@color/white"
                     android:text="@string/share"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, flagJourney.SHARE)}"
                     tools:ignore="TextContrastCheck" />
 
             </LinearLayout>

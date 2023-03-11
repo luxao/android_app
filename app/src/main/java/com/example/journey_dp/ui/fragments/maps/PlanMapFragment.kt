@@ -512,7 +512,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
             binding.backToProfileBtn.setOnClickListener {
-                profileViewModel.showMapFlag = false
                 val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                 view.findNavController().navigate(action)
             }

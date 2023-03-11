@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.fragments.journey
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
 import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
+import com.example.journey_dp.utils.JourneyEnum
 import kotlinx.coroutines.launch
 import kotlin.math.round
 
@@ -61,7 +63,6 @@ class ProfileFragment : Fragment() {
                     true
                 }
                 R.id.planJourney -> {
-                    profileViewModel.showMapFlag = false
                     val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
                         id = 0L
                     )
@@ -79,15 +80,25 @@ class ProfileFragment : Fragment() {
         }
 
         journeysAdapter = JourneysAdapter(
-            journeyEventListener = JourneyEventListener { journeyId: Long ->
+            journeyEventListener = JourneyEventListener { journeyId: Long, flag: JourneyEnum ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
-                profileViewModel.showMapFlag = true
-                findNavController()
-                    .navigate(
-                        ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
-                            id = journeyId
+                if (flag == JourneyEnum.SHOW) {
+                    findNavController()
+                        .navigate(
+                            ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
+                                id = journeyId
+                            )
                         )
-                    )
+                }
+                if (flag == JourneyEnum.SHARE) {
+                    val deepLink = getString(R.string.deep_link).plus(journeyId)
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, deepLink)
+                        type = "text/html"
+                    }
+                    startActivity(Intent.createChooser(sendIntent,"Share"))
+                }
             }
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
