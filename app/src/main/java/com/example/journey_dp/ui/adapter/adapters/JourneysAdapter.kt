@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.adapter.adapters
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -78,9 +80,28 @@ class JourneysAdapter(
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val position = viewHolder.adapterPosition
-            val journey = adapter.currentList[position].journey.id
-            model.deleteJourneyWithDestinations(journey)
-            notifyItemRemoved(position)
+            val journey = getItem(position)
+
+            AlertDialog.Builder(context)
+                .setTitle("Delete item")
+                .setMessage("Are you sure you want to delete this item?")
+                .setPositiveButton("Yes") { _, _ ->
+                    if (journey != null) {
+                        Log.i("MYTEST", "SWIPED ID: ${journey.journey.id}")
+                        Log.i("MYTEST", "SWIPED : ${journey.journey}")
+                        model.deleteJourneyWithDestinations(journey = journey.journey)
+                        adapter.notifyItemRemoved(position)
+                    }
+                    else {
+                        Toast.makeText(context, "Please Try Again in a minute", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    adapter.notifyItemChanged(position)
+                    dialog.dismiss()
+                }
+                .setCancelable(false)
+                .show()
         }
 
         override fun onChildDraw(
@@ -145,6 +166,8 @@ class JourneysAdapter(
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 }
+
+
 
 
 

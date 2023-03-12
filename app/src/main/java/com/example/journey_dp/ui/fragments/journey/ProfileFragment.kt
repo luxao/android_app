@@ -105,6 +105,7 @@ class ProfileFragment : Fragment() {
                     }
                     startActivity(Intent.createChooser(sendIntent,"Share"))
                 }
+
             }
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
@@ -112,33 +113,38 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.viewModelScope.launch {
             profileViewModel.journeysWithDestinations.observe(viewLifecycleOwner) {
-                binding.numberOfJourneys.text = getString(R.string.total_destinations).plus(" ${it.size}")
-                var distance = 0.0
-                var durationHours = 0
-                var durationMinutes = 0
-                var days = 0
-                it.map { item ->
-                    val tmp = item.journey.totalDistance.split("km")[0].split(":")[1].trim()
-                    distance += ((tmp.split(",")[0]).plus('.').plus(tmp.split(",")[1])).toDouble()
-                    val hours = item.journey.totalDuration.split(" h")[0].split(":")[1].trim().toInt()
-                    durationHours += hours
-                    val minutes = item.journey.totalDuration.split("h")[1].split("m")[0].trim().toInt()
-                    durationMinutes += minutes
-                }
-                if (durationHours >= 24) {
-                    days = durationHours.div(24)
-                    durationHours = durationMinutes.mod(24)
-                }
-                if (durationMinutes >= 60) {
-                    durationHours += durationMinutes.div(60)
-                    durationMinutes = durationMinutes.mod(60)
-                }
+                if (it != null) {
+                    Log.i("MYTEST","HALO : $it")
+                    binding.numberOfJourneys.text = getString(R.string.total_destinations).plus(" ${it.size}")
+                    var distance = 0.0
+                    var durationHours = 0
+                    var durationMinutes = 0
+                    var days = 0
+                    it.map { item ->
+                        val tmp = item.journey.totalDistance.split("km")[0].split(":")[1].trim()
+                        distance += ((tmp.split(",")[0]).plus('.').plus(tmp.split(",")[1])).toDouble()
+                        val hours = item.journey.totalDuration.split(" h")[0].split(":")[1].trim().toInt()
+                        durationHours += hours
+                        val minutes = item.journey.totalDuration.split("h")[1].split("m")[0].trim().toInt()
+                        durationMinutes += minutes
+                    }
+                    if (durationHours >= 24) {
+                        days = durationHours.div(24)
+                        durationHours = durationMinutes.mod(24)
+                    }
+                    if (durationMinutes >= 60) {
+                        durationHours += durationMinutes.div(60)
+                        durationMinutes = durationMinutes.mod(60)
+                    }
 
-                val distanceDetails = getString(R.string.total_distance).plus(" ${round(distance)}").plus(" km")
-                val durationDetails = getString(R.string.days).plus(" $days").plus(" ").plus(getString(R.string.hours)).plus(" $durationHours  ").plus(getString(R.string.minutes)).plus("  $durationMinutes")
-                binding.calculatedDistance.text = distanceDetails
-                binding.calculatedDuration.text = durationDetails
-
+                    val distanceDetails = getString(R.string.total_distance).plus(" ${round(distance)}").plus(" km")
+                    val durationDetails = getString(R.string.days).plus(" $days").plus(" ").plus(getString(R.string.hours)).plus(" $durationHours  ").plus(getString(R.string.minutes)).plus("  $durationMinutes")
+                    binding.calculatedDistance.text = distanceDetails
+                    binding.calculatedDuration.text = durationDetails
+                }
+                else {
+                    journeysAdapter.submitList(null)
+                }
             }
 
         }

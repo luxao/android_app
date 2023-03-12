@@ -19,16 +19,23 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
 
     val journeyWithRoutes: LiveData<JourneyWithRoutes> = journeyId.switchMap {
         liveData {
-            it?.let {
+            it?.let { it ->
                 val journey = repository.getJourneyWithRoutesById(it)
-                emit(journey.first())
+                journey.first()?.let { value ->
+                    emit(value)
+                }
             }
         }
     }
 
 
+
+
     val journeysWithDestinations: LiveData<MutableList<JourneyWithRoutes>> =
-        repository.getAllJourneys().asLiveData()
+        repository.getAllJourneys().map { journeys ->
+            journeys.toMutableList()
+        }
+
 
     fun insertJourneyWithDestinations(journey: JourneyEntity, routes: MutableList<RouteEntity>) {
         viewModelScope.launch {
@@ -42,10 +49,14 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-    fun deleteJourneyWithDestinations(journeyId: Long) {
+    fun deleteJourneyWithDestinations(journey: JourneyEntity) {
         viewModelScope.launch {
-            repository.deleteJourneyAndRoutes(journeyId)
+            repository.deleteJourneyAndRoutes(journey)
         }
+    }
+
+    fun refreshData() {
+        repository.getAllJourneys()
     }
 
 
