@@ -60,7 +60,6 @@ import java.util.*
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  -----------------------------------------------------------------------------------
 //  SKUSIT UKLADAT ESTE POINTS, DURATION, DISTANCE ????
-//  UKLADAT NAZVY ORIGIN A DESTINACIE PRE LEPSIE ZOBRAZENIE DETAILS
 //  ________________________________________________________________________________________
 //  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
 //  OTESTOVANIE a OSETRENIE
@@ -437,6 +436,57 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             binding.layoutForAddStation.visibility = View.GONE
             binding.planWrapper.visibility = View.GONE
             binding.placeWrapperInfo.visibility = View.VISIBLE
+            val key = BuildConfig.GOOGLE_MAPS_API_KEY
+            var mode = ""
+            var transit = ""
+            var comparison: Boolean
+            val routes = navigationArgs.shared.split("_")
+            for (element in routes) {
+                val route = element.split("|")
+                val orig = route[0]
+                val dest = route[1]
+                val travel = route[2]
+                if ((travel == "bus").or(travel == "train")) {
+                    mode = "transit"
+                    transit = travel
+                }
+                else {
+                    mode = travel
+                    transit = ""
+                }
+                mapViewModel.getDirections(orig, dest, mode, transit, key)
+
+                mapViewModel.directions.observe(viewLifecycleOwner) { result ->
+                    try {
+                        if (result != null) {
+                            if (result.routes!!.isNotEmpty()) {
+                                comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
+                                if (!comparison) {
+                                    Log.i("MYTEST", "SPUSTAM DIRECTIONS")
+                                    val points = result.routes[0].overviewPolyline.points
+                                    val distance = result.routes[0].legs[0].distance.text
+                                    val duration = result.routes[0].legs[0].duration.text
+
+                                    val originName = result.routes[0].legs[0].startAddress
+                                    val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
+                                    val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
+                                    val destinationName = result.routes[0].legs[0].endAddress
+                                    Log.i("MYTEST", "VYKRESLUJEM  , $originName, $destinationName, $mode , $transit")
+                                    showMarkerOnChoosePlace(originName!!,originLatLng, 0)
+                                    showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
+                                    Log.i("MYTEST","POINTS : $points")
+                                    Log.i("MYTEST","DIST AND DUR : $distance and $duration")
+                                    Log.i("MYTEST","ICON : ${mapViewModel.iconType.value!!}")
+                                    showRouteOnMap(points, distance, duration,  mapViewModel.iconType.value!!, 0)
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MYTEST", "ERROR : ${e.localizedMessage}")
+                        Log.e("MYTEST", "ERROR : ${e.message}")
+                    }
+                }
+            }
         }
 
         if ((navigationArgs.id != 0L).and(navigationArgs.flag == "show")) {

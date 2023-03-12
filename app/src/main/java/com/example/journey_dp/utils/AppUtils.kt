@@ -270,7 +270,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                             routes.add(route)
                         }
                     }
-                    journey.sharedUrl = buildUrl
+                    journey.sharedUrl = buildUrl.dropLast(1)
                     Log.i("MYTEST", "$journey")
                     Log.i("MYTEST", "$routes")
                     profileViewModel.insertJourneyWithDestinations(journey, routes)
