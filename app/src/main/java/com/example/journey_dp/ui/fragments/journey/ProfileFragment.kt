@@ -110,9 +110,7 @@ class ProfileFragment : Fragment() {
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
 
-
-        profileViewModel.viewModelScope.launch {
-            profileViewModel.journeysWithDestinations.observe(viewLifecycleOwner) {
+        profileViewModel.journeysWithDestinations.observe(viewLifecycleOwner) {
                 if (it != null) {
                     Log.i("MYTEST","HALO : $it")
                     binding.numberOfJourneys.text = getString(R.string.total_destinations).plus(" ${it.size}")
@@ -142,12 +140,7 @@ class ProfileFragment : Fragment() {
                     binding.calculatedDistance.text = distanceDetails
                     binding.calculatedDuration.text = durationDetails
                 }
-                else {
-                    journeysAdapter.submitList(null)
-                }
             }
-
-        }
 
 
     }

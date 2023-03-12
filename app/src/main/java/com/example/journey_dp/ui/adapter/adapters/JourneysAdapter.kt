@@ -90,7 +90,6 @@ class JourneysAdapter(
                         Log.i("MYTEST", "SWIPED ID: ${journey.journey.id}")
                         Log.i("MYTEST", "SWIPED : ${journey.journey}")
                         model.deleteJourneyWithDestinations(journey = journey.journey)
-                        adapter.notifyItemRemoved(position)
                     }
                     else {
                         Toast.makeText(context, "Please Try Again in a minute", Toast.LENGTH_SHORT).show()

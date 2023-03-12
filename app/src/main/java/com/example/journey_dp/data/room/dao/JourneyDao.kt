@@ -1,9 +1,8 @@
 package com.example.journey_dp.data.room.dao
 
-import androidx.lifecycle.LiveData
+
 import androidx.room.*
 import com.example.journey_dp.data.room.model.JourneyEntity
-import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,7 +17,7 @@ interface JourneyDao {
     suspend fun delete(journey: JourneyEntity)
 
     @Query("SELECT * FROM journey")
-    fun getAllJourneys(): LiveData<MutableList<JourneyEntity>>
+    fun getAllJourneys(): Flow<MutableList<JourneyEntity>>
 
 
     @Query("SELECT * FROM journey WHERE id = :journeyId")
@@ -26,3 +25,4 @@ interface JourneyDao {
 
 
 }
+

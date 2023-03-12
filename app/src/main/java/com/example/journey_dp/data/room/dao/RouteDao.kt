@@ -1,5 +1,6 @@
 package com.example.journey_dp.data.room.dao
 
+
 import androidx.room.*
 import com.example.journey_dp.data.room.model.RouteEntity
 import kotlinx.coroutines.flow.Flow
@@ -21,3 +22,4 @@ interface RouteDao {
     @Query("DELETE FROM route WHERE journeyId = :journeyId")
     suspend fun deleteRoutesByJourneyId(journeyId: Long)
 }
+

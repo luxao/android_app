@@ -1,9 +1,7 @@
 package com.example.journey_dp.data.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.room.AppDatabase
 import com.example.journey_dp.data.room.model.JourneyEntity
@@ -14,6 +12,7 @@ import com.example.journey_dp.data.service.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
@@ -58,30 +57,17 @@ class Repository private constructor(
         return directions
     }
 
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    fun getAllJourneys(): Flow<MutableList<JourneyWithRoutes>> =
-//        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
-//            combine(journeys.map { journey ->
-//                database.daoJourney().getJourneyById(journey.id).map { newJourney ->
-//                    JourneyWithRoutes(newJourney, database.daoRoute().getRoutesByJourneyId(newJourney.id).firstOrNull() ?: mutableListOf())
-//                }
-//            }) { results ->
-//                results.toMutableList()
-//            }
-//        }.flowOn(Dispatchers.Default)
-
-    fun getAllJourneys(): LiveData<MutableList<JourneyWithRoutes>> {
-        return Transformations.switchMap(database.daoJourney().getAllJourneys()) { journeys ->
-            val journeyFlowList = journeys.map { journey ->
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getAllJourneys(): Flow<MutableList<JourneyWithRoutes>> =
+        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
+            combine(journeys.map { journey ->
                 database.daoJourney().getJourneyById(journey.id).map { newJourney ->
                     JourneyWithRoutes(newJourney, database.daoRoute().getRoutesByJourneyId(newJourney.id).firstOrNull() ?: mutableListOf())
                 }
-            }
-            combine(journeyFlowList) { results ->
+            }) { results ->
                 results.toMutableList()
-            }.asLiveData()
-        }
-    }
+            }
+        }.flowOn(Dispatchers.IO)
 
 
     suspend fun insertJourneyAndRoutes(journey: JourneyEntity, routes: MutableList<RouteEntity>) {
@@ -115,6 +101,8 @@ class Repository private constructor(
                 JourneyWithRoutes(journey, routes)
             }
         }
+
+
 
 
     companion object {
