@@ -15,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +23,6 @@ import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentPlanMapBinding
 import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
-
 import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
@@ -51,7 +49,6 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.maps.android.PolyUtil
-import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -59,7 +56,7 @@ import java.util.*
 //  FIXES: THIS WILL BE FIXED IN THE END
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  -----------------------------------------------------------------------------------
-//  SKUSIT UKLADAT ESTE POINTS, DURATION, DISTANCE ????
+//  REFACTOR and CLEAR CODE
 //  ________________________________________________________________________________________
 //  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
 //  OTESTOVANIE a OSETRENIE
@@ -466,7 +463,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     val points = result.routes[0].overviewPolyline.points
                                     val distance = result.routes[0].legs[0].distance.text
                                     val duration = result.routes[0].legs[0].duration.text
-
                                     val originName = result.routes[0].legs[0].startAddress
                                     val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
                                     val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)

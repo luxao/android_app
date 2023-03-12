@@ -287,10 +287,6 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
     }
 }
 
-fun saveJourney() {
-    // TODO: will be implemented
-}
-
 
 
 fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {

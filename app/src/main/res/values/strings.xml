@@ -89,5 +89,6 @@
     <string name="note_to_destination"> Note to destination :</string>
     <string name="deep_link_title">shared journey link</string>
     <string name="deep_link">https://planjourney/map?id=</string>
+    <string name="delete_item">Delete Item</string>
 
 </resources>
