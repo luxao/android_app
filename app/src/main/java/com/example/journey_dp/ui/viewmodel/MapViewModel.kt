@@ -30,6 +30,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var polylines = mutableListOf<Polyline>()
     var travelMode = mutableListOf<String>()
     var notes = mutableListOf<String>()
+    var destinationsName = mutableListOf<String>()
 
 
     var newOrigin = mutableListOf<String>()

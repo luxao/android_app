@@ -262,9 +262,11 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                                 origin = allDestinations[item],
                                 destination = allDestinations[item.plus(1)],
                                 travelMode = model.travelMode[item],
-                                note = if (model.notes.isEmpty()) "" else model.notes[item]
+                                note = if (model.notes.isEmpty()) "" else model.notes[item],
+                                originName = model.destinationsName[item],
+                                destinationName = model.destinationsName[item.plus(1)]
                             )
-                            buildUrl += allDestinations[item].plus(",${allDestinations[item.plus(1)].plus(",${model.travelMode[item]},")}")
+                            buildUrl += allDestinations[item].plus("|${allDestinations[item.plus(1)].plus("|${model.travelMode[item]}_")}")
                             routes.add(route)
                         }
                     }

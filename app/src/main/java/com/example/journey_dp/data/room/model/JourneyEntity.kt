@@ -35,7 +35,9 @@ data class RouteEntity(
     val origin: String,
     val destination: String,
     val travelMode: String,
-    val note: String
+    val note: String,
+    val originName: String,
+    val destinationName: String
 )
 
 data class JourneyWithRoutes(

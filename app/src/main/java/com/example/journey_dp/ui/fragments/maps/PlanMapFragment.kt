@@ -59,8 +59,8 @@ import java.util.*
 //  FIXES: THIS WILL BE FIXED IN THE END
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
 //  -----------------------------------------------------------------------------------
-//  SKUSIT UKLADAT ESTE POINTS, DURATION, DISTANCE
-//  pri kazdej karticke bude button na zdielanie (ikonka) kde sa pouzivatelovi zobrazia moznosti zdielania
+//  SKUSIT UKLADAT ESTE POINTS, DURATION, DISTANCE ????
+//  UKLADAT NAZVY ORIGIN A DESTINACIE PRE LEPSIE ZOBRAZENIE DETAILS
 //  ________________________________________________________________________________________
 //  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
 //  OTESTOVANIE a OSETRENIE
@@ -138,6 +138,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                         if (mapViewModel.newOrigin.isNotEmpty()) {
                             mapViewModel.newOrigin.removeAt(position)
+                            mapViewModel.destinationsName.removeAt(position.plus(1))
                         }
 
                         mapViewModel.placeIds.removeAt(position)
@@ -158,6 +159,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                     if (mapViewModel.changeUserLocation) {
                         binding.myLocationInput.setText(placeFromSearch.name!!)
+                        if (mapViewModel.destinationsName[0].isNotEmpty()) {
+                            mapViewModel.destinationsName.removeAt(0)
+                        }
+
                         mapViewModel.setLocation(placeFromSearch.latLng!!)
                         val marker = googleMap.addMarker(MarkerOptions().position(placeFromSearch.latLng!!).title(placeFromSearch.name!!).icon(
                             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
@@ -169,7 +174,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 15F
                             )
                         )
-
+                        mapViewModel.destinationsName.add(0, placeFromSearch.name!!)
                         val changedOrigin = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
                         if (mapViewModel.polylines.isNotEmpty()) {
                             val firstDestination = inputAdapter.getNewOrigin(0)
@@ -544,6 +549,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         val marker = mapViewModel.markers.getOrNull(0)
                         marker?.remove()
                         mapViewModel.markers.removeAt(0)
+                        mapViewModel.destinationsName.removeAt(0)
                     }
                     googleMap.apply {
                         val marker = addMarker(
@@ -555,6 +561,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         )
                         mapViewModel.markers.add(0, marker!!)
                         mapViewModel.setLocation(place.latLng!!)
+                        mapViewModel.destinationsName.add(0, place.name!!)
                         animateCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 place.latLng!!,
@@ -670,7 +677,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.setLocation(mapViewModel.defaultLocation)
-
+            mapViewModel.destinationsName.add(0,mapViewModel.defaultLocationName)
             val marker = googleMap.addMarker(
                 MarkerOptions()
                     .position(mapViewModel.defaultLocation)

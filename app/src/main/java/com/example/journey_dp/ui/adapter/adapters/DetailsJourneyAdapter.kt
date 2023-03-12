@@ -15,9 +15,9 @@ class DetailsJourneyAdapter() : ListAdapter<RouteEntity, DetailsJourneyAdapter.D
         fun bind(route: RouteEntity) {
             binding.route = route
             binding.originPointItem.text = nextABC().toString()
-            binding.originItem.text = route.origin
+            binding.originItem.text = route.originName
             binding.destinationPointItem.text = nextABC().toString()
-            binding.destinationItem.text = route.destination
+            binding.destinationItem.text = route.destinationName
             binding.noteToDestination.text = route.note
         }
     }

@@ -103,6 +103,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
         holder.inputText.isFocused.and(name.isNotBlank()).apply {
             model.newOrigin.add(holder.adapterPosition,destination)
+            model.destinationsName.add(holder.adapterPosition.plus(1), name)
             holder.inputText.setText(name)
         }
 
@@ -135,6 +136,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
                 if (model.newOrigin.isNotEmpty()) {
                     model.newOrigin.removeAt(holder.adapterPosition)
+                    model.destinationsName.removeAt(holder.adapterPosition.plus(1))
                 }
 
                 model.placeIds.removeAt(holder.adapterPosition)
