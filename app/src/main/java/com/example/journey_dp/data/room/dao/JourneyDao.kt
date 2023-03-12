@@ -22,4 +22,7 @@ interface JourneyDao {
 
     @Query("SELECT * FROM journey WHERE id = :journeyId")
     fun getJourneyById(journeyId: Long): Flow<JourneyEntity>
+
+    @Query("DELETE FROM journey WHERE id = :journeyId")
+    suspend fun deleteJourney(journeyId: Long)
 }

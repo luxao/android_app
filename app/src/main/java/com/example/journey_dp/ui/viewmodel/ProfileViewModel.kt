@@ -42,9 +42,9 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-    fun deleteJourneyWithDestinations(journey: JourneyEntity) {
+    fun deleteJourneyWithDestinations(journeyId: Long) {
         viewModelScope.launch {
-            repository.deleteJourneyAndRoutes(journey)
+            repository.deleteJourneyAndRoutes(journeyId)
         }
     }
 

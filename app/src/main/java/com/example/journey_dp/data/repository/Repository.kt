@@ -78,9 +78,9 @@ class Repository private constructor(
         database.daoRoute().insert(routes)
     }
 
-    suspend fun deleteJourneyAndRoutes(journey: JourneyEntity) {
-        database.daoRoute().deleteRoutesByJourneyId(journey.id)
-        database.daoJourney().delete(journey)
+    suspend fun deleteJourneyAndRoutes(journeyId: Long) {
+        database.daoRoute().deleteRoutesByJourneyId(journeyId)
+        database.daoJourney().deleteJourney(journeyId)
     }
 
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.journey_dp.R
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
@@ -82,6 +83,8 @@ class ProfileFragment : Fragment() {
         }
 
         journeysAdapter = JourneysAdapter(
+            context = requireContext(),
+            model = profileViewModel,
             journeyEventListener = JourneyEventListener { journeyId: Long, shared: String, flag: JourneyEnum ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
                 if (flag == JourneyEnum.SHOW) {
@@ -105,7 +108,6 @@ class ProfileFragment : Fragment() {
             }
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
-
 
 
         profileViewModel.viewModelScope.launch {

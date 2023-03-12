@@ -24,6 +24,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/journey_card"
+        android:tag="@{journey.journey.id}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentPadding="4dp"
