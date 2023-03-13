@@ -85,6 +85,11 @@ fun setLogOut(
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             // Handle the menu selection
             return when (menuItem.itemId) {
+                R.id.user_profile -> {
+                    val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
                 R.id.action_logout -> {
                     logOurDialog(activity, view, context)
                     true
@@ -291,42 +296,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
     }
 }
 
-//fun getCityName(context: Context, latitude: Double, longitude: Double, key: String): String? {
-//    val geoApiContext = GeoApiContext.Builder()
-//        .apiKey(key)
-//        .build()
-//
-//    val latLng = LatLng(latitude, longitude)
-//    val results: Array<GeocodingResult>?
-//    try {
-//        results = GeocodingApi
-//            .reverseGeocode(geoApiContext, latLng)
-//            .bounds(latLng, latLng)
-//            .await()
-//    } catch (e: ApiException) {
-//        e.printStackTrace()
-//        return null
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//        return null
-//    } catch (e: InterruptedException) {
-//        e.printStackTrace()
-//        return null
-//    }
-//    if (results != null && results.isNotEmpty()) {
-//        for (result in results) {
-//            val addressComponents = result.addressComponents
-//            if (addressComponents != null && addressComponents.isNotEmpty()) {
-//                for (component in addressComponents) {
-//                    if (component.types.toString().contains("locality")) {
-//                        return component.longName
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    return null
-//}
+
 
 
 
@@ -456,33 +426,3 @@ fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {
 
 
 
-
-
-
-// Odlozeny kod
-//                    val placeFields = listOf(Place.Field.NAME, Place.Field.LAT_LNG)
-//                    val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
-//                    val placeResponse = places.findCurrentPlace(request)
-//                    placeResponse.addOnCompleteListener { task ->
-//                        if (task.isSuccessful) {
-//                            val response = task.result
-//                            for (placeLikelihood: PlaceLikelihood in response?.placeLikelihoods ?: emptyList()) {
-//                                googleMap.addMarker(
-//                                MarkerOptions()
-//                                    .position(LatLng(placeLikelihood.place.latLng!!.latitude,placeLikelihood.place.latLng!!.longitude))
-//                                    .title(placeLikelihood.place.name)
-//                            )
-//
-//                            googleMap.animateCamera(
-//                                CameraUpdateFactory.newLatLngZoom(
-//                                    LatLng(placeLikelihood.place.latLng!!.latitude,placeLikelihood.place.latLng!!.longitude),
-//                                    15F
-//                                ))
-//                            }
-//                        } else {
-//                            val exception = task.exception
-//                            if (exception is ApiException) {
-//                                Log.e("PlacesError", "Place not found: ${exception.statusCode}")
-//                            }
-//                        }
-//                    }

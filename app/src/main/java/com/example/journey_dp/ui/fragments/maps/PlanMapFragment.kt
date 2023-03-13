@@ -494,8 +494,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                                     Log.i("MYTEST", "CREATED ROUTE : $detailsOfRoute")
 
-                                    showMarkerOnChoosePlace(originName!!,originLatLng, 0)
-                                    showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
+                                    showMarkerOnChoosePlace(originName,originLatLng, 0)
+                                    showMarkerOnChoosePlace(destinationName,destinationLatLng, 0)
                                     Log.i("MYTEST","POINTS : $points")
                                     Log.i("MYTEST","DIST AND DUR : $distance and $duration")
                                     Log.i("MYTEST","ICON : ${mapViewModel.iconType.value!!}")
@@ -516,10 +516,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         }
                     }
                 }
-
-
             }
-
 
             binding.backToProfileBtn.setOnClickListener {
                 val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
