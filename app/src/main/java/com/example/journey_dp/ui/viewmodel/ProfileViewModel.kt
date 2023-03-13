@@ -6,6 +6,7 @@ import com.example.journey_dp.data.repository.Repository
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -24,9 +25,12 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-
     val journeysWithDestinations: LiveData<MutableList<JourneyWithRoutes>> =
-        repository.getAllJourneys().asLiveData()
+        repository.getAllJourneysWithRoutes().asLiveData()
+
+
+    val journeys: LiveData<MutableList<JourneyEntity>> = repository.getAllJourneys().asLiveData()
+
 
 
     fun insertJourneyWithDestinations(journey: JourneyEntity, routes: MutableList<RouteEntity>) {
@@ -48,7 +52,7 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
     }
 
     fun refreshData() {
-        repository.getAllJourneys()
+        repository.getAllJourneysWithRoutes()
     }
 
 

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
+import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.databinding.JourneyCardItemBinding
 import com.example.journey_dp.ui.adapter.events.JourneyEventListener
@@ -25,26 +26,26 @@ class JourneysAdapter(
     private val context: Context,
     private val model: ProfileViewModel,
     private val journeyEventListener: JourneyEventListener
-) : ListAdapter<JourneyWithRoutes, JourneysAdapter.JourneyItemViewHolder>(DiffCallback) {
+) : ListAdapter<JourneyEntity, JourneysAdapter.JourneyItemViewHolder>(DiffCallback) {
 
     class JourneyItemViewHolder(var binding: JourneyCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(journey: JourneyWithRoutes,journeyEventListener: JourneyEventListener) {
+        fun bind(journey: JourneyEntity,journeyEventListener: JourneyEventListener) {
             binding.journey = journey
             binding.journeyEventListener = journeyEventListener
-            binding.journeyNameItem.text = journey.journey.name
-            binding.totalDistanceItem.text =  journey.journey.totalDistance
-            binding.totalDurationItem.text = journey.journey.totalDuration
-            binding.totalDestinationsItem.text = journey.journey.numberOfDestinations.toString()
+            binding.journeyNameItem.text = journey.name
+            binding.totalDistanceItem.text =  journey.totalDistance
+            binding.totalDurationItem.text = journey.totalDuration
+            binding.totalDestinationsItem.text = journey.numberOfDestinations.toString()
         }
     }
 
-    companion object DiffCallback: DiffUtil.ItemCallback<JourneyWithRoutes>() {
-        override fun areItemsTheSame(oldItem: JourneyWithRoutes, newItem: JourneyWithRoutes): Boolean {
-            return oldItem.journey.id == newItem.journey.id
+    companion object DiffCallback: DiffUtil.ItemCallback<JourneyEntity>() {
+        override fun areItemsTheSame(oldItem: JourneyEntity, newItem: JourneyEntity): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: JourneyWithRoutes, newItem: JourneyWithRoutes): Boolean {
+        override fun areContentsTheSame(oldItem: JourneyEntity, newItem: JourneyEntity): Boolean {
             return oldItem == newItem
         }
 
@@ -61,7 +62,7 @@ class JourneysAdapter(
     }
 
     override fun onBindViewHolder(holder: JourneyItemViewHolder, position: Int) {
-        val journey: JourneyWithRoutes = getItem(position)
+        val journey: JourneyEntity = getItem(position)
         holder.bind(journey,journeyEventListener)
     }
 
@@ -87,9 +88,9 @@ class JourneysAdapter(
                 .setMessage("Are you sure you want to delete this item?")
                 .setPositiveButton("Yes") { _, _ ->
                     if (journey != null) {
-                        Log.i("MYTEST", "SWIPED ID: ${journey.journey.id}")
-                        Log.i("MYTEST", "SWIPED : ${journey.journey}")
-                        model.deleteJourneyWithDestinations(journey = journey.journey)
+                        Log.i("MYTEST", "SWIPED ID: ${journey.id}")
+                        Log.i("MYTEST", "SWIPED : $journey")
+                        model.deleteJourneyWithDestinations(journey = journey)
                     }
                     else {
                         Toast.makeText(context, "Please Try Again in a minute", Toast.LENGTH_SHORT).show()

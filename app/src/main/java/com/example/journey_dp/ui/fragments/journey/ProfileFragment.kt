@@ -110,7 +110,7 @@ class ProfileFragment : Fragment() {
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
 
-        profileViewModel.journeysWithDestinations.observe(viewLifecycleOwner) {
+        profileViewModel.journeys.observe(viewLifecycleOwner) {
                 if (it != null) {
                     Log.i("MYTEST","HALO : $it")
                     binding.numberOfJourneys.text = getString(R.string.total_destinations).plus(" ${it.size}")
@@ -119,11 +119,11 @@ class ProfileFragment : Fragment() {
                     var durationMinutes = 0
                     var days = 0
                     it.map { item ->
-                        val tmp = item.journey.totalDistance.split("km")[0].split(":")[1].trim()
+                        val tmp = item.totalDistance.split("km")[0].split(":")[1].trim()
                         distance += ((tmp.split(",")[0]).plus('.').plus(tmp.split(",")[1])).toDouble()
-                        val hours = item.journey.totalDuration.split(" h")[0].split(":")[1].trim().toInt()
+                        val hours = item.totalDuration.split(" h")[0].split(":")[1].trim().toInt()
                         durationHours += hours
-                        val minutes = item.journey.totalDuration.split("h")[1].split("m")[0].trim().toInt()
+                        val minutes = item.totalDuration.split("h")[1].split("m")[0].trim().toInt()
                         durationMinutes += minutes
                     }
                     if (durationHours >= 24) {

@@ -7,7 +7,7 @@
 
         <variable
             name="journey"
-            type="com.example.journey_dp.data.room.model.JourneyWithRoutes" />
+            type="com.example.journey_dp.data.room.model.JourneyEntity" />
 
         <variable
             name="flagJourney"
@@ -24,7 +24,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/journey_card"
-        android:tag="@{journey.journey.id}"
+        android:tag="@{journey.id}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentPadding="4dp"
@@ -161,7 +161,7 @@
                     android:backgroundTint="@color/cardview_dark_background"
                     style="?attr/materialButtonStyle"
                     android:layout_marginRight="8dp"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, journey.journey.sharedUrl, flagJourney.SHOW)}"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.id, journey.sharedUrl, flagJourney.SHOW)}"
                     />
 
 
@@ -175,7 +175,7 @@
                     android:drawableLeft="@drawable/ic_baseline_share_24"
                     android:drawableTint="@color/white"
                     android:text="@string/share"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, journey.journey.sharedUrl, flagJourney.SHARE)}"
+                    android:onClick="@{() -> journeyEventListener.onClick(journey.id, journey.sharedUrl, flagJourney.SHARE)}"
                     tools:ignore="TextContrastCheck" />
 
             </LinearLayout>

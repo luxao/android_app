@@ -126,7 +126,7 @@
                 android:layout_height="match_parent"
                 android:padding="16dp"
                 android:scrollbars="vertical"
-                app:journeys_list="@{model.journeysWithDestinations}"
+                app:journeys_list="@{model.journeys}"
                 app:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/journey_card_item" />
 

@@ -58,7 +58,7 @@ class Repository private constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAllJourneys(): Flow<MutableList<JourneyWithRoutes>> =
+    fun getAllJourneysWithRoutes(): Flow<MutableList<JourneyWithRoutes>> =
         database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
             combine(journeys.map { journey ->
                 database.daoJourney().getJourneyById(journey.id).map { newJourney ->
@@ -68,6 +68,8 @@ class Repository private constructor(
                 results.toMutableList()
             }
         }.flowOn(Dispatchers.IO)
+
+    fun getAllJourneys(): Flow<MutableList<JourneyEntity>> = database.daoJourney().getAllJourneys()
 
 
     suspend fun insertJourneyAndRoutes(journey: JourneyEntity, routes: MutableList<RouteEntity>) {
