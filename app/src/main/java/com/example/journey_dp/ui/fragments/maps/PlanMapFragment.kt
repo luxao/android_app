@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
+import com.example.journey_dp.data.room.model.RouteEntity
 import com.example.journey_dp.databinding.FragmentPlanMapBinding
 import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
 import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
@@ -28,10 +29,7 @@ import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
-import com.example.journey_dp.utils.Injection
-import com.example.journey_dp.utils.calculateDistanceAndDuration
-import com.example.journey_dp.utils.journeyNameDialog
-import com.example.journey_dp.utils.setMapMenu
+import com.example.journey_dp.utils.*
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -443,6 +441,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val orig = route[0]
                 val dest = route[1]
                 val travel = route[2]
+
                 if ((travel == "bus").or(travel == "train")) {
                     mode = "transit"
                     transit = travel
@@ -451,6 +450,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     mode = travel
                     transit = ""
                 }
+
                 mapViewModel.getDirections(orig, dest, mode, transit, key)
 
                 mapViewModel.directions.observe(viewLifecycleOwner) { result ->
@@ -482,6 +482,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         Log.e("MYTEST", "ERROR : ${e.message}")
                     }
                 }
+            }
+
+            binding.backToProfileBtn.setOnClickListener {
+                val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
             }
         }
 

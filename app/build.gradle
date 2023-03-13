@@ -44,7 +44,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.3'
 
 
-
     //location service
     implementation("com.google.android.gms:play-services-location:21.0.1")
 

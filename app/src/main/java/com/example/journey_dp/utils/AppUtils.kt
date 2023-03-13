@@ -35,11 +35,15 @@ import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 
+
+
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 
+
 import org.jsoup.Jsoup
+import java.io.IOException
 import java.net.URLDecoder
 import java.util.*
 
@@ -286,6 +290,43 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
         builder.create()
     }
 }
+
+//fun getCityName(context: Context, latitude: Double, longitude: Double, key: String): String? {
+//    val geoApiContext = GeoApiContext.Builder()
+//        .apiKey(key)
+//        .build()
+//
+//    val latLng = LatLng(latitude, longitude)
+//    val results: Array<GeocodingResult>?
+//    try {
+//        results = GeocodingApi
+//            .reverseGeocode(geoApiContext, latLng)
+//            .bounds(latLng, latLng)
+//            .await()
+//    } catch (e: ApiException) {
+//        e.printStackTrace()
+//        return null
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//        return null
+//    } catch (e: InterruptedException) {
+//        e.printStackTrace()
+//        return null
+//    }
+//    if (results != null && results.isNotEmpty()) {
+//        for (result in results) {
+//            val addressComponents = result.addressComponents
+//            if (addressComponents != null && addressComponents.isNotEmpty()) {
+//                for (component in addressComponents) {
+//                    if (component.types.toString().contains("locality")) {
+//                        return component.longName
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    return null
+//}
 
 
 
