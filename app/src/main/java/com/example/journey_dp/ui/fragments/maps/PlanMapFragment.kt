@@ -427,6 +427,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isNotBlank()).and(navigationArgs.flag == "share")) {
             Log.i("MYTEST", "SHARED URL: ${navigationArgs.shared}")
+
+            detailsJourneyAdapter = DetailsJourneyAdapter()
+
             binding.searchWrapper.visibility = View.GONE
             binding.layoutForAddStation.visibility = View.GONE
             binding.planWrapper.visibility = View.GONE
@@ -435,7 +438,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             var mode = ""
             var transit = ""
             var comparison: Boolean
+            val detailsOfRoute: MutableList<RouteEntity> = mutableListOf()
             val routes = navigationArgs.shared.split("_")
+            var counter = 1L
+            var position = 0
+            detailsRecyclerView.layoutManager = LinearLayoutManager(context)
             for (element in routes) {
                 val route = element.split("|")
                 val orig = route[0]
@@ -453,6 +460,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                 mapViewModel.getDirections(orig, dest, mode, transit, key)
 
+                detailsRecyclerView.adapter = detailsJourneyAdapter
+
                 mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                     try {
                         if (result != null) {
@@ -468,6 +477,23 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
                                     val destinationName = result.routes[0].legs[0].endAddress
                                     Log.i("MYTEST", "VYKRESLUJEM  , $originName, $destinationName, $mode , $transit")
+                                    Log.i("MYTEST", "COUNTER : $counter and $position")
+                                    val routeDetail = RouteEntity(
+                                        id = counter,
+                                        journeyId = counter,
+                                        origin = originLatLng.toString(),
+                                        destination = destinationLatLng.toString(),
+                                        travelMode = travel,
+                                        note = "",
+                                        originName = originName!!,
+                                        destinationName = destinationName!!
+                                    )
+                                    detailsOfRoute.add(position, routeDetail)
+                                    counter += 1L
+                                    position += 1
+
+                                    Log.i("MYTEST", "CREATED ROUTE : $detailsOfRoute")
+
                                     showMarkerOnChoosePlace(originName!!,originLatLng, 0)
                                     showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
                                     Log.i("MYTEST","POINTS : $points")
@@ -481,8 +507,19 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         Log.e("MYTEST", "ERROR : ${e.localizedMessage}")
                         Log.e("MYTEST", "ERROR : ${e.message}")
                     }
+                    if (detailsOfRoute.size == routes.size) {
+                        if (detailsOfRoute[0].originName.contains(mapViewModel.defaultLocationName)) {
+                            detailsJourneyAdapter.submitList(detailsOfRoute)
+                        }
+                        else {
+                            detailsJourneyAdapter.submitList(detailsOfRoute.asReversed())
+                        }
+                    }
                 }
+
+
             }
+
 
             binding.backToProfileBtn.setOnClickListener {
                 val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
