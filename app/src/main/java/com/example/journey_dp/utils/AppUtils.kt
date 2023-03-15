@@ -34,12 +34,13 @@ import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
-
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 
 
 import org.jsoup.Jsoup
@@ -67,7 +68,9 @@ fun setLogOut(
     activity: FragmentActivity,
     lifecycleOwner: LifecycleOwner,
     context: Context,
-    view: View
+    view: View,
+    googleSignInClient: GoogleSignInClient,
+    auth: FirebaseAuth
 ) {
     // The usage of an interface lets you inject your own implementation
     val menuHost: MenuHost = activity
@@ -91,6 +94,8 @@ fun setLogOut(
                     true
                 }
                 R.id.action_logout -> {
+                    auth.signOut()
+                    googleSignInClient.signOut()
                     logOurDialog(activity, view, context)
                     true
                 }

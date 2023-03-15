@@ -90,5 +90,7 @@
     <string name="deep_link_title">shared journey link</string>
     <string name="deep_link">https://planjourney/map?id=</string>
     <string name="delete_item">Delete Item</string>
-
+    <string name="google_login">Google Login</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="web_client_id">243740589989-skcc6ml25gdmg2kbosi3kas1d0dfk1ff.apps.googleusercontent.com</string>
 </resources>
