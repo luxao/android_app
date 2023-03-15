@@ -22,7 +22,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 
 class LoginFragment : Fragment() {
     private var _binding : FragmentLoginBinding? = null
@@ -34,6 +35,12 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+
+        if (GoogleSignIn.getLastSignedInAccount(requireContext()) != null) {
+            val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
+            findNavController().navigate(action)
+        }
+
     }
 
     override fun onCreateView(
@@ -48,6 +55,7 @@ class LoginFragment : Fragment() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
 
 
         return binding.root
@@ -94,7 +102,7 @@ class LoginFragment : Fragment() {
                     Log.i("MYTEST", user?.photoUrl.toString())
 
                     val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
-                    view?.findNavController()?.navigate(action)
+                    findNavController().navigate(action)
                 } else {
                     // Sign-In failure, display a message to the user
                     Log.w("MYTEST", "signInWithCredential:failure", task.exception)
