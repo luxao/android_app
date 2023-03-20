@@ -31,6 +31,8 @@ import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.*
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -67,6 +69,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private var _binding : FragmentPlanMapBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val navigationArgs: PlanMapFragmentArgs by navArgs()
 
@@ -391,6 +395,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             this,
             Injection.provideViewModelFactory(requireContext())
         )[ProfileViewModel::class.java]
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
     }
 
 
@@ -416,6 +423,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
 
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
@@ -765,20 +774,45 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
-            mapViewModel.setLocation(mapViewModel.defaultLocation)
-            mapViewModel.destinationsName.add(0,mapViewModel.defaultLocationName)
-            val marker = googleMap.addMarker(
-                MarkerOptions()
-                    .position(mapViewModel.defaultLocation)
-                    .title(mapViewModel.defaultLocationName)
-            )
-            mapViewModel.markers.add(0,marker!!)
-            googleMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    mapViewModel.defaultLocation,
-                    15F
-                ))
-            binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+            if (checkPermissions(requireContext())) {
+                Log.i("MYTEST", "LOCATION IS : ${mapViewModel.location.value!!.latitude} and ${mapViewModel.location.value!!.longitude}")
+                Log.i("MYTEST", "LOCATION IS : ${mapViewModel.locationName}")
+
+                val name = mapViewModel.locationName
+                val latLng = mapViewModel.location.value
+
+                mapViewModel.destinationsName.add(0,name)
+                val marker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(latLng!!)
+                        .title(name)
+                )
+                mapViewModel.markers.add(0,marker!!)
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        latLng,
+                        15F
+                    ))
+                binding.myLocationInput.setText(name)
+            }
+            else {
+                mapViewModel.setLocation(mapViewModel.defaultLocation)
+                mapViewModel.destinationsName.add(0,mapViewModel.defaultLocationName)
+                val marker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(mapViewModel.defaultLocation)
+                        .title(mapViewModel.defaultLocationName)
+                )
+                mapViewModel.markers.add(0,marker!!)
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        mapViewModel.defaultLocation,
+                        15F
+                    ))
+                binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+            }
+
+
         }
 
         googleMap.uiSettings.isZoomControlsEnabled = true

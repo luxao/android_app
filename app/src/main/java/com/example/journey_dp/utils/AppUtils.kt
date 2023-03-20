@@ -1,12 +1,18 @@
 package com.example.journey_dp.utils
 
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 
 import android.content.Intent
+import android.content.pm.PackageManager
 
 import android.graphics.Color
+import android.location.Address
+import android.location.Geocoder
+import android.location.LocationManager
 import android.net.Uri
 
 import android.util.Log
@@ -19,6 +25,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toIcon
 
 import androidx.core.view.MenuHost
@@ -39,6 +46,9 @@ import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.model.LatLng
 
 
 import com.google.android.gms.maps.model.Marker
@@ -348,103 +358,62 @@ fun logOurDialog(activity: FragmentActivity,view: View, context: Context) {
     alertDialog.show()
 }
 
-
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    private val locationPermissionRequest = registerForActivityResult(
-//        ActivityResultContracts.RequestMultiplePermissions()
-//    ) { permissions ->
-//        when {
-//            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-//                // Precise location access granted.
-//                getLocation(requireContext())
-//            }
-//            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-//                // Only approximate location access granted.
-//                getLocation(requireContext())
-//            }
-//            else -> {
-//            // No location access granted.
-//                permissionStateDenied = true
-//
-//            }
-//        }
-//    }
-
 // Check if location is enabled or not and return boolean
-//    private fun isLocationEnabled(): Boolean {
-//        val locationManager: LocationManager = context?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-//            LocationManager.NETWORK_PROVIDER
-//        )
-//    }
-
-//    private fun checkPermissions(context: Context): Boolean {
-//        return ActivityCompat.checkSelfPermission(
-//            context,
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//            context,
-//            Manifest.permission.ACCESS_COARSE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED
-//    }
-
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    private fun requestPermissions() {
-//        locationPermissionRequest.launch(arrayOf(
-//            Manifest.permission.ACCESS_FINE_LOCATION,
-//            Manifest.permission.ACCESS_COARSE_LOCATION))
-//    }
+fun isLocationEnabled(context: Context): Boolean {
+    val locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+        LocationManager.NETWORK_PROVIDER
+    )
+}
 
 
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    @SuppressLint("MissingPermission")
-//    fun getLocation(context: Context){
-//        if (checkPermissions(context)) {
-//                if (isLocationEnabled()) {
-//                    fusedLocationProviderClient.getCurrentLocation(
-//                        CurrentLocationRequest.Builder().setDurationMillis(30000)
-//                            .setMaxUpdateAgeMillis(60000).build(), null
-//                    ).addOnSuccessListener {
-//                        it?.let {
-//                            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-//
-//
-//                            // DEPRECATED FOR TIRAMISU VERSION
-//                            val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
-//                            val cityName: String = addresses!![0].getAddressLine(0)
-////                            lifecycleScope.launch {
-////                                geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
-////                                    cityName = addresses[0].getAddressLine(0)
-////                                }
-////                            }
-//
-//                            googleMap.clear()
-//                            markers.removeAt(0)
-//                            val marker = googleMap.addMarker(
-//                                MarkerOptions()
-//                                    .position(LatLng(it.latitude, it.longitude))
-//                                    .title(cityName)
-//                            )
-//
-//                            markers.add(0,marker!!)
-//                            googleMap.animateCamera(
-//                                CameraUpdateFactory.newLatLngZoom(
-//                                    LatLng(it.latitude, it.longitude),
-//                                    15F
-//                                ))
-//                            binding.myLocationInput.setText(cityName)
-//                        }
-//                    }
-//                }
-//            else {
-//                Toast.makeText(context,"Please turn on location", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//        else {
-//            requestPermissions()
-//        }
-//    }
+fun checkPermissions(context: Context): Boolean {
+    return ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+}
 
+
+
+@SuppressLint("MissingPermission")
+fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProviderClient, model: MapViewModel){
+    if (checkPermissions(context)) {
+        if (isLocationEnabled(context)) {
+            fusedLocationProviderClient.getCurrentLocation(
+                CurrentLocationRequest.Builder().setDurationMillis(30000)
+                    .setMaxUpdateAgeMillis(60000).build(), null
+            ).addOnSuccessListener {
+                it?.let {
+                    val geocoder = Geocoder(context, Locale.getDefault())
+                    // DEPRECATED FOR TIRAMISU VERSION
+                    val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
+                    val cityName: String = addresses!![0].getAddressLine(0)
+                    Log.i("MYTEST", "LOCATION IS : $cityName")
+                    Log.i("MYTEST", "LOCATION IS : ${it.latitude} and ${it.longitude}")
+
+                    model.locationName = cityName
+                    model.setLocation(LatLng(it.latitude, it.longitude))
+                    Log.i("MYTEST", "LOCATION IS : ${model.location.value!!.latitude} and ${model.location.value!!.longitude}")
+                    Log.i("MYTEST", "LOCATION IS : ${model.locationName}")
+
+//                            lifecycleScope.launch {
+//                                geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
+//                                    cityName = addresses[0].getAddressLine(0)
+//                                }
+//                            }
+                }
+            }
+        }
+        else {
+            Toast.makeText(context,"Please turn on location", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+}
 
 
 

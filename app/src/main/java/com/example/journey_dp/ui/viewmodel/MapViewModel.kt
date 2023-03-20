@@ -21,7 +21,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         get() = _message
 
     val defaultLocation = LatLng(48.14838109999999, 17.1080601)
-
     val defaultLocationName = "Bratislava"
 
     var inputs = mutableListOf<LinearLayout>()
@@ -63,6 +62,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     private var _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
 
+    var locationName = ""
+
 
     fun getDirections(
         origin: String, destination: String,
@@ -100,6 +101,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     fun setLine(lineValue: String) {
         this.checkLine = lineValue
     }
+
 
     fun setLocation(coordinates: LatLng) {
         _location.value = coordinates
