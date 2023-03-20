@@ -14,17 +14,21 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.drawable.toIcon
 
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.get
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
@@ -83,6 +87,13 @@ fun setLogOut(
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             // Add menu items here
             menuInflater.inflate(R.menu.log_out, menu)
+            val profileItem = menu.findItem(R.id.user_profile)
+            val imageItem = profileItem?.actionView as ImageView
+            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+            imageItem.setOnClickListener {
+                val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
+            }
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -171,14 +182,23 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
 
 
 fun setMapMenu(
+    context: Context,
     activity: FragmentActivity,
     lifecycleOwner: LifecycleOwner,
-    view: View
+    view: View,
+    auth: FirebaseAuth
 ) {
     val menuHost: MenuHost = activity
     menuHost.addMenuProvider(object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.top_map_menu, menu)
+            val profileItem = menu.findItem(R.id.profile)
+            val imageItem = profileItem?.actionView as ImageView
+            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+            imageItem.setOnClickListener {
+                val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
+            }
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

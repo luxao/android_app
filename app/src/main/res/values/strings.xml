@@ -72,7 +72,7 @@
     <string name="journey_for_adventure">Journey for adventure</string>
     <string name="settings">Settings</string>
     <string name="profile_picture">profile picture</string>
-    <string name="test_name_of_user">Lukas Lobl</string>
+    <string name="test_name_of_user">Luxao</string>
     <string name="test_number">All journeys : 10</string>
     <string name="test_journey_name">Journey 1</string>
     <string name="totalDistance_test">Total Distance: 650,59 km</string>
@@ -93,4 +93,5 @@
     <string name="google_login">Google Login</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="web_client_id">243740589989-skcc6ml25gdmg2kbosi3kas1d0dfk1ff.apps.googleusercontent.com</string>
+    <string name="profile_item">profile item</string>
 </resources>

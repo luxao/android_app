@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.toIcon
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
@@ -20,6 +22,10 @@ import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.JourneyEnum
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlin.math.round
 
@@ -30,10 +36,12 @@ class ProfileFragment : Fragment() {
     private lateinit var journeysAdapter: JourneysAdapter
     private var _binding : FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        auth = Firebase.auth
         profileViewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext())
@@ -54,6 +62,10 @@ class ProfileFragment : Fragment() {
 
         binding.lifecycleOwner = this@ProfileFragment.viewLifecycleOwner
         binding.model = this@ProfileFragment.profileViewModel
+
+
+        Glide.with(requireContext()).load(auth.currentUser?.photoUrl).circleCrop().into(binding.profilePicture)
+        binding.nameOfUser.text = auth.currentUser?.displayName
 
         binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
@@ -143,6 +155,11 @@ class ProfileFragment : Fragment() {
             }
 
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

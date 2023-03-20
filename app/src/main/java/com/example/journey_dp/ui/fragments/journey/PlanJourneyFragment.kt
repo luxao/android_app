@@ -6,8 +6,10 @@ import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentPlanJourneyBinding
@@ -63,6 +65,7 @@ class PlanJourneyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.startPlan.setOnClickListener {
             val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
                 id = 0L,
@@ -71,5 +74,10 @@ class PlanJourneyFragment : Fragment() {
             )
             view.findNavController().navigate(action)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

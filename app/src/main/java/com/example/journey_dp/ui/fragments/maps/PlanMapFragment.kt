@@ -46,6 +46,9 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.maps.android.PolyUtil
 import java.util.*
 
@@ -53,10 +56,7 @@ import java.util.*
 // TODO: """
 //  FIXES: THIS WILL BE FIXED IN THE END
 //  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
-//  -----------------------------------------------------------------------------------
 //  REFACTOR and CLEAR CODE
-//  ________________________________________________________________________________________
-//  Ako posledne spravit logovanie do aplikacie cez gmail ucet - vyuzitie firebase
 //  OTESTOVANIE a OSETRENIE
 //  STYLOVANIE
 //  """
@@ -66,6 +66,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     // Declaration of binding fragment
     private var _binding : FragmentPlanMapBinding? = null
     private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
 
     private val navigationArgs: PlanMapFragmentArgs by navArgs()
 
@@ -378,6 +379,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
 
         mapViewModel = ViewModelProvider(
@@ -399,9 +401,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     ): View {
         _binding = FragmentPlanMapBinding.inflate(inflater, container, false)
         setMapMenu(
+            context = requireContext(),
             activity = requireActivity() ,
             lifecycleOwner = viewLifecycleOwner,
-            view = binding.root
+            view = binding.root,
+            auth = auth
         )
         recyclerView = binding.inputsList
         recyclerViewSteps = binding.recyclerViewSteps

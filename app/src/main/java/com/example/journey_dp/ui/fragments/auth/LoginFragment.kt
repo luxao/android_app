@@ -33,30 +33,13 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        Log.i(TAG, "ResultCODE = ${result.resultCode}")
-        when (result.resultCode) {
-            Activity.RESULT_OK -> {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                if (task.isSuccessful) {
-                    val account = task.getResult(ApiException::class.java)!!
-                    firebaseAuthWithGoogle(account.idToken!!)
-                }
-                else {
-                    Log.w(TAG, "Google sign in failed")
-                }
-            }
-            Activity.RESULT_CANCELED -> {
-                Log.w(TAG, "Google sign was canceled")
-            }
-        }
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
 
-        if (GoogleSignIn.getLastSignedInAccount(requireContext()) != null) {
+        if (auth.currentUser != null) {
             val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
             findNavController().navigate(action)
         }
@@ -81,6 +64,23 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                if (task.isSuccessful) {
+                    val account = task.getResult(ApiException::class.java)!!
+                    firebaseAuthWithGoogle(account.idToken!!)
+                }
+                else {
+                    Log.w(TAG, "Google sign in failed")
+                }
+            }
+            Activity.RESULT_CANCELED -> {
+                Log.w(TAG, "Google sign was canceled")
+            }
+        }
+    }
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
@@ -96,22 +96,6 @@ class LoginFragment : Fragment() {
     }
 
 
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (requestCode == RC_SIGN_IN) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            try {
-//                // Google Sign-In was successful, authenticate with Firebase
-//                val account = task.getResult(ApiException::class.java)!!
-//                firebaseAuthWithGoogle(account.idToken!!)
-//            } catch (e: ApiException) {
-//                // Google Sign-In failed, update UI accordingly
-//                Log.w(TAG, "Google sign in failed", e)
-//            }
-//        }
-//    }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -136,6 +120,11 @@ class LoginFragment : Fragment() {
     companion object {
         private const val RC_SIGN_IN = 9001
         private const val TAG = "MYTEST"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

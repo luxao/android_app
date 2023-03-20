@@ -12,10 +12,11 @@
         />
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/me"
+        android:icon="@drawable/ic_person_24"
+        android:iconTint="@color/white"
         android:title="@string/profile"
-        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         android:contentDescription="@string/profile"
+        app:actionViewClass="android.widget.ImageView"
         app:showAsAction="ifRoom"
         />
 </menu>
