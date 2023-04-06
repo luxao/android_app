@@ -1,4 +1,4 @@
-# DP ANDROID APP PROJECT
+# THESIS ANDROID APP PROJECT
 
 # Versioning
 - Versioning is in syntax X.Y.Z where:
