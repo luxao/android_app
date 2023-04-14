@@ -232,9 +232,14 @@ fun setMapMenu(
 }
 
 var currentChar = 'A'
+
+fun setAgainCharacter() {
+    currentChar = 'A'
+}
 fun nextABC(): Char {
     val result = currentChar
     currentChar = currentChar.plus(1)
+    Log.i("MYTEST", "CHARACTER AFTER CHANGE: $currentChar")
     return result
 }
 

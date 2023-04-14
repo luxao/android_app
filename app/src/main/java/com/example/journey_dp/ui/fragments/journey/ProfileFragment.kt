@@ -22,6 +22,7 @@ import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.JourneyEnum
+import com.example.journey_dp.utils.setAgainCharacter
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -102,6 +103,7 @@ class ProfileFragment : Fragment() {
             journeyEventListener = JourneyEventListener { journeyId: Long, shared: String, flag: JourneyEnum ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
                 if (flag == JourneyEnum.SHOW) {
+                    setAgainCharacter()
                     findNavController()
                         .navigate(
                             ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
@@ -112,6 +114,7 @@ class ProfileFragment : Fragment() {
                         )
                 }
                 if (flag == JourneyEnum.SHARE) {
+                    setAgainCharacter()
                     val sendIntent: Intent = Intent().apply {
                         action = Intent.ACTION_SEND
                         putExtra(Intent.EXTRA_TEXT, shared)

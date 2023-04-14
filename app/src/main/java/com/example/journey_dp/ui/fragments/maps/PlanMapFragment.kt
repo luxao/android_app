@@ -630,9 +630,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, listFields)
                 .build(requireContext())
-//            val search =
-//                childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-//            search.setPlaceFields(listFields)
+
 
             searchView = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
             searchView.setPlaceFields(listFields)

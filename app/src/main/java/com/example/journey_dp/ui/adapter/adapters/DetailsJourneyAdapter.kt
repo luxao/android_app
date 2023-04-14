@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.adapter.adapters
 
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil

@@ -70,34 +70,6 @@ class Repository private constructor(
         }.flowOn(Dispatchers.IO)
 
 
-//    fun getAllJourneysWithRoutes2(): Flow<MutableList<JourneyWithRoutes>> =
-//        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
-//            val flows = journeys.map { journey ->
-//                val journeyFlow = database.daoJourney().getJourneyById(journey.id)
-//                val routeFlow = database.daoRoute().getRoutesByJourneyId(journey.id).map { routes ->
-//                    JourneyWithRoutes(journey = journey, routes = routes.toMutableList())
-//                }
-//                combine(journeyFlow, routeFlow) { journey, routes -> JourneyWithRoutes(journey, routes.routes) }
-//            }
-//            combine(flows) { results -> results.toMutableList() }
-//        }.flowOn(Dispatchers.IO)
-
-
-//    fun getAllJourneysWithRoutes3(): Flow<MutableList<JourneyWithRoutes>> =
-//        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
-//            combine(journeys.map { journey ->
-//                database.daoJourney().getJourneyById(journey.id).map { newJourney ->
-//                    JourneyWithRoutes(
-//                        newJourney,
-//                        database.daoRoute().getRoutesByJourneyId(newJourney.id).firstOrNull() ?: mutableListOf()
-//                    )
-//                }
-//            }) { results ->
-//                results.toMutableList()
-//            }
-//        }.flowOn(Dispatchers.IO)
-
-
 
     fun getAllJourneys(user:String): Flow<MutableList<JourneyEntity>> = database.daoJourney().getAllJourneys(user)
 
