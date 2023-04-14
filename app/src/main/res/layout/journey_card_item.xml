@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <data>
-
         <variable
             name="journey"
             type="com.example.journey_dp.data.room.model.JourneyEntity" />

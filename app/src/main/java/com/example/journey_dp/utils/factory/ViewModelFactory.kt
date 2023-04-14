@@ -6,8 +6,9 @@ import com.example.journey_dp.data.repository.Repository
 
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
-class ViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
+class ViewModelFactory(private val repository: Repository, private val auth: FirebaseAuth) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
         if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
@@ -17,7 +18,7 @@ class ViewModelFactory(private val repository: Repository) : ViewModelProvider.F
 
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ProfileViewModel(repository) as T
+            return ProfileViewModel(repository,auth) as T
         }
 
 

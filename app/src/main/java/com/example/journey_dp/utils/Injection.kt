@@ -7,6 +7,7 @@ import com.example.journey_dp.data.room.AppDatabase
 import com.example.journey_dp.data.service.ApiService
 
 import com.example.journey_dp.utils.factory.ViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 
 object Injection {
@@ -20,9 +21,10 @@ object Injection {
         return Repository.getInstance(ApiService.create(),provideCache(context))
     }
 
-    fun provideViewModelFactory(context: Context): ViewModelProvider.Factory {
+    fun provideViewModelFactory(context: Context, auth: FirebaseAuth): ViewModelProvider.Factory {
         return ViewModelFactory(
-            provideDataRepository(context)
+            provideDataRepository(context),
+            auth = auth
         )
     }
 }

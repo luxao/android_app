@@ -20,7 +20,6 @@ interface ApiService {
 
     companion object {
         private const val BASE_URL = "https://maps.googleapis.com/maps/api/"
-
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)

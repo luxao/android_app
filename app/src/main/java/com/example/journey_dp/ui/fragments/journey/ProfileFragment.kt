@@ -45,7 +45,7 @@ class ProfileFragment : Fragment() {
         auth = Firebase.auth
         profileViewModel = ViewModelProvider(
             this,
-            Injection.provideViewModelFactory(requireContext())
+            Injection.provideViewModelFactory(requireContext(),auth)
         )[ProfileViewModel::class.java]
     }
 
@@ -68,6 +68,7 @@ class ProfileFragment : Fragment() {
         Glide.with(requireContext()).load(auth.currentUser?.photoUrl).circleCrop().into(binding.profilePicture)
         binding.nameOfUser.text = auth.currentUser?.displayName
 
+        Log.i("MYTEST","USER NAME: ${profileViewModel.userEmail}")
         binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.homeJourney -> {

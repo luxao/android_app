@@ -58,8 +58,8 @@ class Repository private constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAllJourneysWithRoutes(): Flow<MutableList<JourneyWithRoutes>> =
-        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
+    fun getAllJourneysWithRoutes(user: String): Flow<MutableList<JourneyWithRoutes>> =
+        database.daoJourney().getAllJourneys(user).flatMapLatest { journeys ->
             combine(journeys.map { journey ->
                 database.daoJourney().getJourneyById(journey.id).map { newJourney ->
                     JourneyWithRoutes(newJourney, database.daoRoute().getRoutesByJourneyId(newJourney.id).firstOrNull() ?: mutableListOf())
@@ -69,7 +69,37 @@ class Repository private constructor(
             }
         }.flowOn(Dispatchers.IO)
 
-    fun getAllJourneys(): Flow<MutableList<JourneyEntity>> = database.daoJourney().getAllJourneys()
+
+//    fun getAllJourneysWithRoutes2(): Flow<MutableList<JourneyWithRoutes>> =
+//        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
+//            val flows = journeys.map { journey ->
+//                val journeyFlow = database.daoJourney().getJourneyById(journey.id)
+//                val routeFlow = database.daoRoute().getRoutesByJourneyId(journey.id).map { routes ->
+//                    JourneyWithRoutes(journey = journey, routes = routes.toMutableList())
+//                }
+//                combine(journeyFlow, routeFlow) { journey, routes -> JourneyWithRoutes(journey, routes.routes) }
+//            }
+//            combine(flows) { results -> results.toMutableList() }
+//        }.flowOn(Dispatchers.IO)
+
+
+//    fun getAllJourneysWithRoutes3(): Flow<MutableList<JourneyWithRoutes>> =
+//        database.daoJourney().getAllJourneys().flatMapLatest { journeys ->
+//            combine(journeys.map { journey ->
+//                database.daoJourney().getJourneyById(journey.id).map { newJourney ->
+//                    JourneyWithRoutes(
+//                        newJourney,
+//                        database.daoRoute().getRoutesByJourneyId(newJourney.id).firstOrNull() ?: mutableListOf()
+//                    )
+//                }
+//            }) { results ->
+//                results.toMutableList()
+//            }
+//        }.flowOn(Dispatchers.IO)
+
+
+
+    fun getAllJourneys(user:String): Flow<MutableList<JourneyEntity>> = database.daoJourney().getAllJourneys(user)
 
 
     suspend fun insertJourneyAndRoutes(journey: JourneyEntity, routes: MutableList<RouteEntity>) {

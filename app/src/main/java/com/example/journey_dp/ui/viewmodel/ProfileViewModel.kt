@@ -6,19 +6,21 @@ import com.example.journey_dp.data.repository.Repository
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val repository: Repository): ViewModel() {
+class ProfileViewModel(private val repository: Repository, private val auth: FirebaseAuth): ViewModel() {
 
+    val userEmail = auth.currentUser!!.email
     val journeyId = MutableLiveData<Long>()
 
     val journeyWithRoutes: LiveData<JourneyWithRoutes> = journeyId.switchMap {
         liveData {
             it?.let { it ->
                 val journey = repository.getJourneyWithRoutesById(it)
-                journey.first()?.let { value ->
+                journey.first().let { value ->
                     emit(value)
                 }
             }
@@ -26,10 +28,10 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
     }
 
     val journeysWithDestinations: LiveData<MutableList<JourneyWithRoutes>> =
-        repository.getAllJourneysWithRoutes().asLiveData()
+        repository.getAllJourneysWithRoutes(userEmail.toString()).asLiveData()
 
 
-    val journeys: LiveData<MutableList<JourneyEntity>> = repository.getAllJourneys().asLiveData()
+    val journeys: LiveData<MutableList<JourneyEntity>> = repository.getAllJourneys(userEmail.toString()).asLiveData()
 
 
 
@@ -52,7 +54,7 @@ class ProfileViewModel(private val repository: Repository): ViewModel() {
     }
 
     fun refreshData() {
-        repository.getAllJourneysWithRoutes()
+        repository.getAllJourneysWithRoutes(userEmail.toString())
     }
 
 

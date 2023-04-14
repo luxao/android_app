@@ -81,7 +81,7 @@ class PlanJourneyFragment : Fragment() {
 
         model = ViewModelProvider(
             this,
-            Injection.provideViewModelFactory(requireContext())
+            Injection.provideViewModelFactory(requireContext(),auth)
         )[MapViewModel::class.java]
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())

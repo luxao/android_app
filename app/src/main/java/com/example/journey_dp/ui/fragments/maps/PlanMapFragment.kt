@@ -57,7 +57,7 @@ import java.util.*
 
 // TODO: """
 //  FIXES: THIS WILL BE FIXED IN THE END
-//  DOKONCENIE ZISKANIA AKTUALNEJ POLOHY USERA
+//  Skontrolovat ziskavania polohy po zmene polohy
 //  REFACTOR and CLEAR CODE
 //  OTESTOVANIE a OSETRENIE
 //  STYLOVANIE
@@ -388,12 +388,12 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         mapViewModel = ViewModelProvider(
             this,
-            Injection.provideViewModelFactory(requireContext())
+            Injection.provideViewModelFactory(requireContext(),auth)
         )[MapViewModel::class.java]
 
         profileViewModel = ViewModelProvider(
             this,
-            Injection.provideViewModelFactory(requireContext())
+            Injection.provideViewModelFactory(requireContext(),auth)
         )[ProfileViewModel::class.java]
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -630,11 +630,12 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, listFields)
                 .build(requireContext())
-            val search =
-                childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-            search.setPlaceFields(listFields)
+//            val search =
+//                childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+//            search.setPlaceFields(listFields)
 
-            searchView = search
+            searchView = childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+            searchView.setPlaceFields(listFields)
             searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
 
 
@@ -737,7 +738,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 mapViewModel,
                 profileViewModel,
                 inputAdapter.getAllDestinations(),
-                binding.root
+                binding.root,
+                auth
             )
             binding.finishButton.setOnClickListener {
                 nameDialog.show()
@@ -775,25 +777,29 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
-                Log.i("MYTEST", "LOCATION IS : ${mapViewModel.location.value!!.latitude} and ${mapViewModel.location.value!!.longitude}")
-                Log.i("MYTEST", "LOCATION IS : ${mapViewModel.locationName}")
+                if (mapViewModel.location.value != null) {
 
-                val name = mapViewModel.locationName
-                val latLng = mapViewModel.location.value
+                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.location.value!!.latitude} and ${mapViewModel.location.value!!.longitude}")
+                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.locationName}")
 
-                mapViewModel.destinationsName.add(0,name)
-                val marker = googleMap.addMarker(
-                    MarkerOptions()
-                        .position(latLng!!)
-                        .title(name)
-                )
-                mapViewModel.markers.add(0,marker!!)
-                googleMap.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        latLng,
-                        15F
-                    ))
-                binding.myLocationInput.setText(name)
+                    val name = mapViewModel.locationName
+                    val latLng = mapViewModel.location.value
+
+                    mapViewModel.destinationsName.add(0,name)
+                    val marker = googleMap.addMarker(
+                        MarkerOptions()
+                            .position(latLng!!)
+                            .title(name)
+                    )
+                    mapViewModel.markers.add(0,marker!!)
+                    googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            latLng,
+                            15F
+                        ))
+                    binding.myLocationInput.setText(name)
+                }
+
             }
             else {
                 mapViewModel.setLocation(mapViewModel.defaultLocation)

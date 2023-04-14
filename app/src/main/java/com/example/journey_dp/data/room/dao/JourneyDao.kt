@@ -16,8 +16,8 @@ interface JourneyDao {
     @Delete
     suspend fun delete(journey: JourneyEntity)
 
-    @Query("SELECT * FROM journey")
-    fun getAllJourneys(): Flow<MutableList<JourneyEntity>>
+    @Query("SELECT * FROM journey WHERE user = :user")
+    fun getAllJourneys(user: String): Flow<MutableList<JourneyEntity>>
 
 
     @Query("SELECT * FROM journey WHERE id = :journeyId")

@@ -7,6 +7,7 @@ import androidx.room.*
 data class JourneyEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
+    val user: String,
     val name: String,
     val totalDistance: String,
     val totalDuration: String,

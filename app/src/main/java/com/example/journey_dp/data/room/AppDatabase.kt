@@ -11,7 +11,7 @@ import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
 
 
-@Database(entities = [JourneyEntity::class, RouteEntity::class], version = 2, exportSchema = false)
+@Database(entities = [JourneyEntity::class, RouteEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun daoJourney(): JourneyDao
     abstract fun daoRoute(): RouteDao

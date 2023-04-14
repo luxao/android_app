@@ -261,7 +261,7 @@ fun showWebPageIntent(uriWeb: String, context: Context) {
 
 fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                       profileViewModel: ProfileViewModel,
-                      allDestinations: MutableList<String>, mapView: View): Dialog {
+                      allDestinations: MutableList<String>, mapView: View, auth: FirebaseAuth): Dialog {
     return activity.let {
         val builder = AlertDialog.Builder(it)
         val inflater = activity.layoutInflater;
@@ -289,8 +289,9 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                     model.travelMode.removeAll { travel -> travel.isBlank() }
                     val parsedOrigin = model.location.value?.latitude.toString().plus(",${model.location.value?.longitude.toString()}")
                     allDestinations.add(0,parsedOrigin)
-
+                    val userEmail = auth.currentUser!!.email
                     val journey = JourneyEntity(
+                        user = userEmail.toString(),
                         name = journeyName.text.toString(),
                         totalDistance = totalDistance.text.toString(),
                         totalDuration = totalDuration.text.toString(),
