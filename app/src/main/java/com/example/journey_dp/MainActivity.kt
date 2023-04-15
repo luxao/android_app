@@ -1,6 +1,9 @@
 package com.example.journey_dp
 
+import android.Manifest.permission.ACCESS_NETWORK_STATE
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
@@ -13,7 +16,8 @@ import com.example.journey_dp.databinding.ActivityMainBinding
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragment
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.journey.ProfileFragmentDirections
-
+import android.app.AlertDialog
+import android.net.NetworkCapabilities
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -21,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -42,6 +48,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

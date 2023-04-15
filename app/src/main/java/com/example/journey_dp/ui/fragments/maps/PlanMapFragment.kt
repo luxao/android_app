@@ -772,13 +772,19 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     override fun onMapReady(mapG: GoogleMap) {
         googleMap = mapG
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-
+        var flag = false
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
-                if (mapViewModel.location.value != null) {
+                mapViewModel.location.observe(viewLifecycleOwner) {
+                    if (it != null) {
+                        flag = true
+                    }
+                }
+                if (flag) {
 
-                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.location.value!!.latitude} and ${mapViewModel.location.value!!.longitude}")
-                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.locationName}")
+//                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.location.value!!.latitude} and ${mapViewModel.location.value!!.longitude}")
+//                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.locationName}")
+
 
                     val name = mapViewModel.locationName
                     val latLng = mapViewModel.location.value
@@ -842,7 +848,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.checkLine = line
             if (line.isNotBlank()) {
-                Log.i("MYTEST", "CREATE POLYLINE line is : $line")
+//                Log.i("MYTEST", "CREATE POLYLINE line is : $line")
                 val polyline: List<LatLng> = PolyUtil.decode(line)
 
                 val options = PolylineOptions()

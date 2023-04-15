@@ -2,6 +2,7 @@ package com.example.journey_dp.data.repository
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.journey_dp.data.domain.ApiResponse
 import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.room.AppDatabase
 import com.example.journey_dp.data.room.model.JourneyEntity
@@ -14,6 +15,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.IOException
 
 class Repository private constructor(
@@ -56,6 +60,29 @@ class Repository private constructor(
         }
         return directions
     }
+
+
+    fun getWikiInfo(title: String, callback: (String) -> Unit, errorCallback: (String) -> Unit) {
+        service.getPageIntro(titles = title).enqueue(object : Callback<ApiResponse> {
+            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                if (response.isSuccessful) {
+                    val apiResponse = response.body()
+                    val pages = apiResponse?.query?.pages ?: emptyMap()
+                    val page = pages.values.firstOrNull()
+                    val extract = page?.extract ?: ""
+                    callback(extract)
+                } else {
+                    errorCallback("Error fetching data from Wikipedia API")
+                }
+            }
+
+            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                errorCallback("Error fetching data from Wikipedia API: ${t.message}")
+            }
+        })
+    }
+
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAllJourneysWithRoutes(user: String): Flow<MutableList<JourneyWithRoutes>> =

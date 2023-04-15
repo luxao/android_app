@@ -67,6 +67,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
         val backButton = viewMap.findViewById<ImageView>(R.id.back_button)
         val placeWrapper = viewMap.findViewById<ConstraintLayout>(R.id.place_wrapper)
         val placeName = viewMap.findViewById<TextView>(R.id.place_name)
+        val wikiInfo = viewMap.findViewById<TextView>(R.id.wiki_info)
         val address = viewMap.findViewById<TextView>(R.id.address)
         val phone = viewMap.findViewById<TextView>(R.id.phone_number)
         val uriOfPage = viewMap.findViewById<TextView>(R.id.uri_of_page)
@@ -79,19 +80,20 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
 
         idPosition = holder.adapterPosition
-
+        Log.i("MYTEST", "HOLDER ADAPTER POSITION ON START ${holder.adapterPosition} and IDPOS : $idPosition")
 
         model.bitmapList.add(holder.adapterPosition, mutableListOf())
         model.addressList.add(holder.adapterPosition, "")
         model.phoneList.add(holder.adapterPosition, "")
         model.websiteList.add(holder.adapterPosition, "")
+        model.wikiInfoList.add(holder.adapterPosition, "")
 
         holder.inputText.focusable = View.NOT_FOCUSABLE
 
         holder.inputText.setOnClickListener {
             idPosition = holder.adapterPosition
             if (holder.inputText.text.toString().isNotBlank()) {
-                Log.i("MYTEST", "ALL DESTINATIONS ${model.newOrigin}")
+//                Log.i("MYTEST", "ALL DESTINATIONS ${model.newOrigin}")
 
                 model.changeBetweenWaypoints = true
             }
@@ -109,6 +111,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
         holder.deleteButton.setOnClickListener{
             idPosition = holder.adapterPosition.minus(1)
+            Log.i("MYTEST", "HOLDER ADAPTER POSITION AFTER DELETE ${holder.adapterPosition} and IDPOS : $idPosition")
+
             Log.i("MYTEST","POSITION AND ADAPTER POSITION : $idPosition and ${holder.adapterPosition}")
             if (model.stepsList.isNotEmpty().and(holder.inputText.text.toString().isNotBlank())) {
                 model.stepsList.removeAt(holder.adapterPosition)
@@ -152,7 +156,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 model.addressList.removeAt(holder.adapterPosition)
                 model.phoneList.removeAt(holder.adapterPosition)
                 model.websiteList.removeAt(holder.adapterPosition)
-
+                model.wikiInfoList.removeAt(holder.adapterPosition)
 
                 Log.i("MYTEST", "MARKERS: ${model.markers}")
                 Log.i("MYTEST", "INFOMARKERS: ${model.infoMarkers}")
@@ -163,7 +167,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             if (idPosition == -1) {
                 model.setLine("")
                 model.setDirectionsToStart()
-                Log.i("MYTEST", "CHECKLINE: ${model.checkLine}")
+//                Log.i("MYTEST", "CHECKLINE: ${model.checkLine}")
                 hideElements(viewMap)
             }
 
@@ -197,9 +201,9 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             if (holder.inputText.text.toString().isNotBlank()) {
                 placeName.text = holder.inputText.text.toString()
 
-                Log.i("MYTEST", "PLACE ID: ${model.placeIds} and ${holder.adapterPosition}")
+//                Log.i("MYTEST", "PLACE ID: ${model.placeIds} and ${holder.adapterPosition}")
                 placeId = model.placeIds[holder.adapterPosition]
-                Log.i("MYTEST", "PLACE ID SELECTED: $placeId ")
+//                Log.i("MYTEST", "PLACE ID SELECTED: $placeId ")
                 Log.i("MYTEST", "Bitmap list ${model.bitmapList} ")
 
                 if (model.bitmapList[holder.adapterPosition].isNotEmpty()) {
@@ -232,12 +236,32 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                     else {
                         uriOfPage.visibility = View.GONE
                     }
+
+                    if (model.wikiInfoList[holder.adapterPosition].isNotEmpty()) {
+                        wikiInfo.text = model.wikiInfoList[holder.adapterPosition]
+                    }
+                    else {
+                        wikiInfo.visibility = View.GONE
+                    }
                 }
 
                 else {
                     val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
 
                     val request = FetchPlaceRequest.newInstance(placeId, placeFields)
+
+                    model.getWikiInfo(
+                        placeName.text.toString(),
+                        successCallback = { cityInfo ->
+                            wikiInfo.text = cityInfo
+                            model.wikiInfoList.add(holder.adapterPosition, cityInfo)
+                        },
+                        errorCallback = { error ->
+                            Log.e("MYTEST", "ERROR : $error")
+                            wikiInfo.visibility = View.GONE
+                        }
+                    )
+
 
                     placesClient.fetchPlace(request)
                         .addOnSuccessListener { response: FetchPlaceResponse ->
@@ -272,6 +296,7 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                                 uriOfPage.visibility = View.GONE
                             }
 
+
                             // Get the photo metadata.
                             val metadata = place.photoMetadatas
                             if (metadata == null || metadata.isEmpty()) {
@@ -280,6 +305,8 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                             }
 
                             loadingAnimation.playAnimation()
+
+
                             for (meta in metadata) {
                                 // Get the attribution text.
                                 val attributions = meta?.attributions
@@ -310,7 +337,13 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                                     if (bitmaps.size == metadata.size) {
                                         animationWrapper.visibility = View.GONE
                                         placeWrapper.visibility = View.VISIBLE
-                                        model.bitmapList.add(holder.adapterPosition, bitmaps)
+                                        if (holder.adapterPosition != -1) {
+                                            model.bitmapList.add(holder.adapterPosition, bitmaps)
+                                        }
+                                        else {
+                                            Log.i("MYTEST", "NOT ADD TO BITMAPLIST : ${holder.adapterPosition}")
+                                        }
+
                                         recyclerViewImage.adapter = imageAdapter
                                         imageAdapter.submitList(bitmaps)
                                         Log.i("MYTEST", "Bitmap list $bitmaps ")
@@ -392,11 +425,11 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
             }
 
             noteAddButton.setOnClickListener {
-                Log.i("MYTEST", "TEXTAREA : ${textArea.text.toString()}")
-                Log.i("MYTEST", "USER NAME : ${userName.text.toString()}")
-                Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
-                Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
-                Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
+//                Log.i("MYTEST", "TEXTAREA : ${textArea.text.toString()}")
+//                Log.i("MYTEST", "USER NAME : ${userName.text.toString()}")
+//                Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
+//                Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
+//                Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
                 var noteInfo = ""
                 noteInfo = if (checkReservation.isChecked) {
                     userName.text.toString() + "-" + dateFrom.text.toString() + "-" + dateTo.text.toString() + "-" + payment.text.toString()

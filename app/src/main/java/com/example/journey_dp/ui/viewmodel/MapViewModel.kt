@@ -2,7 +2,9 @@ package com.example.journey_dp.ui.viewmodel
 
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.domain.Step
@@ -38,6 +40,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var addressList = mutableListOf<String>()
     var phoneList = mutableListOf<String>()
     var websiteList = mutableListOf<String>()
+    var wikiInfoList = mutableListOf<String>()
 
 
     var checkLine: String = ""
@@ -63,6 +66,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     val location: LiveData<LatLng> get() = _location
 
     var locationName = ""
+    var cityInfo = ""
 
 
     fun getDirections(
@@ -89,6 +93,27 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
+    fun getWikiInfo(
+        title: String,
+        successCallback: (String) -> Unit,
+        errorCallback: (String) -> Unit
+    ) {
+        repository.getWikiInfo(
+            title = title,
+            callback = { extract ->
+                cityInfo = extract
+                Log.i("MYTEST", "FROM VIEWMODEL : $cityInfo")
+                successCallback(cityInfo)
+
+            },
+            errorCallback = {error ->
+                Log.e("MYTEST" ,"ERROR : $error")
+                errorCallback(error)
+            }
+        )
+
+    }
+
     fun setDirectionsToStart() {
         _directions.value = null
     }
@@ -101,6 +126,8 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     fun setLine(lineValue: String) {
         this.checkLine = lineValue
     }
+
+
 
 
     fun setLocation(coordinates: LatLng) {

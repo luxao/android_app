@@ -1,6 +1,8 @@
 package com.example.journey_dp.data.service
 
+import com.example.journey_dp.data.domain.ApiResponse
 import com.example.journey_dp.data.domain.DirectionsResponse
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,6 +19,20 @@ interface ApiService {
         @Query("transit_mode") transit: String,
         @Query("key") apiKey: String
     ): Response<DirectionsResponse>
+
+    @GET("https://en.wikipedia.org/w/api.php")
+    @Headers(
+        "Content-Type: application/json; charset=utf-8"
+    )
+    fun getPageIntro(
+        @Query("action") action: String = "query",
+        @Query("prop") prop: String = "extracts",
+        @Query("format") format: String = "json",
+        @Query("titles") titles: String,
+        @Query("exintro") exintro: Boolean = true,
+        @Query("explaintext") explaintext: Boolean = true,
+        @Query("exsentences") exsentences: Int = 3
+    ): Call<ApiResponse>
 
     companion object {
         private const val BASE_URL = "https://maps.googleapis.com/maps/api/"

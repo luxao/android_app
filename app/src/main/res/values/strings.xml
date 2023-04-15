@@ -94,4 +94,7 @@
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="web_client_id">243740589989-skcc6ml25gdmg2kbosi3kas1d0dfk1ff.apps.googleusercontent.com</string>
     <string name="profile_item">profile item</string>
+    <string name="information_from_wikipedia">information from wikipedia</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

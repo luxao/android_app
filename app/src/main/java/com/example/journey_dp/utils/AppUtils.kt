@@ -145,6 +145,7 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
         var durationItemHour = 0
         var durationItemMinutes = ""
 
+
         if (it.snippet!!.contains("day").or(it.snippet!!.contains("days"))) {
             val tmp = it.snippet!!.split(" ")
             totalDurationHours += tmp[0].toInt().times(24)
@@ -164,7 +165,12 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
 
         else if (it.snippet!!.contains("hour")) {
             durationItemHour = it.snippet!!.split("hour")[0].trim().toInt()
-            durationItemMinutes = it.snippet!!.split("hour")[1].split("mins")[0]
+            durationItemMinutes = if (it.snippet!!.contains("min")) {
+                it.snippet!!.split("hour")[1].split("min")[0]
+            } else {
+                it.snippet!!.split("hour")[1].split("mins")[0]
+            }
+
             if (durationItemMinutes.contains("s")) {
                 durationItemMinutes = durationItemMinutes.split("s")[1]
             }
@@ -172,7 +178,12 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
             totalDurationMinutes += durationItemMinutes.trim().toInt()
         }
         else {
-            durationItemMinutes = it.snippet!!.split("mins")[0]
+            durationItemMinutes = if (it.snippet!!.contains("min")) {
+                it.snippet!!.split("min")[0]
+            } else {
+                it.snippet!!.split("mins")[0]
+            }
+
             totalDurationMinutes += durationItemMinutes.trim().toInt()
         }
         totalDistance += distanceItem
@@ -321,8 +332,8 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                         }
                     }
                     journey.sharedUrl = buildUrl.dropLast(1)
-                    Log.i("MYTEST", "$journey")
-                    Log.i("MYTEST", "$routes")
+//                    Log.i("MYTEST", "$journey")
+//                    Log.i("MYTEST", "$routes")
                     profileViewModel.insertJourneyWithDestinations(journey, routes)
                     val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                     mapView.findNavController().navigate(action)
@@ -398,13 +409,13 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
                     // DEPRECATED FOR TIRAMISU VERSION
                     val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
                     val cityName: String = addresses!![0].getAddressLine(0)
-                    Log.i("MYTEST", "LOCATION IS : $cityName")
-                    Log.i("MYTEST", "LOCATION IS : ${it.latitude} and ${it.longitude}")
+//                    Log.i("MYTEST", "LOCATION IS : $cityName")
+//                    Log.i("MYTEST", "LOCATION IS : ${it.latitude} and ${it.longitude}")
 
                     model.locationName = cityName
                     model.setLocation(LatLng(it.latitude, it.longitude))
-                    Log.i("MYTEST", "LOCATION IS : ${model.location.value!!.latitude} and ${model.location.value!!.longitude}")
-                    Log.i("MYTEST", "LOCATION IS : ${model.locationName}")
+//                    Log.i("MYTEST", "LOCATION IS : ${model.location.value!!.latitude} and ${model.location.value!!.longitude}")
+//                    Log.i("MYTEST", "LOCATION IS : ${model.locationName}")
 
 //                            lifecycleScope.launch {
 //                                geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
