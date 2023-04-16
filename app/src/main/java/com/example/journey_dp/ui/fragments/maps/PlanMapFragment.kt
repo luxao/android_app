@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
+import com.example.journey_dp.data.domain.DistanceDuration
+import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.room.model.RouteEntity
 import com.example.journey_dp.databinding.FragmentPlanMapBinding
 import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
@@ -207,6 +209,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                                 mapViewModel.changeUserLocation = false
                                             }
                                         }
+                                        else {
+                                            Toast.makeText(context,"This path does not exist ! Please choose another transport", Toast.LENGTH_LONG).show()
+                                        }
 
                                     }
                                 }
@@ -250,6 +255,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                             comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
                                             if (!comparison) {
                                                 Log.i("MYTEST", "SPUSTAM DIRECTIONS")
+
+
                                                 points = result.routes[0].overviewPolyline.points
                                                 distance = result.routes[0].legs[0].distance.text
                                                 duration = result.routes[0].legs[0].duration.text
@@ -264,7 +271,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                                 mapViewModel.stepsList.add(result.routes[0].legs[0].steps)
                                                 stepsAdapter.submitList(result.routes[0].legs[0].steps)
                                                 showRouteOnMap(points, distance, duration, iconType,position)
+
                                             }
+                                        }
+                                        else {
+                                            Toast.makeText(context,"This path does not exist ! Please choose another transport", Toast.LENGTH_LONG).show()
                                         }
 
                                     }
@@ -831,16 +842,13 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         var flag = false
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
+                getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
                 mapViewModel.location.observe(viewLifecycleOwner) {
                     if (it != null) {
                         flag = true
                     }
                 }
-                if (flag) {
-
-//                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.location.value!!.latitude} and ${mapViewModel.location.value!!.longitude}")
-//                    Log.i("MYTEST", "LOCATION IS : ${mapViewModel.locationName}")
-
+                if (flag.or(mapViewModel.location.value != null)) {
 
                     val name = mapViewModel.locationName
                     val latLng = mapViewModel.location.value
