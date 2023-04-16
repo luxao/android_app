@@ -636,7 +636,7 @@
                 <CheckBox
                     android:id="@+id/reservation_check"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:checked="false"
                     android:text="@string/reservation"
                     android:layout_marginStart="32dp"
@@ -783,6 +783,7 @@
                         android:id="@+id/value_of_reservation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
                         android:textColorHint="#757575" />
                 </com.google.android.material.textfield.TextInputLayout>
 

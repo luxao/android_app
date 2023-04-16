@@ -724,6 +724,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 inputAdapter = InputAdapter(
                     binding.root,
+                    requireContext(),
                     stepsAdapter,
                     recyclerViewSteps,
                     imageAdapter,

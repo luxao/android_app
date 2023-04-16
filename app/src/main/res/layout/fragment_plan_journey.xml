@@ -18,7 +18,7 @@
            android:fontFamily="monospace"
            android:text="@string/plane_your"
            android:textColor="@color/white"
-           android:textFontWeight="@integer/material_motion_duration_long_1"
+           android:textStyle="bold"
            android:textSize="38sp"
            app:layout_constraintBottom_toBottomOf="parent"
            app:layout_constraintEnd_toEndOf="parent"

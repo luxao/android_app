@@ -2,6 +2,8 @@ package com.example.journey_dp.ui.adapter.adapters
 
 
 import android.animation.Animator
+import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.util.Log
@@ -33,12 +35,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.util.*
 
 
-class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView,
+class InputAdapter(private var viewMap: View, private var cont: Context, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView,
                    private var imageAdapter: ImageAdapter, private var recyclerViewImage: RecyclerView,
                    private var name: String, private var destination: String,
-                   private val model: MapViewModel,private var standardBottomSheetBehavior: BottomSheetBehavior<View>,
+                   private val model: MapViewModel, private var standardBottomSheetBehavior: BottomSheetBehavior<View>,
                    private val placesClient: PlacesClient,
                    private val result: ActivityResultLauncher<Intent>) : RecyclerView.Adapter<InputAdapter.ViewHolder>() {
 
@@ -413,6 +416,24 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                         dateFromLayout.visibility = View.VISIBLE
                         dateToLayout.visibility = View.VISIBLE
                         paymentLayout.visibility = View.VISIBLE
+                        dateFrom.focusable = View.NOT_FOCUSABLE
+                        dateTo.focusable = View.NOT_FOCUSABLE
+                        dateFrom.setOnClickListener {
+                            val datePicker = DatePickerDialog(cont)
+                            datePicker.setOnDateSetListener { _, year, month, dayOfMonth ->
+                                val selectedDate = "${dayOfMonth}/${month+1}/${year}"
+                                dateFrom.setText(selectedDate)
+                            }
+                            datePicker.show()
+                        }
+                        dateTo.setOnClickListener {
+                            val datePicker2 = DatePickerDialog(cont)
+                            datePicker2.setOnDateSetListener { _, year, month, dayOfMonth ->
+                                val selectedDate2 = "${dayOfMonth}/${month+1}/${year}"
+                                dateTo.setText(selectedDate2)
+                            }
+                            datePicker2.show()
+                        }
                     }
                     else {
                         userNameLayout.visibility = View.GONE
@@ -424,11 +445,6 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
                 }
 
                 noteAddButton.setOnClickListener {
-    //                Log.i("MYTEST", "TEXTAREA : ${textArea.text.toString()}")
-    //                Log.i("MYTEST", "USER NAME : ${userName.text.toString()}")
-    //                Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
-    //                Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
-    //                Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
                     var noteInfo = ""
                     noteInfo = if (checkReservation.isChecked) {
                         userName.text.toString() + "-" + dateFrom.text.toString() + "-" + dateTo.text.toString() + "-" + payment.text.toString()
