@@ -57,399 +57,425 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.inputText.id = position
-        holder.inputText.tag = "input_$position"
-
-        val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-
-        val planWrapper = viewMap.findViewById<ConstraintLayout>(R.id.plan_wrapper)
-        val userLocationInput = viewMap.findViewById<LinearLayout>(R.id.layout_for_add_station)
-        val backButton = viewMap.findViewById<ImageView>(R.id.back_button)
-        val placeWrapper = viewMap.findViewById<ConstraintLayout>(R.id.place_wrapper)
-        val placeName = viewMap.findViewById<TextView>(R.id.place_name)
-        val wikiInfo = viewMap.findViewById<TextView>(R.id.wiki_info)
-        val address = viewMap.findViewById<TextView>(R.id.address)
-        val phone = viewMap.findViewById<TextView>(R.id.phone_number)
-        val uriOfPage = viewMap.findViewById<TextView>(R.id.uri_of_page)
-        val animationWrapper = viewMap.findViewById<ConstraintLayout>(R.id.animation_layout)
-        val notesWrapper = viewMap.findViewById<ConstraintLayout>(R.id.notes_wrapper)
-        val loadingAnimation = viewMap.findViewById<LottieAnimationView>(R.id.loading_animation)
-        val backButtonNote = viewMap.findViewById<ImageView>(R.id.back_button_from_notes)
-        var bitmaps: MutableList<Bitmap>
-        var placeId = ""
+        try {
 
 
-        idPosition = holder.adapterPosition
-        Log.i("MYTEST", "HOLDER ADAPTER POSITION ON START ${holder.adapterPosition} and IDPOS : $idPosition")
+            holder.inputText.id = position
+            holder.inputText.tag = "input_$position"
 
-        model.bitmapList.add(holder.adapterPosition, mutableListOf())
-        model.addressList.add(holder.adapterPosition, "")
-        model.phoneList.add(holder.adapterPosition, "")
-        model.websiteList.add(holder.adapterPosition, "")
-        model.wikiInfoList.add(holder.adapterPosition, "")
+            val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
-        holder.inputText.focusable = View.NOT_FOCUSABLE
+            val planWrapper = viewMap.findViewById<ConstraintLayout>(R.id.plan_wrapper)
+            val userLocationInput = viewMap.findViewById<LinearLayout>(R.id.layout_for_add_station)
+            val backButton = viewMap.findViewById<ImageView>(R.id.back_button)
+            val placeWrapper = viewMap.findViewById<ConstraintLayout>(R.id.place_wrapper)
+            val placeName = viewMap.findViewById<TextView>(R.id.place_name)
+            val wikiInfo = viewMap.findViewById<TextView>(R.id.wiki_info)
+            val address = viewMap.findViewById<TextView>(R.id.address)
+            val phone = viewMap.findViewById<TextView>(R.id.phone_number)
+            val uriOfPage = viewMap.findViewById<TextView>(R.id.uri_of_page)
+            val animationWrapper = viewMap.findViewById<ConstraintLayout>(R.id.animation_layout)
+            val notesWrapper = viewMap.findViewById<ConstraintLayout>(R.id.notes_wrapper)
+            val loadingAnimation = viewMap.findViewById<LottieAnimationView>(R.id.loading_animation)
+            val backButtonNote = viewMap.findViewById<ImageView>(R.id.back_button_from_notes)
+            var bitmaps: MutableList<Bitmap>
+            var placeId = ""
 
-        holder.inputText.setOnClickListener {
+
             idPosition = holder.adapterPosition
-            if (holder.inputText.text.toString().isNotBlank()) {
-//                Log.i("MYTEST", "ALL DESTINATIONS ${model.newOrigin}")
+            Log.i("MYTEST", "HOLDER ADAPTER POSITION ON START ${holder.adapterPosition} and IDPOS : $idPosition")
 
-                model.changeBetweenWaypoints = true
-            }
-            idPosition = holder.adapterPosition
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
-            result.launch(intent)
-        }
+            model.bitmapList.add(holder.adapterPosition, mutableListOf())
+            model.addressList.add(holder.adapterPosition, "")
+            model.phoneList.add(holder.adapterPosition, "")
+            model.websiteList.add(holder.adapterPosition, "")
+            model.wikiInfoList.add(holder.adapterPosition, "")
 
+            holder.inputText.focusable = View.NOT_FOCUSABLE
 
-        holder.inputText.isFocused.and(name.isNotBlank()).apply {
-            model.newOrigin.add(holder.adapterPosition,destination)
-            model.destinationsName.add(holder.adapterPosition.plus(1), name)
-            holder.inputText.setText(name)
-        }
-
-        holder.deleteButton.setOnClickListener{
-            idPosition = holder.adapterPosition.minus(1)
-            Log.i("MYTEST", "HOLDER ADAPTER POSITION AFTER DELETE ${holder.adapterPosition} and IDPOS : $idPosition")
-
-            Log.i("MYTEST","POSITION AND ADAPTER POSITION : $idPosition and ${holder.adapterPosition}")
-            if (model.stepsList.isNotEmpty().and(holder.inputText.text.toString().isNotBlank())) {
-                model.stepsList.removeAt(holder.adapterPosition)
+            holder.inputText.setOnClickListener {
+                idPosition = holder.adapterPosition
+                if (holder.inputText.text.toString().isNotBlank()) {
+                    model.changeBetweenWaypoints = true
+                }
+                idPosition = holder.adapterPosition
+                val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,listFields).build(holder.itemView.context)
+                result.launch(intent)
             }
 
-            if (holder.inputText.text.toString().isNotBlank()) {
-                Log.i("MYTEST", "IDPOSITION IS BEFORE DELETE: $idPosition and ${model.newOrigin}")
-                Log.i("MYTEST", "MARKERS BEFORE DELETE ${model.markers}")
-                val marker = model.markers.getOrNull(holder.adapterPosition.plus(1))
-                marker?.remove()
-                model.markers.removeAt(holder.adapterPosition.plus(1))
-                if (model.polylines.isNotEmpty()) {
-                    var counter = 0
-                    for (line in model.polylines) {
-                        if (counter == holder.adapterPosition) {
-                            line.remove()
+
+            holder.inputText.isFocused.and(name.isNotBlank()).apply {
+                model.newOrigin.add(holder.adapterPosition,destination)
+                model.destinationsName.add(holder.adapterPosition.plus(1), name)
+                holder.inputText.setText(name)
+            }
+
+
+            holder.deleteButton.setOnClickListener{
+                idPosition = holder.adapterPosition.minus(1)
+                Log.i("MYTEST", "HOLDER ADAPTER POSITION AFTER DELETE ${holder.adapterPosition} and IDPOS : $idPosition")
+
+                Log.i("MYTEST","POSITION AND ADAPTER POSITION : $idPosition and ${holder.adapterPosition}")
+                if (model.stepsList.isNotEmpty().and(holder.inputText.text.toString().isNotBlank())) {
+                    model.stepsList.removeAt(holder.adapterPosition)
+                }
+
+                if (holder.inputText.text.toString().isNotBlank()) {
+                    Log.i("MYTEST", "IDPOSITION IS BEFORE DELETE: $idPosition and ${model.newOrigin}")
+                    Log.i("MYTEST", "MARKERS BEFORE DELETE ${model.markers}")
+                    val marker = model.markers.getOrNull(holder.adapterPosition.plus(1))
+                    marker?.remove()
+                    model.markers.removeAt(holder.adapterPosition.plus(1))
+                    if (model.polylines.isNotEmpty()) {
+                        var counter = 0
+                        for (line in model.polylines) {
+                            if (counter == holder.adapterPosition) {
+                                line.remove()
+                            }
+                            counter+=1
                         }
-                        counter+=1
-                    }
-                    val infoMark = model.infoMarkers.getOrNull(holder.adapterPosition)
-                    infoMark?.remove()
-                    model.infoMarkers.removeAt(holder.adapterPosition)
-                    model.polylines.removeAt(holder.adapterPosition)
-                }
-
-                if (model.newOrigin.isNotEmpty()) {
-                    model.newOrigin.removeAt(holder.adapterPosition)
-                    model.destinationsName.removeAt(holder.adapterPosition.plus(1))
-                }
-
-                model.placeIds.removeAt(holder.adapterPosition)
-
-                if (model.notes[holder.adapterPosition].isNotEmpty()) {
-                    model.notes.removeAt(holder.adapterPosition)
-                }
-                if (model.travelMode.isNotEmpty()) {
-                    model.travelMode.removeAt(holder.adapterPosition)
-                }
-
-                model.bitmapList.removeAt(holder.adapterPosition)
-                model.addressList.removeAt(holder.adapterPosition)
-                model.phoneList.removeAt(holder.adapterPosition)
-                model.websiteList.removeAt(holder.adapterPosition)
-                model.wikiInfoList.removeAt(holder.adapterPosition)
-
-                Log.i("MYTEST", "MARKERS: ${model.markers}")
-                Log.i("MYTEST", "INFOMARKERS: ${model.infoMarkers}")
-                Log.i("MYTEST", "POLYLINES: ${model.polylines}")
-                Log.i("MYTEST", "IDPOSITION IS AFTER DELETE: $idPosition and ${model.newOrigin}")
-            }
-
-            if (idPosition == -1) {
-                model.setLine("")
-                model.setDirectionsToStart()
-//                Log.i("MYTEST", "CHECKLINE: ${model.checkLine}")
-                hideElements(viewMap)
-            }
-
-
-            holder.inputText.setText("")
-            model.inputs.removeAt(holder.adapterPosition)
-
-            if (idPosition != -1) {
-                if (model.stepsList.size > 0) {
-                    recyclerView.adapter = stepsAdapter
-                    stepsAdapter.submitList(model.stepsList[idPosition])
-                }
-            }
-
-            calculateDistanceAndDuration(model.infoMarkers, viewMap)
-
-            notifyItemRemoved(holder.adapterPosition)
-
-        }
-
-
-
-        holder.infoButton.setOnClickListener {
-            userLocationInput.visibility = View.GONE
-            planWrapper.visibility = View.GONE
-            animationWrapper.visibility = View.VISIBLE
-            bitmaps = mutableListOf()
-            standardBottomSheetBehavior.peekHeight = 700
-            standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-            if (holder.inputText.text.toString().isNotBlank()) {
-                placeName.text = holder.inputText.text.toString()
-
-//                Log.i("MYTEST", "PLACE ID: ${model.placeIds} and ${holder.adapterPosition}")
-                placeId = model.placeIds[holder.adapterPosition]
-//                Log.i("MYTEST", "PLACE ID SELECTED: $placeId ")
-                Log.i("MYTEST", "Bitmap list ${model.bitmapList} ")
-
-                if (model.bitmapList[holder.adapterPosition].isNotEmpty()) {
-                    placeWrapper.visibility = View.VISIBLE
-                    recyclerViewImage.adapter = imageAdapter
-                    imageAdapter.submitList(model.bitmapList[holder.adapterPosition])
-                    if (model.addressList[holder.adapterPosition].isNotEmpty()) {
-                        address.text = model.addressList[holder.adapterPosition]
-                    }
-                    else {
-                        address.visibility = View.GONE
+                        val infoMark = model.infoMarkers.getOrNull(holder.adapterPosition)
+                        infoMark?.remove()
+                        model.infoMarkers.removeAt(holder.adapterPosition)
+                        model.polylines.removeAt(holder.adapterPosition)
                     }
 
-                    if (model.phoneList[holder.adapterPosition].isNotEmpty()) {
-                        phone.text = model.phoneList[holder.adapterPosition]
-                        phone.setOnClickListener {
-                            callIntent(phone.text.toString(), viewMap.context)
+                    if (model.newOrigin.isNotEmpty()) {
+                        model.newOrigin.removeAt(holder.adapterPosition)
+                        model.destinationsName.removeAt(holder.adapterPosition.plus(1))
+                    }
+
+                    model.placeIds.removeAt(holder.adapterPosition)
+
+                    if (model.notes[holder.adapterPosition].isNotEmpty()) {
+                        model.notes.removeAt(holder.adapterPosition)
+                    }
+                    if (model.travelMode.isNotEmpty()) {
+                        model.travelMode.removeAt(holder.adapterPosition)
+                    }
+
+                    model.bitmapList.removeAt(holder.adapterPosition)
+                    model.addressList.removeAt(holder.adapterPosition)
+                    model.phoneList.removeAt(holder.adapterPosition)
+                    model.websiteList.removeAt(holder.adapterPosition)
+                    model.wikiInfoList.removeAt(holder.adapterPosition)
+
+                    Log.i("MYTEST", "MARKERS: ${model.markers}")
+                    Log.i("MYTEST", "INFOMARKERS: ${model.infoMarkers}")
+                    Log.i("MYTEST", "POLYLINES: ${model.polylines}")
+                    Log.i("MYTEST", "IDPOSITION IS AFTER DELETE: $idPosition and ${model.newOrigin}")
+                }
+
+                if (idPosition == -1) {
+                    model.setLine("")
+                    model.setDirectionsToStart()
+                    hideElements(viewMap)
+                }
+
+
+                holder.inputText.setText("")
+                model.inputs.removeAt(holder.adapterPosition)
+
+                if (idPosition != -1) {
+                    if (model.stepsList.size > 0) {
+                        recyclerView.adapter = stepsAdapter
+                        stepsAdapter.submitList(model.stepsList[idPosition])
+                    }
+                }
+
+                calculateDistanceAndDuration(model.infoMarkers, viewMap)
+
+                notifyItemRemoved(holder.adapterPosition)
+
+            }
+
+
+
+            holder.infoButton.setOnClickListener {
+                userLocationInput.visibility = View.GONE
+                planWrapper.visibility = View.GONE
+
+                bitmaps = mutableListOf()
+                standardBottomSheetBehavior.peekHeight = 700
+                standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+                if (holder.inputText.text.toString().isNotBlank()) {
+                    placeName.text = holder.inputText.text.toString()
+
+                    placeId = model.placeIds[holder.adapterPosition]
+                    Log.i("MYTEST", "Bitmap list ${model.bitmapList} ")
+
+                    if (model.bitmapList[holder.adapterPosition].isNotEmpty()) {
+                        placeWrapper.visibility = View.VISIBLE
+                        recyclerViewImage.adapter = imageAdapter
+                        imageAdapter.submitList(model.bitmapList[holder.adapterPosition])
+                        if (model.addressList[holder.adapterPosition].isNotEmpty()) {
+                            address.text = model.addressList[holder.adapterPosition]
                         }
-                    }
-                    else {
-                        phone.visibility = View.GONE
-                    }
-
-                    if (model.websiteList[holder.adapterPosition].isNotEmpty()) {
-                        uriOfPage.text = model.websiteList[holder.adapterPosition]
-                        uriOfPage.setOnClickListener {
-                            showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
+                        else {
+                            address.visibility = View.GONE
                         }
-                    }
-                    else {
-                        uriOfPage.visibility = View.GONE
-                    }
 
-                    if (model.wikiInfoList[holder.adapterPosition].isNotEmpty()) {
-                        wikiInfo.text = model.wikiInfoList[holder.adapterPosition]
-                    }
-                    else {
-                        wikiInfo.visibility = View.GONE
-                    }
-                }
+                        if (model.phoneList[holder.adapterPosition].isNotEmpty()) {
+                            phone.text = model.phoneList[holder.adapterPosition]
+                            phone.setOnClickListener {
+                                callIntent(phone.text.toString(), viewMap.context)
+                            }
+                        }
+                        else {
+                            phone.visibility = View.GONE
+                        }
 
-                else {
-                    val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
+                        if (model.websiteList[holder.adapterPosition].isNotEmpty()) {
+                            uriOfPage.text = model.websiteList[holder.adapterPosition]
+                            uriOfPage.setOnClickListener {
+                                showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
+                            }
+                        }
+                        else {
+                            uriOfPage.visibility = View.GONE
+                        }
 
-                    val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-
-                    model.getWikiInfo(
-                        placeName.text.toString(),
-                        successCallback = { cityInfo ->
-                            wikiInfo.text = cityInfo
-                            model.wikiInfoList.add(holder.adapterPosition, cityInfo)
-                        },
-                        errorCallback = { error ->
-                            Log.e("MYTEST", "ERROR : $error")
+                        if (model.wikiInfoList[holder.adapterPosition].isNotEmpty()) {
+                            wikiInfo.text = model.wikiInfoList[holder.adapterPosition]
+                        }
+                        else {
                             wikiInfo.visibility = View.GONE
                         }
-                    )
+                    }
 
+                    else {
+                        animationWrapper.visibility = View.VISIBLE
+                        val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
 
-                    placesClient.fetchPlace(request)
-                        .addOnSuccessListener { response: FetchPlaceResponse ->
-                            val place = response.place
+                        val request = FetchPlaceRequest.newInstance(placeId, placeFields)
 
-                            if (place.address != null) {
-                                address.text = place.address
-                                model.addressList.add(holder.adapterPosition, place.address!!)
+                        model.getWikiInfo(
+                            placeName.text.toString(),
+                            successCallback = { cityInfo ->
+                                wikiInfo.text = cityInfo
+                                model.wikiInfoList.add(holder.adapterPosition, cityInfo)
+                            },
+                            errorCallback = { error ->
+                                Log.e("MYTEST", "ERROR : $error")
+                                wikiInfo.visibility = View.GONE
                             }
-                            else {
-                                address.visibility = View.GONE
-                            }
-                            if (place.phoneNumber != null) {
-                                phone.text = place.phoneNumber
-                                phone.setOnClickListener {
-                                    callIntent(phone.text.toString(), viewMap.context)
+                        )
+
+
+                        placesClient.fetchPlace(request)
+                            .addOnSuccessListener { response: FetchPlaceResponse ->
+                                val place = response.place
+
+                                if (place.address != null) {
+                                    address.text = place.address
+                                    model.addressList.add(holder.adapterPosition, place.address!!)
                                 }
-                                model.phoneList.add(holder.adapterPosition, place.phoneNumber!!)
-                            }
-                            else {
-                                phone.visibility = View.GONE
-                            }
-
-                            if (place.websiteUri != null) {
-                                uriOfPage.text = place.websiteUri!!.toString()
-                                uriOfPage.setOnClickListener {
-                                    showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
+                                else {
+                                    address.visibility = View.GONE
                                 }
-                                model.websiteList.add(holder.adapterPosition, place.websiteUri!!.toString())
-                            }
-                            else {
-                                uriOfPage.visibility = View.GONE
-                            }
-
-
-                            // Get the photo metadata.
-                            val metadata = place.photoMetadatas
-                            if (metadata == null || metadata.isEmpty()) {
-                                Log.w("MYTEST", "No photo metadata.")
-                                return@addOnSuccessListener
-                            }
-
-                            loadingAnimation.playAnimation()
-
-
-                            for (meta in metadata) {
-                                // Get the attribution text.
-                                val attributions = meta?.attributions
-
-                                // Create a FetchPhotoRequest.
-                                val photoRequest = FetchPhotoRequest.builder(meta)
-                                    .setMaxWidth(500) // Optional.
-                                    .setMaxHeight(300) // Optional.
-                                    .build()
-                                placesClient.fetchPhoto(photoRequest)
-                                    .addOnSuccessListener { fetchPhotoResponse: FetchPhotoResponse ->
-                                        val bitmap = fetchPhotoResponse.bitmap
-                                        bitmaps.add(bitmap)
-                                    }.addOnFailureListener { exception: Exception ->
-                                        if (exception is ApiException) {
-                                            Log.e("MYTEST", "Place not found: " + exception.message)
-                                            val statusCode = exception.statusCode
-                                            TODO("Handle error with given status code.")
-                                        }
+                                if (place.phoneNumber != null) {
+                                    phone.text = place.phoneNumber
+                                    phone.setOnClickListener {
+                                        callIntent(phone.text.toString(), viewMap.context)
                                     }
-                            }
-
-                            loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
-                                override fun onAnimationStart(animation: Animator) {
-                                    Log.i("MYTEST", "animation start")
+                                    model.phoneList.add(holder.adapterPosition, place.phoneNumber!!)
                                 }
-                                override fun onAnimationEnd(animation: Animator) {
-                                    if (bitmaps.size == metadata.size) {
-                                        animationWrapper.visibility = View.GONE
-                                        placeWrapper.visibility = View.VISIBLE
-                                        if (holder.adapterPosition != -1) {
-                                            model.bitmapList.add(holder.adapterPosition, bitmaps)
+                                else {
+                                    phone.visibility = View.GONE
+                                }
+
+                                if (place.websiteUri != null) {
+                                    uriOfPage.text = place.websiteUri!!.toString()
+                                    uriOfPage.setOnClickListener {
+                                        showWebPageIntent(uriOfPage.text.toString(), viewMap.context)
+                                    }
+                                    model.websiteList.add(holder.adapterPosition, place.websiteUri!!.toString())
+                                }
+                                else {
+                                    uriOfPage.visibility = View.GONE
+                                }
+
+
+                                // Get the photo metadata.
+                                val metadata = place.photoMetadatas
+                                if (metadata == null || metadata.isEmpty()) {
+                                    Log.w("MYTEST", "No photo metadata.")
+                                    return@addOnSuccessListener
+                                }
+
+                                loadingAnimation.playAnimation()
+
+
+                                for (meta in metadata) {
+                                    // Get the attribution text.
+                                    val attributions = meta?.attributions
+
+                                    // Create a FetchPhotoRequest.
+                                    val photoRequest = FetchPhotoRequest.builder(meta)
+                                        .setMaxWidth(500) // Optional.
+                                        .setMaxHeight(300) // Optional.
+                                        .build()
+                                    placesClient.fetchPhoto(photoRequest)
+                                        .addOnSuccessListener { fetchPhotoResponse: FetchPhotoResponse ->
+                                            val bitmap = fetchPhotoResponse.bitmap
+                                            bitmaps.add(bitmap)
+                                        }.addOnFailureListener { exception: Exception ->
+                                            if (exception is ApiException) {
+                                                Log.e("MYTEST", "Place not found: " + exception.message)
+                                                val statusCode = exception.statusCode
+                                                TODO("Handle error with given status code.")
+                                            }
+                                        }
+                                }
+
+                                loadingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                                    override fun onAnimationStart(animation: Animator) {
+                                        Log.i("MYTEST", "animation start")
+                                    }
+                                    override fun onAnimationEnd(animation: Animator) {
+                                        if (bitmaps.size == metadata.size) {
+                                            animationWrapper.visibility = View.GONE
+                                            placeWrapper.visibility = View.VISIBLE
+                                            if (holder.adapterPosition != -1) {
+                                                model.bitmapList.add(holder.adapterPosition, bitmaps)
+                                            }
+                                            else {
+                                                Log.i("MYTEST", "NOT ADD TO BITMAPLIST : ${holder.adapterPosition}")
+                                            }
+
+                                            recyclerViewImage.adapter = imageAdapter
+                                            imageAdapter.submitList(bitmaps)
+                                            Log.i("MYTEST", "Bitmap list $bitmaps ")
                                         }
                                         else {
-                                            Log.i("MYTEST", "NOT ADD TO BITMAPLIST : ${holder.adapterPosition}")
+                                            loadingAnimation.playAnimation()
                                         }
-
-                                        recyclerViewImage.adapter = imageAdapter
-                                        imageAdapter.submitList(bitmaps)
-                                        Log.i("MYTEST", "Bitmap list $bitmaps ")
                                     }
-                                    else {
-                                        loadingAnimation.playAnimation()
+                                    override fun onAnimationCancel(animation: Animator) {
+                                        Log.i("info", "animation cancel")
                                     }
-                                }
-                                override fun onAnimationCancel(animation: Animator) {
-                                    Log.i("info", "animation cancel")
-                                }
-                                override fun onAnimationRepeat(animation: Animator) {
-                                    Log.i("info", "animation repeat")
-                                }
-                            })
-                        }
-                }
+                                    override fun onAnimationRepeat(animation: Animator) {
+                                        Log.i("info", "animation repeat")
+                                    }
+                                })
+                            }
+                    }
 
 
-            }
-        }
-
-
-        backButton.setOnClickListener {
-            placeWrapper.visibility = View.GONE
-            userLocationInput.visibility = View.VISIBLE
-            planWrapper.visibility = View.VISIBLE
-        }
-
-        holder.notesButton.setOnClickListener {
-            userLocationInput.visibility = View.GONE
-            planWrapper.visibility = View.GONE
-            notesWrapper.visibility = View.VISIBLE
-            val checkReservation = viewMap.findViewById<CheckBox>(R.id.reservation_check)
-            val noteAddButton = viewMap.findViewById<Button>(R.id.add_note_button)
-
-            val textAreaLayout = viewMap.findViewById<TextInputLayout>(R.id.label_textarea)
-            val textArea = viewMap.findViewById<TextInputEditText>(R.id.textarea)
-
-            val userNameLayout = viewMap.findViewById<TextInputLayout>(R.id.user_name_note)
-            val userName = viewMap.findViewById<TextInputEditText>(R.id.user_name)
-
-            val dateFromLayout = viewMap.findViewById<TextInputLayout>(R.id.date_from_layout)
-            val dateFrom =  viewMap.findViewById<TextInputEditText>(R.id.date_from)
-
-            val dateToLayout = viewMap.findViewById<TextInputLayout>(R.id.date_to_layout)
-            val dateTo = viewMap.findViewById<TextInputEditText>(R.id.date_to)
-
-            val paymentLayout = viewMap.findViewById<TextInputLayout>(R.id.value_layout)
-            val payment = viewMap.findViewById<TextInputEditText>(R.id.value_of_reservation)
-
-            if (textArea.text!!.isNotBlank()) {
-                textArea.setText("")
-            }
-            if (userName.text!!.isNotBlank()) {
-                userName.setText("")
-                dateFrom.setText("")
-                dateTo.setText("")
-                payment.setText("")
-            }
-
-
-            checkReservation.setOnCheckedChangeListener{ _, isChecked ->
-                if (isChecked) {
-                    textAreaLayout.visibility = View.GONE
-                    noteAddButton.marginTop.plus(100)
-                    userNameLayout.visibility = View.VISIBLE
-                    dateFromLayout.visibility = View.VISIBLE
-                    dateToLayout.visibility = View.VISIBLE
-                    paymentLayout.visibility = View.VISIBLE
-                }
-                else {
-                    userNameLayout.visibility = View.GONE
-                    dateFromLayout.visibility = View.GONE
-                    dateToLayout.visibility = View.GONE
-                    paymentLayout.visibility = View.GONE
-                    textAreaLayout.visibility = View.VISIBLE
                 }
             }
 
-            noteAddButton.setOnClickListener {
-//                Log.i("MYTEST", "TEXTAREA : ${textArea.text.toString()}")
-//                Log.i("MYTEST", "USER NAME : ${userName.text.toString()}")
-//                Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
-//                Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
-//                Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
-                var noteInfo = ""
-                noteInfo = if (checkReservation.isChecked) {
-                    userName.text.toString() + "-" + dateFrom.text.toString() + "-" + dateTo.text.toString() + "-" + payment.text.toString()
-                } else {
-                    textArea.text.toString()
+
+            backButton.setOnClickListener {
+                animationWrapper.visibility = View.GONE
+                placeWrapper.visibility = View.GONE
+                userLocationInput.visibility = View.VISIBLE
+                planWrapper.visibility = View.VISIBLE
+            }
+
+            holder.notesButton.setOnClickListener {
+                userLocationInput.visibility = View.GONE
+                planWrapper.visibility = View.GONE
+                notesWrapper.visibility = View.VISIBLE
+                val checkReservation = viewMap.findViewById<CheckBox>(R.id.reservation_check)
+                val noteAddButton = viewMap.findViewById<Button>(R.id.add_note_button)
+
+                val textAreaLayout = viewMap.findViewById<TextInputLayout>(R.id.label_textarea)
+                val textArea = viewMap.findViewById<TextInputEditText>(R.id.textarea)
+
+                val userNameLayout = viewMap.findViewById<TextInputLayout>(R.id.user_name_note)
+                val userName = viewMap.findViewById<TextInputEditText>(R.id.user_name)
+
+                val dateFromLayout = viewMap.findViewById<TextInputLayout>(R.id.date_from_layout)
+                val dateFrom =  viewMap.findViewById<TextInputEditText>(R.id.date_from)
+
+                val dateToLayout = viewMap.findViewById<TextInputLayout>(R.id.date_to_layout)
+                val dateTo = viewMap.findViewById<TextInputEditText>(R.id.date_to)
+
+                val paymentLayout = viewMap.findViewById<TextInputLayout>(R.id.value_layout)
+                val payment = viewMap.findViewById<TextInputEditText>(R.id.value_of_reservation)
+
+                if (textArea.text!!.isNotBlank()) {
+                    textArea.setText("")
                 }
-                model.notes.add(holder.adapterPosition, noteInfo)
+                if (userName.text!!.isNotBlank()) {
+                    userName.setText("")
+                    dateFrom.setText("")
+                    dateTo.setText("")
+                    payment.setText("")
+                }
+
+
+                checkReservation.setOnCheckedChangeListener{ _, isChecked ->
+                    if (isChecked) {
+                        textAreaLayout.visibility = View.GONE
+                        noteAddButton.marginTop.plus(100)
+                        userNameLayout.visibility = View.VISIBLE
+                        dateFromLayout.visibility = View.VISIBLE
+                        dateToLayout.visibility = View.VISIBLE
+                        paymentLayout.visibility = View.VISIBLE
+                    }
+                    else {
+                        userNameLayout.visibility = View.GONE
+                        dateFromLayout.visibility = View.GONE
+                        dateToLayout.visibility = View.GONE
+                        paymentLayout.visibility = View.GONE
+                        textAreaLayout.visibility = View.VISIBLE
+                    }
+                }
+
+                noteAddButton.setOnClickListener {
+    //                Log.i("MYTEST", "TEXTAREA : ${textArea.text.toString()}")
+    //                Log.i("MYTEST", "USER NAME : ${userName.text.toString()}")
+    //                Log.i("MYTEST", "DATE FROM : ${dateFrom.text.toString()}")
+    //                Log.i("MYTEST", "DATE TO : ${dateTo.text.toString()}")
+    //                Log.i("MYTEST", "PAYMENT : ${payment.text.toString()}")
+                    var noteInfo = ""
+                    noteInfo = if (checkReservation.isChecked) {
+                        userName.text.toString() + "-" + dateFrom.text.toString() + "-" + dateTo.text.toString() + "-" + payment.text.toString()
+                    } else {
+                        textArea.text.toString()
+                    }
+                    model.notes.add(holder.adapterPosition, noteInfo)
+                    notesWrapper.visibility = View.GONE
+                    userLocationInput.visibility = View.VISIBLE
+                    planWrapper.visibility = View.VISIBLE
+                }
+
+            }
+
+            backButtonNote.setOnClickListener {
                 notesWrapper.visibility = View.GONE
                 userLocationInput.visibility = View.VISIBLE
                 planWrapper.visibility = View.VISIBLE
             }
 
         }
+        catch(e: NullPointerException) {
+            Log.e("MYTEST", "NullPointerException : $e")
 
-        backButtonNote.setOnClickListener {
-            notesWrapper.visibility = View.GONE
-            userLocationInput.visibility = View.VISIBLE
-            planWrapper.visibility = View.VISIBLE
+            Log.e("MYTEST", "NullPointerException : ${e.stackTrace}")
+            Log.e("MYTEST","NullPointerException : ${e.localizedMessage}")
         }
+        catch (e: OutOfMemoryError) {
+            Log.e("MYTEST", "OutOfMemoryError : $e")
 
+            Log.e("MYTEST", "OutOfMemoryError : ${e.stackTrace}")
+            Log.e("MYTEST","OutOfMemoryError : ${e.localizedMessage}")
+        }
+        catch (e: IllegalStateException) {
+            Log.e("MYTEST", "IllegalStateException : $e")
+
+            Log.e("MYTEST", "IllegalStateException : ${e.stackTrace}")
+            Log.e("MYTEST","IllegalStateException : ${e.localizedMessage}")
+        }
+        catch (e: Exception) {
+            Log.e("MYTEST", "Exception : $e")
+
+            Log.e("MYTEST", "Exception : ${e.stackTrace}")
+            Log.e("MYTEST","Exception : ${e.localizedMessage}")
+        }
     }
 
     fun getNewOrigin(position: Int): String {

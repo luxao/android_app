@@ -332,8 +332,6 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                         }
                     }
                     journey.sharedUrl = buildUrl.dropLast(1)
-//                    Log.i("MYTEST", "$journey")
-//                    Log.i("MYTEST", "$routes")
                     profileViewModel.insertJourneyWithDestinations(journey, routes)
                     val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                     mapView.findNavController().navigate(action)
