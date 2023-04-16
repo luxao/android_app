@@ -899,6 +899,13 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     }
 
+    //TODO: Urobit na uvod fetchovanie informacii o mieste aj lokacii
+    //TODO: Urobit zobrazenie Places Types ako benzinky,hotely,restauracie, autobusove zastavky tieto 4 stačia
+    //TODO: Ukladanie do FIREBASE , a skontrolovat ak je lokalna DB prazdna tak ziskat data z Firebase a ulozit ich aj do lokalnej a potom zobrazovat uz len z lokalnej
+    //TODO: alebo to urobit len na ziskavanie z firebase real time database
+    //TODO: Dopisat About fragment
+    //TODO: Nadizajnovat
+
     override fun onPoiClick(poi: PointOfInterest) {
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
