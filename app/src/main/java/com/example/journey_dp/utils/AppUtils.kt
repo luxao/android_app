@@ -86,13 +86,8 @@ fun setLogOut(
     googleSignInClient: GoogleSignInClient,
     auth: FirebaseAuth
 ) {
-    // The usage of an interface lets you inject your own implementation
     val menuHost: MenuHost = activity
 
-    // Add menu items without using the Fragment Menu APIs
-    // Note how we can tie the MenuProvider to the viewLifecycleOwner
-    // and an optional Lifecycle.State (here, RESUMED) to indicate when
-    // the menu should be visible
     menuHost.addMenuProvider(object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             // Add menu items here
@@ -107,7 +102,6 @@ fun setLogOut(
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            // Handle the menu selection
             return when (menuItem.itemId) {
                 R.id.user_profile -> {
                     val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
@@ -297,44 +291,52 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                 if (journeyName.text.toString().isBlank()) {
                     journeyName.setText(journeyGeneratedName)
                 }
-                if (allDestinations.isEmpty().and(model.travelMode.isEmpty()).and(model.notes.isEmpty())) {
+                if (allDestinations.isEmpty().and(model.polylines.isEmpty()).and(model.notes.isEmpty())) {
+                    Toast.makeText(activity.applicationContext, "YOU CANNOT CREATE EMPTY JOURNEY", Toast.LENGTH_SHORT).show()
                     dialog.cancel()
                 }
                 else {
-                    allDestinations.removeAll {destination -> destination.isBlank() }
-                    model.travelMode.removeAll { travel -> travel.isBlank() }
-                    val parsedOrigin = model.location.value?.latitude.toString().plus(",${model.location.value?.longitude.toString()}")
-                    allDestinations.add(0,parsedOrigin)
-                    val userEmail = auth.currentUser!!.email
-                    val journey = JourneyEntity(
-                        user = userEmail.toString(),
-                        name = journeyName.text.toString(),
-                        totalDistance = totalDistance.text.toString(),
-                        totalDuration = totalDuration.text.toString(),
-                        numberOfDestinations = allDestinations.size,
-                        sharedUrl = ""
-                    )
-                    val routes = mutableListOf<RouteEntity>()
-                    var buildUrl = "https://planjourney/map?details="
-                    for (item in 0 until allDestinations.size.minus(1)) {
-                        if (item != allDestinations.size.minus(1)) {
-                            val route = RouteEntity(
-                                journeyId = journey.id,
-                                origin = allDestinations[item],
-                                destination = allDestinations[item.plus(1)],
-                                travelMode = model.travelMode[item],
-                                note = if (model.notes.isEmpty()) "" else model.notes[item],
-                                originName = model.destinationsName[item],
-                                destinationName = model.destinationsName[item.plus(1)]
-                            )
-                            buildUrl += allDestinations[item].plus("|${allDestinations[item.plus(1)].plus("|${model.travelMode[item]}_")}")
-                            routes.add(route)
+                    if (model.polylines.isNotEmpty()) {
+                        allDestinations.removeAll {destination -> destination.isBlank() }
+                        model.travelMode.removeAll { travel -> travel.isBlank() }
+                        val parsedOrigin = model.location.value?.latitude.toString().plus(",${model.location.value?.longitude.toString()}")
+                        allDestinations.add(0,parsedOrigin)
+                        val userEmail = auth.currentUser!!.email
+                        val journey = JourneyEntity(
+                            user = userEmail.toString(),
+                            name = journeyName.text.toString(),
+                            totalDistance = totalDistance.text.toString(),
+                            totalDuration = totalDuration.text.toString(),
+                            numberOfDestinations = allDestinations.size,
+                            sharedUrl = ""
+                        )
+                        val routes = mutableListOf<RouteEntity>()
+                        var buildUrl = "https://planjourney/map?details="
+                        for (item in 0 until allDestinations.size.minus(1)) {
+                            if (item != allDestinations.size.minus(1)) {
+                                val route = RouteEntity(
+                                    journeyId = journey.id,
+                                    origin = allDestinations[item],
+                                    destination = allDestinations[item.plus(1)],
+                                    travelMode = model.travelMode[item],
+                                    note = if (model.notes.isEmpty()) "" else model.notes[item],
+                                    originName = model.destinationsName[item],
+                                    destinationName = model.destinationsName[item.plus(1)]
+                                )
+                                buildUrl += allDestinations[item].plus("|${allDestinations[item.plus(1)].plus("|${model.travelMode[item]}_")}")
+                                routes.add(route)
+                            }
                         }
+                        journey.sharedUrl = buildUrl.dropLast(1)
+                        profileViewModel.insertJourneyWithDestinations(journey, routes)
+                        val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
+                        mapView.findNavController().navigate(action)
                     }
-                    journey.sharedUrl = buildUrl.dropLast(1)
-                    profileViewModel.insertJourneyWithDestinations(journey, routes)
-                    val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
-                    mapView.findNavController().navigate(action)
+                    else {
+                        Toast.makeText(activity.applicationContext, "YOU CANNOT CREATE EMPTY JOURNEY", Toast.LENGTH_SHORT).show()
+                        dialog.cancel()
+                    }
+
                 }
             }
             .setNegativeButton(R.string.cancel

@@ -395,11 +395,12 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 result.data?.let {
                     status = Autocomplete.getStatusFromIntent(result.data!!)
                     Log.i("TEST", status.statusMessage ?: "")
-                    Toast.makeText(context,"Error: ${status.statusMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                 }
             }
             Activity.RESULT_CANCELED -> {
                 // The user canceled the operation.
+                Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                 Log.e("MYTEST", "USER CANCELNUL VYHLADAVANIE")
             }
         }

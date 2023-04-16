@@ -58,8 +58,6 @@ class InputAdapter(private var viewMap: View, private var stepsAdapter: StepsAda
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         try {
-
-
             holder.inputText.id = position
             holder.inputText.tag = "input_$position"
 
