@@ -752,7 +752,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
                 val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
-                binding.testButton.setOnClickListener {
+                binding.addDestination.setOnClickListener {
+                    binding.searchWrapper.visibility = View.GONE
                     inputAdapter.setName("", "")
                     binding.chipGroupDirections.clearCheck()
                     binding.chipGroupDirections.visibility = View.GONE

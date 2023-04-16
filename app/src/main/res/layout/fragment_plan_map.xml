@@ -130,7 +130,7 @@
 
 
                 <Button
-                    android:id="@+id/test_button"
+                    android:id="@+id/add_destination"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginLeft="@dimen/spacing_xmedium"
