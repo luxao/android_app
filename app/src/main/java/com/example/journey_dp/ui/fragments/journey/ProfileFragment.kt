@@ -69,7 +69,7 @@ class ProfileFragment : Fragment() {
         Glide.with(requireContext()).load(auth.currentUser?.photoUrl).circleCrop().into(binding.profilePicture)
         binding.nameOfUser.text = auth.currentUser?.displayName
 
-        Log.i("MYTEST","USER NAME: ${profileViewModel.userEmail}")
+
         binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.homeJourney -> {
@@ -87,9 +87,9 @@ class ProfileFragment : Fragment() {
                     view.findNavController().navigate(action)
                     true
                 }
-                R.id.settings -> {
+                R.id.about -> {
                     val action =
-                        ProfileFragmentDirections.actionProfileFragment2ToPlanJourneyFragment()
+                        ProfileFragmentDirections.actionProfileFragment2ToInfoFragment()
                     view.findNavController().navigate(action)
                     true
                 }

@@ -75,5 +75,17 @@
         <action
             android:id="@+id/action_profileFragment2_to_planMapFragment"
             app:destination="@id/planMapFragment" />
+        <action
+            android:id="@+id/action_profileFragment2_to_infoFragment"
+            app:destination="@id/infoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.example.journey_dp.ui.fragments.journey.InfoFragment"
+        android:label="fragment_info"
+        tools:layout="@layout/fragment_info" >
+        <action
+            android:id="@+id/action_infoFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
     </fragment>
 </navigation>

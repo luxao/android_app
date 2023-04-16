@@ -248,7 +248,6 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
                     else {
                         animationWrapper.visibility = View.VISIBLE
                         val placeFields = listOf(Place.Field.ID,Place.Field.ADDRESS, Place.Field.WEBSITE_URI,Place.Field.PHONE_NUMBER,Place.Field.OPENING_HOURS,Place.Field.PHOTO_METADATAS)
-
                         val request = FetchPlaceRequest.newInstance(placeId, placeFields)
 
                         model.getWikiInfo(

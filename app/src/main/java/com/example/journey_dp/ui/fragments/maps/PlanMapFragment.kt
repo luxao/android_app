@@ -112,6 +112,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 try {
                     result.data?.let {
                         placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
+
                         var position = inputAdapter.getID()
                         Log.i("MYTEST", "PLACE FROM SEARCH ${placeFromSearch.name}")
 
@@ -413,6 +414,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 // The user canceled the operation.
                 Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                 Log.e("MYTEST", "USER CANCELNUL VYHLADAVANIE")
+//                if (mapViewModel.poiMarkers.isNotEmpty()) {
+//                    mapViewModel.poiMarkers.removeAt(0)
+//                }
             }
         }
 
@@ -678,7 +682,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 searchView.setActivityMode(AutocompleteActivityMode.FULLSCREEN)
 
 
-
                 binding.myLocationInput.focusable = View.NOT_FOCUSABLE
                 searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
                     override fun onPlaceSelected(place: Place) {
@@ -718,10 +721,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                     }
 
+
+
                     override fun onError(status: Status) {
                         Log.i("Place", "An error occurred: $status")
-                        Toast.makeText(context, "Error ! Please Try again $status", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                     }
                 })
 
@@ -912,7 +916,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.checkLine = line
             if (line.isNotBlank()) {
-//                Log.i("MYTEST", "CREATE POLYLINE line is : $line")
                 val polyline: List<LatLng> = PolyUtil.decode(line)
 
                 val options = PolylineOptions()
@@ -989,9 +992,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
 

@@ -27,6 +27,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     var inputs = mutableListOf<LinearLayout>()
     var markers = mutableListOf<Marker>()
+    var poiMarkers = mutableListOf<Marker>()
     var infoMarkers = mutableListOf<Marker>()
     var polylines = mutableListOf<Polyline>()
     var travelMode = mutableListOf<String>()

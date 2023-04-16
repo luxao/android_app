@@ -97,4 +97,8 @@
     <string name="information_from_wikipedia">information from wikipedia</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_journey">About Journey</string>
+    <string name="about">about</string>
+    <string name="back_to_profile">back to profile</string>
+    <string name="place_image">place_image</string>
 </resources>

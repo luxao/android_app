@@ -857,7 +857,6 @@
                         android:layout_height="match_parent"
                         android:padding="16dp"
                         android:scrollbars="vertical"
-
                         app:layoutManager="LinearLayoutManager"
                         tools:listitem="@layout/journey_detail_item" />
 
@@ -866,7 +865,6 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
         </FrameLayout>
