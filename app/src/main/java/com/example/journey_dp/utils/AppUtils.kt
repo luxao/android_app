@@ -421,13 +421,15 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
                     val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
 
                     val cityName: String = addresses!![0].getAddressLine(0)
-//                    Log.i("MYTEST", "LOCATION IS : $cityName")
-//                    Log.i("MYTEST", "LOCATION IS : ${it.latitude} and ${it.longitude}")
+
+                    if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
+                        Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
+                        model.setCountry(addresses[0].countryCode)
+                    }
 
                     model.locationName = cityName
                     model.setLocation(LatLng(it.latitude, it.longitude))
-//                    Log.i("MYTEST", "LOCATION IS : ${model.location.value!!.latitude} and ${model.location.value!!.longitude}")
-//                    Log.i("MYTEST", "LOCATION IS : ${model.locationName}")
+
 //                    geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
 //                        cityName = addresses[0].getAddressLine(0)
 //                    }

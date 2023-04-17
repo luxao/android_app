@@ -66,6 +66,9 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     private var _location: MutableLiveData<LatLng> = MutableLiveData()
     val location: LiveData<LatLng> get() = _location
 
+    private var _countryCode: MutableLiveData<String> = MutableLiveData()
+    val countryCode: LiveData<String> get() = _countryCode
+
     var locationName = ""
     var cityInfo = ""
 
@@ -128,7 +131,9 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         this.checkLine = lineValue
     }
 
-
+    fun setCountry(country: String) {
+        _countryCode.value = country
+    }
 
 
     fun setLocation(coordinates: LatLng) {

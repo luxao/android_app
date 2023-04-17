@@ -104,11 +104,7 @@ class LoginFragment : Fragment() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Sign-In success, update UI with the signed-in user's information
                     val user = auth.currentUser
-                    // Retrieve user's profile picture and navigate to ProfileFragment
-                    Log.i("MYTEST", user?.photoUrl.toString())
-
                     binding.loginWrapper.visibility = View.GONE
                     binding.loginAnimationWrapper.visibility = View.VISIBLE
                     binding.loginAnimation.playAnimation()

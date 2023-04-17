@@ -43,6 +43,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.RectangularBounds
+import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
@@ -55,6 +60,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.maps.android.PolyUtil
+import com.google.maps.android.SphericalUtil
 import java.util.*
 
 
@@ -758,14 +764,23 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
                 binding.apply {
+                    showInfoMarkersFromChips()
                     startPlanJourney.setOnClickListener {
                         startPlanJourney.visibility = View.GONE
-                        myLocationLabel.layoutParams.width = convertDpToPixel(165F, requireContext()).toInt()
+                        chipsInfoMarkersWrapper.visibility = View.GONE
                         addDestination.visibility = View.VISIBLE
+                        cancelPlan.visibility = View.VISIBLE
                         planWrapper.visibility = View.VISIBLE
                     }
                     findUserLocation.setOnClickListener {
                         showUserLocation()
+                    }
+                    cancelPlan.setOnClickListener {
+                        addDestination.visibility = View.GONE
+                        planWrapper.visibility = View.GONE
+                        cancelPlan.visibility = View.GONE
+                        startPlanJourney.visibility = View.VISIBLE
+                        chipsInfoMarkersWrapper.visibility = View.VISIBLE
                     }
                 }
 
@@ -995,6 +1010,28 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
+    private fun showInfoMarkersFromChips() {
+        binding.chipGroupMarkers.setOnCheckedStateChangeListener { group, checkedIds ->
+            checkedIds.map {
+                val chip: Chip? = group.findViewById(it)
+//                val listFields = listOf(Place.Field.TYPES)
+//                var type = Place.Type.RESTAURANT
+                Log.i("MYTEST","CHECKED CHIP IS : ${chip?.tag}")
+                Log.i("MYTEST","COUNTRY IS : ${mapViewModel.countryCode.value}")
+//                when (chip?.tag) {
+//                    "station" -> {
+//                        type = Place.Type.GAS_STATION
+//                    }
+//                    "hotels" -> {
+//                        type = Place.Type.LODGING
+//                    }
+//                    "restaurants" -> {
+//                        type = Place.Type.RESTAURANT
+//                    }
+//                }
+            }
+        }
+    }
 
 
     private fun Polyline.addInfoWindow(map: GoogleMap, title: String, message: String, iconType: String) {
