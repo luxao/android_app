@@ -5,16 +5,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-
 import android.content.Intent
 import android.content.pm.PackageManager
-
 import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
-
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -26,11 +24,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.drawable.toIcon
-
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.core.view.get
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -39,29 +34,44 @@ import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
-
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
-
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
-
-
 import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-
-
 import org.jsoup.Jsoup
-import java.io.IOException
 import java.net.URLDecoder
 import java.util.*
 
+
+/**
+ * This method converts dp unit to equivalent pixels, depending on device density.
+ *
+ * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+ * @param context Context to get resources and device specific display metrics
+ * @return A float value to represent px equivalent to dp depending on device density
+ */
+fun convertDpToPixel(dp: Float, context: Context): Float {
+    return dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+}
+
+/**
+ * This method converts device specific pixels to density independent pixels.
+ *
+ * @param px A value in px (pixels) unit. Which we need to convert into db
+ * @param context Context to get resources and device specific display metrics
+ * @return A float value to represent dp equivalent to px value
+ */
+fun convertPixelsToDp(px: Float, context: Context): Float {
+    return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+}
 
 fun isLightColor(color: Int): Boolean {
     val r = Color.red(color)
@@ -406,8 +416,10 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
             ).addOnSuccessListener {
                 it?.let {
                     val geocoder = Geocoder(context, Locale.getDefault())
+
                     // DEPRECATED FOR TIRAMISU VERSION
                     val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
+
                     val cityName: String = addresses!![0].getAddressLine(0)
 //                    Log.i("MYTEST", "LOCATION IS : $cityName")
 //                    Log.i("MYTEST", "LOCATION IS : ${it.latitude} and ${it.longitude}")
@@ -416,12 +428,10 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
                     model.setLocation(LatLng(it.latitude, it.longitude))
 //                    Log.i("MYTEST", "LOCATION IS : ${model.location.value!!.latitude} and ${model.location.value!!.longitude}")
 //                    Log.i("MYTEST", "LOCATION IS : ${model.locationName}")
+//                    geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
+//                        cityName = addresses[0].getAddressLine(0)
+//                    }
 
-//                            lifecycleScope.launch {
-//                                geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
-//                                    cityName = addresses[0].getAddressLine(0)
-//                                }
-//                            }
                 }
             }
         }

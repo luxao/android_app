@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.fragments.auth
 
+import android.animation.Animator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -26,6 +27,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 
 class LoginFragment : Fragment() {
     private var _binding : FragmentLoginBinding? = null
@@ -107,8 +109,24 @@ class LoginFragment : Fragment() {
                     // Retrieve user's profile picture and navigate to ProfileFragment
                     Log.i("MYTEST", user?.photoUrl.toString())
 
-                    val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
-                    findNavController().navigate(action)
+                    binding.loginWrapper.visibility = View.GONE
+                    binding.loginAnimationWrapper.visibility = View.VISIBLE
+                    binding.loginAnimation.playAnimation()
+                    binding.loginAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {
+                            Log.i("MYTEST", "animation start")
+                        }
+                        override fun onAnimationEnd(animation: Animator) {
+                            val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
+                            findNavController().navigate(action)
+                        }
+                        override fun onAnimationCancel(animation: Animator) {
+                            Log.i("info", "animation cancel")
+                        }
+                        override fun onAnimationRepeat(animation: Animator) {
+                            Log.i("info", "animation repeat")
+                        }
+                    })
                 } else {
                     // Sign-In failure, display a message to the user
                     Log.w("MYTEST", "signInWithCredential:failure", task.exception)

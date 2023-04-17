@@ -12,6 +12,8 @@
     <color name="card_light">#D6D6D6</color>
     <color name="blue">#5008F3</color>
     <color name="card_journey">#00BCD4</color>
+    <color name="red">#D40000</color>
+    <color name="green">#036C05</color>
 </resources>
 
 

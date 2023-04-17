@@ -46,7 +46,6 @@
                 android:layout_height="match_parent"
                 android:elevation="5dp"
                 app:iconifiedByDefault="true"
-
                 app:queryHint="Search Here" />
 
         </androidx.cardview.widget.CardView>
@@ -135,10 +134,30 @@
                     android:layout_height="48dp"
                     android:layout_marginLeft="@dimen/spacing_xmedium"
                     android:layout_marginRight="@dimen/spacing_middle"
+                    android:visibility="gone"
                     android:background="@drawable/ic_baseline_add_circle_24"
                     android:contentDescription="@string/add_input" />
 
+                <Button
+                    android:id="@+id/start_plan_journey"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="@dimen/spacing_xmedium"
+                    android:visibility="visible"
+                    android:background="@drawable/ic_baseline_directions_24"
+                    android:contentDescription="@string/add_input" />
+
+                <Button
+                    android:id="@+id/find_user_location"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:visibility="visible"
+                    android:background="@drawable/ic_baseline_near_me_24"
+                    android:contentDescription="@string/add_input" />
+
             </LinearLayout>
+
+
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -147,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="90dp"
                 android:nestedScrollingEnabled="true"
-                android:visibility="visible"
+                android:visibility="gone"
                 tools:context=".ui.fragments.maps.PlanMapFragment">
 
                 <ScrollView
@@ -253,7 +272,7 @@
                         android:contextClickable="true"
                         android:tag="@string/car"
                         app:checkedIcon="@drawable/ic_baseline_directions_car_24"
-                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconTint="@color/green"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_car_24"
                         app:chipIconSize="30dp"
@@ -294,7 +313,7 @@
                         android:contextClickable="true"
                         android:tag="@string/train"
                         app:checkedIcon="@drawable/ic_baseline_directions_transit_filled_24"
-                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconTint="@color/green"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_transit_filled_24"
                         app:chipIconSize="30dp"
@@ -315,7 +334,7 @@
                         android:contextClickable="true"
                         android:tag="@string/walk"
                         app:checkedIcon="@drawable/ic_baseline_directions_walk_24"
-                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconTint="@color/green"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_walk_24"
                         app:chipIconSize="30dp"
@@ -336,7 +355,7 @@
                         android:contextClickable="true"
                         android:tag="@string/bike"
                         app:checkedIcon="@drawable/ic_baseline_directions_bike_24"
-                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconTint="@color/green"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_bike_24"
                         app:chipIconSize="30dp"
@@ -390,7 +409,7 @@
                     android:tooltipText="Loading information"
                     app:lottie_autoPlay="false"
                     app:lottie_loop="false"
-                    app:lottie_rawRes="@raw/loading"
+                    app:lottie_rawRes="@raw/loading_map"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:lottie_speed="1"
@@ -868,6 +887,8 @@
 
 
         </FrameLayout>
+
+
 
 
 

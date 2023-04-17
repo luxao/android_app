@@ -1,6 +1,8 @@
 package com.example.journey_dp.ui.fragments.maps
 
+
 import android.app.Activity
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -13,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -21,8 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
-import com.example.journey_dp.data.domain.DistanceDuration
-import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.room.model.RouteEntity
 import com.example.journey_dp.databinding.FragmentPlanMapBinding
 import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
@@ -667,7 +668,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             }
 
             if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
-                Log.i("MYTEST","BEZIM")
                 standardBottomSheetBehavior.apply {
                     peekHeight = 80
                     this.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -683,9 +683,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
                 binding.myLocationInput.focusable = View.NOT_FOCUSABLE
+
                 searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
                     override fun onPlaceSelected(place: Place) {
-
+                        Log.i("MYTESTE","SEARCHVIEW : ${place.id}")
                         if (binding.myLocationInput.text.toString().isNotBlank()) {
                             val marker = mapViewModel.markers.getOrNull(0)
                             marker?.remove()
@@ -756,6 +757,18 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val layoutView = layoutInflater.inflate(R.layout.destination_item, null)
                 val layout: LinearLayout = layoutView.findViewById(R.id.layout_for_add_stop)
 
+                binding.apply {
+                    startPlanJourney.setOnClickListener {
+                        startPlanJourney.visibility = View.GONE
+                        myLocationLabel.layoutParams.width = convertDpToPixel(165F, requireContext()).toInt()
+                        addDestination.visibility = View.VISIBLE
+                        planWrapper.visibility = View.VISIBLE
+                    }
+                    findUserLocation.setOnClickListener {
+                        showUserLocation()
+                    }
+                }
+
                 binding.addDestination.setOnClickListener {
                     binding.searchWrapper.visibility = View.GONE
                     inputAdapter.setName("", "")
@@ -824,6 +837,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
         ))
 
+
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             mapViewModel.markers.add(position,marker!!)
         }
@@ -841,19 +855,29 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
+
     override fun onMapReady(mapG: GoogleMap) {
         googleMap = mapG
-        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-        var flag = false
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            val success = googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    requireContext(), R.raw.night_map
+                )
+            )
+            if (!success) {
+                Log.e("MYTEST", "Style parsing failed.")
+                googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+            }
+        } catch (e: Resources.NotFoundException) {
+            Log.e("MYTEST", "Can't find style. Error: ", e)
+        }
+
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
                 getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
-                mapViewModel.location.observe(viewLifecycleOwner) {
-                    if (it != null) {
-                        flag = true
-                    }
-                }
-                if (flag.or(mapViewModel.location.value != null)) {
+                if (mapViewModel.location.value != null) {
 
                     val name = mapViewModel.locationName
                     val latLng = mapViewModel.location.value
@@ -893,13 +917,13 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
         }
 
+        googleMap.uiSettings.isMyLocationButtonEnabled = true
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnPoiClickListener(this)
 
-
     }
 
-    //TODO: Urobit na uvod fetchovanie informacii o mieste aj lokacii
+
     //TODO: Urobit zobrazenie Places Types ako benzinky,hotely,restauracie, autobusove zastavky tieto 4 stačia
     //TODO: Ukladanie do FIREBASE , a skontrolovat ak je lokalna DB prazdna tak ziskat data z Firebase a ulozit ich aj do lokalnej a potom zobrazovat uz len z lokalnej
     //TODO: alebo to urobit len na ziskavanie z firebase real time database
@@ -910,13 +934,21 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
 
+    private fun showUserLocation() {
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                mapViewModel.location.value!!,
+                15F
+            ))
+    }
+
     private fun showRouteOnMap(line: String, distanceText: String, durationText: String, choosedIcon: String, position: Int) {
         val color = when(choosedIcon){
-            "driving" -> Color.BLUE
+            "driving" -> Color.WHITE
             "bus" -> Color.rgb(210, 152, 121)
             "train" -> Color.rgb(187, 62, 146)
-            "walking" -> Color.rgb(32, 96, 70)
-            "bicycling" -> Color.rgb(176,129,213)
+            "walking" -> Color.rgb(156, 222, 161)
+            "bicycling" -> Color.rgb(221,152,184)
             else -> Color.BLUE
         }
 
@@ -928,6 +960,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val options = PolylineOptions()
                 options.width(10F)
                 options.color(color)
+                options.geodesic(true)
                 options.addAll(polyline)
                 val addedPolyline = googleMap.addPolyline(options)
                 addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
@@ -962,6 +995,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
+
+
     private fun Polyline.addInfoWindow(map: GoogleMap, title: String, message: String, iconType: String) {
         val pointsOnLine = this.points.size
         val infoLatLng = this.points[(pointsOnLine / 2)]
@@ -974,6 +1009,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             "bicycling" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_directions_bike_24)
             else -> bitmapDescriptorFromVector(R.drawable.ic_baseline_mode_of_travel_24)
         }
+
+
         val info: Marker? = map.addMarker(
             MarkerOptions()
                 .position(infoLatLng)

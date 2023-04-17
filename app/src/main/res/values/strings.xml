@@ -101,4 +101,5 @@
     <string name="about">about</string>
     <string name="back_to_profile">back to profile</string>
     <string name="place_image">place_image</string>
+    <string name="find_user_location">Find user location</string>
 </resources>

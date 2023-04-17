@@ -2,6 +2,7 @@ package com.example.journey_dp.ui.fragments.journey
 
 
 import android.Manifest
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Address
@@ -119,12 +120,30 @@ class PlanJourneyFragment : Fragment() {
         }
 
         binding.startPlan.setOnClickListener {
-            val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
-                id = 0L,
-                shared = "",
-                flag = ""
-            )
-            view.findNavController().navigate(action)
+            binding.introductionAnimationWrapper.visibility = View.GONE
+            binding.loadingMapAnimationWrapper.visibility = View.VISIBLE
+            binding.loadingMapAnimation.playAnimation()
+            binding.loadingMapAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                    Log.i("MYTEST", "animation start")
+                }
+                override fun onAnimationEnd(animation: Animator) {
+                    val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
+                        id = 0L,
+                        shared = "",
+                        flag = ""
+                    )
+                    view.findNavController().navigate(action)
+
+                }
+                override fun onAnimationCancel(animation: Animator) {
+                    Log.i("info", "animation cancel")
+                }
+                override fun onAnimationRepeat(animation: Animator) {
+                    Log.i("info", "animation repeat")
+                }
+            })
+
         }
     }
 
