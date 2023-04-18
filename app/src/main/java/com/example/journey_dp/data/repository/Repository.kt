@@ -4,12 +4,16 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.ApiResponse
 import com.example.journey_dp.data.domain.DirectionsResponse
+import com.example.journey_dp.data.domain.Place
+import com.example.journey_dp.data.domain.PlaceResponse
 import com.example.journey_dp.data.room.AppDatabase
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.data.service.ApiService
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -80,6 +84,31 @@ class Repository private constructor(
                 errorCallback("Error fetching data from Wikipedia API: ${t.message}")
             }
         })
+    }
+
+    fun searchNearby(location: LatLng, radius: Int, type: String, key: String): List<Place>? {
+        var places: List<Place>? = null
+        val locationString = "${location.latitude},${location.longitude}"
+        service.getNearbyPlaces(locationString, radius, type, key).enqueue(object : Callback<PlaceResponse> {
+            override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
+                if (response.isSuccessful) {
+                     places = response.body()?.results
+//                    places?.forEach { place ->
+//                        val latLng = LatLng(place.location.lat, place.location.lng)
+//                        val markerOptions = MarkerOptions().position(latLng)
+//                            .title(place.name)
+//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+//                        mMap.addMarker(markerOptions)
+//                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PlaceResponse>, t: Throwable) {
+                Log.e("MapsActivity", "Error: ${t.message}")
+//                Toast.makeText(this@MapsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+        return places
     }
 
 
