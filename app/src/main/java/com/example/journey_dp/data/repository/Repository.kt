@@ -86,29 +86,21 @@ class Repository private constructor(
         })
     }
 
-    fun searchNearby(location: LatLng, radius: Int, type: String, key: String): List<Place>? {
-        var places: List<Place>? = null
+    fun searchNearby(location: LatLng, radius: Int, type: String, key: String,callback: (List<Place>) -> Unit, errorCallback: (String) -> Unit) {
         val locationString = "${location.latitude},${location.longitude}"
         service.getNearbyPlaces(locationString, radius, type, key).enqueue(object : Callback<PlaceResponse> {
             override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
                 if (response.isSuccessful) {
-                     places = response.body()?.results
-//                    places?.forEach { place ->
-//                        val latLng = LatLng(place.location.lat, place.location.lng)
-//                        val markerOptions = MarkerOptions().position(latLng)
-//                            .title(place.name)
-//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-//                        mMap.addMarker(markerOptions)
-//                    }
+                     val places = response.body()?.results
+                     callback(places!!)
                 }
             }
 
             override fun onFailure(call: Call<PlaceResponse>, t: Throwable) {
                 Log.e("MapsActivity", "Error: ${t.message}")
-//                Toast.makeText(this@MapsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                errorCallback("Error fetching data from Places API")
             }
         })
-        return places
     }
 
 

@@ -922,7 +922,7 @@
                         android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:checkable="true"
-                        android:checked="true"
+
                         android:clickable="true"
                         android:contextClickable="true"
                         android:tag="station"
@@ -942,7 +942,7 @@
                         android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:checkable="true"
-                        android:checked="true"
+
                         android:clickable="true"
                         android:contextClickable="true"
                         android:tag="hotels"
@@ -962,7 +962,7 @@
                         android:layout_width="60dp"
                         android:layout_height="50dp"
                         android:checkable="true"
-                        android:checked="true"
+
                         android:clickable="true"
                         android:contextClickable="true"
                         android:tag="restaurants"

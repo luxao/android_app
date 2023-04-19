@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
+import com.example.journey_dp.data.domain.Place
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.repository.Repository
 import com.example.journey_dp.utils.Errors
@@ -71,7 +72,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
 
     var locationName = ""
     var cityInfo = ""
-
+    var placesTypes = listOf<Place>()
 
     fun getDirections(
         origin: String, destination: String,
@@ -115,7 +116,31 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
                 errorCallback(error)
             }
         )
+    }
 
+    fun getPlacesTypes(
+        location: LatLng,
+        radius: Int,
+        type: String,
+        key: String,
+        successCallback: (List<Place>) -> Unit,
+        errorCallback: (String) -> Unit
+    ) {
+        repository.searchNearby(
+            location = location,
+            radius = radius,
+            type = type,
+            key = key,
+            callback = { data ->
+                placesTypes = data
+                Log.i("MYTEST", "FROM VIEWMODEL : $placesTypes")
+                successCallback(placesTypes)
+            },
+            errorCallback = { error ->
+                Log.e("MYTEST","ERROR : $error")
+                errorCallback(error)
+            }
+        )
     }
 
     fun setDirectionsToStart() {

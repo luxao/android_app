@@ -771,6 +771,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         addDestination.visibility = View.VISIBLE
                         cancelPlan.visibility = View.VISIBLE
                         planWrapper.visibility = View.VISIBLE
+                        if (mapViewModel.poiMarkers.isNotEmpty()) {
+                            mapViewModel.poiMarkers.map { marker ->
+                                marker.remove()
+                            }
+                        }
                     }
                     findUserLocation.setOnClickListener {
                         showUserLocation()
@@ -868,7 +873,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         )
 
     }
-
 
 
     override fun onMapReady(mapG: GoogleMap) {
@@ -1014,21 +1018,70 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         binding.chipGroupMarkers.setOnCheckedStateChangeListener { group, checkedIds ->
             checkedIds.map {
                 val chip: Chip? = group.findViewById(it)
-//                val listFields = listOf(Place.Field.TYPES)
-//                var type = Place.Type.RESTAURANT
+                var type = ""
+
+                val locationUser = if (mapViewModel.location.value != null) {
+                    mapViewModel.location.value!!
+                } else {
+                    mapViewModel.defaultLocation
+                }
                 Log.i("MYTEST","CHECKED CHIP IS : ${chip?.tag}")
                 Log.i("MYTEST","COUNTRY IS : ${mapViewModel.countryCode.value}")
-//                when (chip?.tag) {
-//                    "station" -> {
-//                        type = Place.Type.GAS_STATION
-//                    }
-//                    "hotels" -> {
-//                        type = Place.Type.LODGING
-//                    }
-//                    "restaurants" -> {
-//                        type = Place.Type.RESTAURANT
-//                    }
-//                }
+                when (chip?.tag) {
+                    "station" -> {
+                        type = "gas_station"
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                    "hotels" -> {
+                        type = "lodging"
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                    "restaurants" -> {
+                        type = "restaurant"
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                }
+                val iconMarker = when(type){
+                    "gas_station" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_local_gas_station_24)
+                    "lodging" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_hotel_24)
+                    "restaurant" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_restaurant_24)
+                    else -> {BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)}
+                }
+
+                if (type.isNotBlank()){
+                    mapViewModel.getPlacesTypes(locationUser,
+                        5000,
+                        type,
+                        BuildConfig.GOOGLE_MAPS_API_KEY,
+                        successCallback = { data ->
+                            mapViewModel.placesTypes = data
+                            data.forEach {place ->
+                                val latLng = LatLng(place.geometry.location.lat, place.geometry.location.lng)
+                                val info: Marker? = googleMap.addMarker(
+                                    MarkerOptions()
+                                        .position(latLng)
+                                        .title(place.name)
+                                        .snippet(place.vicinity)
+                                        .alpha(1f)
+                                        .icon(iconMarker)
+                                        .anchor(0f, 0f)
+                                )
+                                info?.showInfoWindow()
+                                mapViewModel.poiMarkers.add(info!!)
+                            }
+                        },
+                        errorCallback = { error ->
+                            Log.e("MYTEST", "ERROR : $error")
+                            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                        }
+                    )
+                }
             }
         }
     }
