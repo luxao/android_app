@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.fragments.journey
 
+import android.animation.Animator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -80,12 +81,29 @@ class ProfileFragment : Fragment() {
                     true
                 }
                 R.id.planJourney -> {
-                    val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
-                        id = 0L,
-                        shared = "",
-                        flag = ""
-                    )
-                    view.findNavController().navigate(action)
+                    binding.profileLayout.visibility = View.GONE
+                    binding.animationProfileLayout.visibility = View.VISIBLE
+
+                    binding.profileLoadingMapAnimation.playAnimation()
+                    binding.profileLoadingMapAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {
+                            Log.i("MYTEST", "animation start")
+                        }
+                        override fun onAnimationEnd(animation: Animator) {
+                            val action = ProfileFragmentDirections.actionProfileFragment2ToPlanMapFragment(
+                                id = 0L,
+                                shared = "",
+                                flag = ""
+                            )
+                            view.findNavController().navigate(action)
+                        }
+                        override fun onAnimationCancel(animation: Animator) {
+                            Log.i("info", "animation cancel")
+                        }
+                        override fun onAnimationRepeat(animation: Animator) {
+                            Log.i("info", "animation repeat")
+                        }
+                    })
                     true
                 }
                 R.id.about -> {

@@ -91,7 +91,8 @@
                     android:padding="4dp"
                     android:layout_margin="4dp"
                     android:gravity="center"
-                    app:drawableLeftCompat="@drawable/ic_baseline_mode_of_travel_24" />
+                    app:drawableLeftCompat="@drawable/ic_baseline_mode_of_travel_24"
+                    app:drawableTint="@color/black" />
 
                 <TextView
                     android:id="@+id/totalDuration_item"

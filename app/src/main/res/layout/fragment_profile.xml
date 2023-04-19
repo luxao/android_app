@@ -10,153 +10,192 @@
         <import type="android.view.View"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:nestedScrollingEnabled="true"
         >
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/profile_information"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/animation_profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:cardBackgroundColor="@color/card_light"
-            app:cardElevation="8dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:context=".ui.fragments.journey.ProfileFragment"
             >
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/profile_picture"
-                android:layout_width="86dp"
-                android:layout_height="86dp"
-                android:padding="4dp"
-                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                app:strokeColor="@color/blue"
-                app:strokeWidth="2dp"
-                android:src="@drawable/me"
-                android:layout_margin="8dp"
-                android:contentDescription="@string/profile_picture"
-                />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/profile_loading_map_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:tooltipText="Loading map"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/loading_map"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:lottie_speed="1.5"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-            <LinearLayout
-                android:id="@+id/layout_for_name"
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profile_layout"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="true"
+            tools:context=".ui.fragments.journey.ProfileFragment"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/profile_information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="6dp"
-                android:layout_marginStart="110dp"
-                android:layout_marginEnd="20dp"
-                android:layout_gravity="top|left"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:cardBackgroundColor="@color/card_light"
+                app:cardElevation="8dp"
                 >
 
-                <TextView
-                    android:id="@+id/name_of_user"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="@string/test_name_of_user"
-                    android:textStyle="bold"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/profile_picture"
+                    android:layout_width="86dp"
+                    android:layout_height="86dp"
+                    android:padding="4dp"
+                    app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+                    app:strokeColor="@color/blue"
+                    app:strokeWidth="2dp"
+                    android:src="@drawable/me"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/profile_picture"
                     />
 
-                <TextView
-                    android:id="@+id/number_of_journeys"
+                <LinearLayout
+                    android:id="@+id/layout_for_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:drawablePadding="4dp"
-                    app:drawableLeftCompat="@drawable/ic_baseline_map_24"
-                    app:drawableTint="@color/black" />
+                    android:orientation="vertical"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="110dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_gravity="top|left"
+                    >
+
+                    <TextView
+                        android:id="@+id/name_of_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:text="@string/test_name_of_user"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/number_of_journeys"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="2dp"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:drawablePadding="4dp"
+                        app:drawableLeftCompat="@drawable/ic_baseline_map_24"
+                        app:drawableTint="@color/black" />
 
 
-                <TextView
-                    android:id="@+id/calculated_distance"
+                    <TextView
+                        android:id="@+id/calculated_distance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="2dp"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:drawablePadding="4dp"
+                        app:drawableLeftCompat="@drawable/ic_baseline_route_24" />
+
+
+                    <TextView
+                        android:id="@+id/calculated_duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="2dp"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:drawablePadding="4dp"
+                        app:drawableLeftCompat="@drawable/ic_baseline_calendar_month_24" />
+
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dialog_divider"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                app:dividerColor="@color/black"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_information"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="150dp"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dialog_divider"
+                app:layout_constraintVertical_bias="0.0"
+                android:orientation="vertical"
+                >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/journeys_list_recyclerview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:drawablePadding="4dp"
-                    app:drawableLeftCompat="@drawable/ic_baseline_route_24" />
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:scrollbars="vertical"
+                    app:journeys_list="@{model.journeys}"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:listitem="@layout/journey_card_item" />
 
-
-                <TextView
-                    android:id="@+id/calculated_duration"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:drawablePadding="4dp"
-                    app:drawableLeftCompat="@drawable/ic_baseline_calendar_month_24" />
 
 
             </LinearLayout>
 
 
-        </androidx.cardview.widget.CardView>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/dialog_divider"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            app:dividerColor="@color/black"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_information"
-            app:layout_constraintVertical_bias="0.0" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="150dp"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dialog_divider"
-            app:layout_constraintVertical_bias="0.0"
-            android:orientation="vertical"
-            >
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/journeys_list_recyclerview"
+            <LinearLayout
+                android:id="@+id/profile_bottom_menu"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp"
-                android:scrollbars="vertical"
-                app:journeys_list="@{model.journeys}"
-                app:layoutManager="LinearLayoutManager"
-                tools:listitem="@layout/journey_card_item" />
-
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/profile_bottom_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/bottom_navigation"
-                android:layout_width="match_parent"
-                android:background="@color/card_light"
-                app:itemIconTint="@color/black"
                 android:layout_height="wrap_content"
-                app:itemIconSize="30dp"
-                app:menu="@menu/profile_menu" />
+                android:layout_marginTop="200dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-        </LinearLayout>
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/bottom_navigation"
+                    android:layout_width="match_parent"
+                    android:background="@color/card_light"
+                    app:itemIconTint="@color/black"
+                    android:layout_height="wrap_content"
+                    app:itemIconSize="30dp"
+                    app:menu="@menu/profile_menu" />
+
+            </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
 
 </layout>
 

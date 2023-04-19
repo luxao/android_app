@@ -894,7 +894,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         } catch (e: Resources.NotFoundException) {
             Log.e("MYTEST", "Can't find style. Error: ", e)
         }
-
+        googleMap.setMinZoomPreference(10f)
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
                 getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
@@ -917,6 +917,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         ))
                     binding.myLocationInput.setText(name)
                 }
+
 
             }
             else {
@@ -956,6 +957,19 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
     private fun showUserLocation() {
+        //TODO: OTESTOVAT
+        if (binding.myLocationInput.text!!.isBlank().or(binding.myLocationInput.text!!.isEmpty())) {
+            if (mapViewModel.locationName.isNotBlank().or(mapViewModel.locationName.isNotEmpty())) {
+                mapViewModel.destinationsName.add(0,mapViewModel.locationName)
+                val marker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(mapViewModel.location.value!!)
+                        .title(mapViewModel.locationName)
+                )
+                mapViewModel.markers.add(0,marker!!)
+                binding.myLocationInput.setText(mapViewModel.locationName)
+            }
+        }
         googleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 mapViewModel.location.value!!,
