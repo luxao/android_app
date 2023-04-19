@@ -13,8 +13,10 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val repository: Repository, private val auth: FirebaseAuth): ViewModel() {
 
-    val userEmail = auth.currentUser!!.email
+    private val userEmail = auth.currentUser!!.email
     val journeyId = MutableLiveData<Long>()
+
+    var helperJourney = mutableListOf<JourneyEntity>()
 
     val journeyWithRoutes: LiveData<JourneyWithRoutes> = journeyId.switchMap {
         liveData {

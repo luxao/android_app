@@ -494,6 +494,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                 detailsJourneyAdapter = DetailsJourneyAdapter()
 
+                binding.chipsInfoMarkersWrapper.visibility = View.GONE
                 binding.searchWrapper.visibility = View.GONE
                 binding.layoutForAddStation.visibility = View.GONE
                 binding.planWrapper.visibility = View.GONE
@@ -597,6 +598,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 }
                 profileViewModel.journeyId.postValue(navigationArgs.id)
                 binding.searchWrapper.visibility = View.GONE
+                binding.chipsInfoMarkersWrapper.visibility = View.GONE
                 binding.layoutForAddStation.visibility = View.GONE
                 binding.planWrapper.visibility = View.GONE
                 binding.placeWrapperInfo.visibility = View.VISIBLE

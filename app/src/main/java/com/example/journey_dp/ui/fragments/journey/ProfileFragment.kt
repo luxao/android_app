@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.bumptech.glide.Glide
 import com.example.journey_dp.R
+import com.example.journey_dp.data.room.model.JourneyEntity
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
@@ -115,9 +116,30 @@ class ProfileFragment : Fragment() {
                 }
                 if (flag == JourneyEnum.SHARE) {
                     setAgainCharacter()
+                    var journeyName = ""
+                    var distance = ""
+                    var duration = ""
+                    var destinations = 0
+                    if (profileViewModel.helperJourney.isNotEmpty()) {
+                        profileViewModel.helperJourney.map { journey ->
+                            if (journeyId == journey.id) {
+                                journeyName = journey.name
+                                distance = journey.totalDistance
+                                duration = journey.totalDuration
+                                destinations = journey.numberOfDestinations
+                                Log.i("MYTEST", "TEST TEST ${journey.name}")
+                            }
+                        }
+                    }
                     val sendIntent: Intent = Intent().apply {
                         action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, shared)
+                        val textToSend = "Journey was created by : ${auth.currentUser!!.displayName} \n" +
+                                "Journey Name : $journeyName \n" +
+                                "$distance \n" +
+                                "$duration \n " +
+                                "Number of destinations of journey : $destinations \n" +
+                                "Click to link below to see journey your friend \n Link is : $shared"
+                        putExtra(Intent.EXTRA_TEXT, textToSend)
                         type = "text/html"
                     }
                     startActivity(Intent.createChooser(sendIntent,"Share"))
@@ -136,6 +158,15 @@ class ProfileFragment : Fragment() {
                     var durationMinutes = 0
                     var days = 0
                     it.map { item ->
+                        profileViewModel.helperJourney.add(JourneyEntity(
+                            id = item.id,
+                            user = item.user,
+                            name = item.name,
+                            totalDistance = item.totalDistance,
+                            totalDuration = item.totalDuration,
+                            numberOfDestinations = item.numberOfDestinations,
+                            sharedUrl = item.sharedUrl
+                        ))
                         val tmp = item.totalDistance.split("km")[0].split(":")[1].trim()
                         distance += ((tmp.split(",")[0]).plus('.').plus(tmp.split(",")[1])).toDouble()
                         val hours = item.totalDuration.split(" h")[0].split(":")[1].trim().toInt()

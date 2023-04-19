@@ -10,6 +10,7 @@ import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.domain.Place
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.repository.Repository
+import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.utils.Errors
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -34,6 +35,7 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     var travelMode = mutableListOf<String>()
     var notes = mutableListOf<String>()
     var destinationsName = mutableListOf<String>()
+
 
 
     var newOrigin = mutableListOf<String>()
