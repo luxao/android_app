@@ -64,14 +64,6 @@ import com.google.maps.android.SphericalUtil
 import java.util.*
 
 
-// TODO: """
-//  FIXES: THIS WILL BE FIXED IN THE END
-//  Skontrolovat ziskavania polohy po zmene polohy
-//  REFACTOR and CLEAR CODE
-//  OTESTOVANIE a OSETRENIE
-//  STYLOVANIE
-//  """
-
 class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickListener {
 
     // Declaration of binding fragment
