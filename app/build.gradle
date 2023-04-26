@@ -44,6 +44,14 @@ dependencies {
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
 
+    //Firebase
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+
+    // Add the dependency for the Realtime Database library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-database-ktx'
+
 
     // for parsing html
     implementation 'org.jsoup:jsoup:1.14.3'
@@ -92,6 +100,7 @@ dependencies {
     // Room libraries
     implementation "androidx.room:room-runtime:2.5.0"
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
+    implementation 'com.google.firebase:firebase-database:20.1.0'
     kapt "androidx.room:room-compiler:2.5.0"
     implementation "androidx.room:room-ktx:2.5.0"
 

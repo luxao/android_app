@@ -28,6 +28,8 @@ import com.example.journey_dp.utils.setAgainCharacter
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlin.math.round
@@ -40,12 +42,18 @@ class ProfileFragment : Fragment() {
     private var _binding : FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: FirebaseDatabase
+    private lateinit var ref : DatabaseReference
+    private lateinit var userId: String
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        database = FirebaseDatabase.getInstance()
+        ref = database.reference
+        userId = auth.currentUser!!.uid
         profileViewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext(),auth)
@@ -70,6 +78,39 @@ class ProfileFragment : Fragment() {
 
         Glide.with(requireContext()).load(auth.currentUser?.photoUrl).circleCrop().into(binding.profilePicture)
         binding.nameOfUser.text = auth.currentUser?.displayName
+
+        profileViewModel.journeys.observe(viewLifecycleOwner) { journey->
+            if (journey.size <= 1) {
+                ref.child("users").child(userId).get().addOnSuccessListener { snapshot ->
+                    Log.i("MYTEST", "TESTUJEME ${snapshot.childrenCount}")
+                    if ((snapshot.childrenCount.toInt() > journey.size).or(journey.isEmpty())) {
+                        Log.i("MYTEST","SPUSTAM SE ${journey.size}")
+                        if (profileViewModel.helperJourney.isNotEmpty()) {
+                            Log.i("MYTEST","HELPERJOURNEY ${profileViewModel.helperJourney[0]}")
+                            val ignoreName = profileViewModel.helperJourney[0].name
+                            Log.i("MYTEST","Ignorujeeme meno $ignoreName")
+                            for (item in snapshot.children) {
+                                if (item.key != ignoreName) {
+                                    Log.i("MYTEST","${item.key} => ${item.value}")
+                                }
+                            }
+                        }
+                        else {
+                            Log.i("MYTEST","ELSE:")
+
+                            for (item in snapshot.children) {
+                                Log.i("MYTEST","${item.key} => ${item.value}")
+
+                            }
+                        }
+                    }
+                }.addOnCanceledListener {
+                    Log.e("firebase", "Error getting data")
+                }
+
+            }
+        }
+
 
 
         binding.bottomNavigation.setOnItemSelectedListener {
@@ -107,6 +148,7 @@ class ProfileFragment : Fragment() {
                     true
                 }
                 R.id.about -> {
+
                     val action =
                         ProfileFragmentDirections.actionProfileFragment2ToInfoFragment()
                     view.findNavController().navigate(action)
@@ -209,6 +251,37 @@ class ProfileFragment : Fragment() {
             }
 
 
+    }
+
+    private fun retrieveData() {
+        val values = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.i("MYTEST","GOT VALUE : ${dataSnapshot.childrenCount}")
+                if (dataSnapshot.childrenCount == 0L) {
+                    TODO("not yet implemented")
+                }
+                else {
+                    var ignoreName = ""
+                    if (profileViewModel.helperJourney.size != 0) {
+                        profileViewModel.helperJourney.map {
+                            Log.i("MYTEST", "VYPIS MENA : ${it.name}")
+                            ignoreName = it.name
+                        }
+                    }
+                    for (test in dataSnapshot.children) {
+                        if (test.key != ignoreName) {
+                            Log.i("MYTEST","GOT VALUE : ${test.key} and ${test.value}")
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("MYTEST", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        ref.child("users").child(userId).addValueEventListener(values)
     }
 
     override fun onDestroyView() {

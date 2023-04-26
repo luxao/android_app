@@ -29,6 +29,7 @@ data class JourneyEntity(
         Index(value = ["journeyId"])
     ]
 )
+
 data class RouteEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,

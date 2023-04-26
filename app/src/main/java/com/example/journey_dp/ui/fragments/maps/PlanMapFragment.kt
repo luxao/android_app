@@ -58,6 +58,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.maps.android.PolyUtil
 import com.google.maps.android.SphericalUtil
@@ -70,6 +72,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private var _binding : FragmentPlanMapBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: FirebaseDatabase
+    private lateinit var ref : DatabaseReference
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -104,6 +108,24 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var status: Status
 
+    //TODO: Ukladanie do FIREBASE , a skontrolovat ak je lokalna DB prazdna tak ziskat data z Firebase a ulozit ich aj do lokalnej a potom zobrazovat uz len z lokalnej
+    //TODO: alebo to urobit len na ziskavanie z firebase real time database
+    //TODO: otestovat vypocet vzdialenosti lebo bol zly z Hulu do podhajskej
+    //TODO: upravit farbu ikoniek na mape
+    //TODO: upravit mapu
+    //TODO: spravit asi jeden styl dizajnu , nocny netreba
+    //TODO: pridat aspon slovenčinu
+    //TODO: pridat moznost rezervácie počtu osob k poznamkam ????
+    //TODO: upravit ikonku appky
+    //TODO: pridat ešte nejake pointmarkers pre zobrazovanie najblizsich veci
+    //TODO: skusit pridat settings ale este premysliet ake
+    //TODO: spravit pouzivatelsku prirucku
+    //TODO: zlepsit lokaciu
+    //TODO: Nadizajnovat
+    //TODO: hodit na google play
+    //TODO: PO NADIZAJNOVANI
+    //TODO: pridat viac info k miestu ?
+    //TODO: ak sa podarí firebase implementacia DB do recyclerview zobrazovania vyletov v profile tak skusit vypista userov a ich vylety ak by dal follow
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
@@ -426,6 +448,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        database = FirebaseDatabase.getInstance()
+        ref = database.reference
         activity?.applicationContext?.let { Places.initialize(it, BuildConfig.GOOGLE_MAPS_API_KEY) }
 
         mapViewModel = ViewModelProvider(
@@ -811,7 +835,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     profileViewModel,
                     inputAdapter.getAllDestinations(),
                     binding.root,
-                    auth
+                    auth,
+                    ref
                 )
                 binding.finishButton.setOnClickListener {
                     nameDialog.show()
@@ -938,12 +963,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
 
-    //TODO: Urobit zobrazenie Places Types ako benzinky,hotely,restauracie, autobusove zastavky tieto 4 stačia
-    //TODO: Ukladanie do FIREBASE , a skontrolovat ak je lokalna DB prazdna tak ziskat data z Firebase a ulozit ich aj do lokalnej a potom zobrazovat uz len z lokalnej
-    //TODO: alebo to urobit len na ziskavanie z firebase real time database
-    //TODO: Dopisat About fragment
-    //TODO: Nadizajnovat
-
     override fun onPoiClick(poi: PointOfInterest) {
         Toast.makeText(context, "Clicked: ${poi.name}", Toast.LENGTH_SHORT).show()
     }
@@ -1064,7 +1083,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                 if (type.isNotBlank()){
                     mapViewModel.getPlacesTypes(locationUser,
-                        5000,
+                        10000,
                         type,
                         BuildConfig.GOOGLE_MAPS_API_KEY,
                         successCallback = { data ->

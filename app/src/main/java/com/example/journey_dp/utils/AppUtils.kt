@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import org.jsoup.Jsoup
 import java.net.URLDecoder
 import java.util.*
@@ -281,7 +282,7 @@ fun showWebPageIntent(uriWeb: String, context: Context) {
 
 fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                       profileViewModel: ProfileViewModel,
-                      allDestinations: MutableList<String>, mapView: View, auth: FirebaseAuth): Dialog {
+                      allDestinations: MutableList<String>, mapView: View, auth: FirebaseAuth,firebaseDatabase: DatabaseReference): Dialog {
     return activity.let {
         val builder = AlertDialog.Builder(it)
         val inflater = activity.layoutInflater;
@@ -312,6 +313,7 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                         val parsedOrigin = model.location.value?.latitude.toString().plus(",${model.location.value?.longitude.toString()}")
                         allDestinations.add(0,parsedOrigin)
                         val userEmail = auth.currentUser!!.email
+                        val userUid = auth.currentUser!!.uid
                         val journey = JourneyEntity(
                             user = userEmail.toString(),
                             name = journeyName.text.toString(),
@@ -339,6 +341,11 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                         }
                         journey.sharedUrl = buildUrl.dropLast(1)
                         profileViewModel.insertJourneyWithDestinations(journey, routes)
+
+                        Log.i("MYTEST","IDDID: ${journey.id}")
+                        firebaseDatabase.child("users").child(userUid).child(journey.name).setValue(journey)
+                        firebaseDatabase.child("users").child(userUid).child(journey.name).child("routes").setValue(routes)
+
                         val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                         mapView.findNavController().navigate(action)
                     }
