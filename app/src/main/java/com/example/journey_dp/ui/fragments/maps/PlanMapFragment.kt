@@ -1071,11 +1071,18 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             marker.remove()
                         }
                     }
+                    "bar" -> {
+                        type = "bar"
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
                 }
                 val iconMarker = when(type){
                     "gas_station" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_local_gas_station_24)
                     "lodging" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_hotel_24)
                     "restaurant" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_restaurant_24)
+                    "bar" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_local_bar_24)
                     else -> {BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)}
                 }
 

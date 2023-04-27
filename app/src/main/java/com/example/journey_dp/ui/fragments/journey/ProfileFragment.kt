@@ -93,12 +93,11 @@ class ProfileFragment : Fragment() {
                             Log.i("MYTEST","HELPERJOURNEY ${profileViewModel.helperJourney[0]}")
                             val ignoreName = profileViewModel.helperJourney[0].name
                             Log.i("MYTEST","Ignorujeeme meno $ignoreName")
+
                             for (item in snapshot.children) {
                                 if (item.key != ignoreName) {
-//                                    Log.i("MYTEST","${item.key} => ${item.value}")
                                     val testJourney = item.getValue(UserJourney::class.java)
-//                                    Log.i("MYTEST","${testJourney?.name} => ${testJourney?.id} , ${testJourney?.user}, ${testJourney?.sharedUrl}, ${testJourney?.totalDistance}, ${testJourney?.totalDuration}, ${testJourney?.numberOfDestinations}")
-//                                    Log.i("MYTEST", "${testJourney?.routes}")
+
                                     val journeyToDB = JourneyEntity(
                                         user = testJourney?.user!!,
                                         name = testJourney.name,
@@ -192,6 +191,8 @@ class ProfileFragment : Fragment() {
         journeysAdapter = JourneysAdapter(
             context = requireContext(),
             model = profileViewModel,
+            userId = userId,
+            ref = ref,
             journeyEventListener = JourneyEventListener { journeyId: Long, shared: String, flag: JourneyEnum ->
                 Log.i("MYTEST", "CLICKED: $journeyId")
                 if (flag == JourneyEnum.SHOW) {

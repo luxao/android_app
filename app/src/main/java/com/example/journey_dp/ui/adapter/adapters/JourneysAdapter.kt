@@ -21,10 +21,13 @@ import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.databinding.JourneyCardItemBinding
 import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
+import com.google.firebase.database.DatabaseReference
 
 class JourneysAdapter(
     private val context: Context,
     private val model: ProfileViewModel,
+    private val userId: String,
+    private val ref: DatabaseReference,
     private val journeyEventListener: JourneyEventListener
 ) : ListAdapter<JourneyEntity, JourneysAdapter.JourneyItemViewHolder>(DiffCallback) {
 
@@ -89,8 +92,11 @@ class JourneysAdapter(
                 .setPositiveButton("Yes") { _, _ ->
                     if (journey != null) {
                         Log.i("MYTEST", "SWIPED ID: ${journey.id}")
+                        Log.i("MYTEST", "SWIPED NAME: ${journey.name}")
                         Log.i("MYTEST", "SWIPED : $journey")
                         model.deleteJourneyWithDestinations(journey = journey)
+
+                        ref.child("users").child(userId).child(journey.name).removeValue()
                     }
                     else {
                         Toast.makeText(context, "Please Try Again in a minute", Toast.LENGTH_SHORT).show()

@@ -901,7 +901,7 @@
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_markers"
-                    android:layout_width="200dp"
+                    android:layout_width="270dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="8dp"
@@ -970,6 +970,25 @@
                         app:checkedIconTint="@color/green"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_restaurant_24"
+                        app:chipIconSize="30dp"
+                        app:chipIconTint="@color/black"
+                        app:chipIconVisible="true"
+                        app:iconEndPadding="10dp"
+                        app:iconStartPadding="10dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/bar"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:contextClickable="true"
+                        android:tag="bar"
+                        app:checkedIcon="@drawable/ic_baseline_local_bar_24"
+                        app:checkedIconTint="@color/green"
+                        app:checkedIconVisible="true"
+                        app:chipIcon="@drawable/ic_baseline_local_bar_24"
                         app:chipIconSize="30dp"
                         app:chipIconTint="@color/black"
                         app:chipIconVisible="true"
