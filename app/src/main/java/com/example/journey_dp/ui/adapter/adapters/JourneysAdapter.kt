@@ -96,7 +96,7 @@ class JourneysAdapter(
                         Log.i("MYTEST", "SWIPED : $journey")
                         model.deleteJourneyWithDestinations(journey = journey)
 
-                        ref.child("users").child(userId).child(journey.name).removeValue()
+                        ref.child("users_journeys").child(userId).child(journey.name).removeValue()
                     }
                     else {
                         Toast.makeText(context, "Please Try Again in a minute", Toast.LENGTH_SHORT).show()

@@ -343,8 +343,8 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                         profileViewModel.insertJourneyWithDestinations(journey, routes)
 
                         Log.i("MYTEST","IDDID: ${journey.id}")
-                        firebaseDatabase.child("users").child(userUid).child(journey.name).setValue(journey)
-                        firebaseDatabase.child("users").child(userUid).child(journey.name).child("routes").setValue(routes)
+                        firebaseDatabase.child("users_journeys").child(userUid).child(journey.name).setValue(journey)
+                        firebaseDatabase.child("users_journeys").child(userUid).child(journey.name).child("routes").setValue(routes)
 
                         val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
                         mapView.findNavController().navigate(action)

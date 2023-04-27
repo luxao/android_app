@@ -113,7 +113,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     //TODO: upravit mapu
     //TODO: spravit asi jeden styl dizajnu , nocny netreba
     //TODO: pridat aspon slovenčinu
-    //TODO: pridat moznost rezervácie počtu osob k poznamkam ????
     //TODO: upravit ikonku appky
     //TODO: skusit pridat settings ale este premysliet ake
     //TODO: spravit pouzivatelsku prirucku
@@ -123,6 +122,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     //TODO: PO NADIZAJNOVANI
     //TODO: pridat viac info k miestu ?
     //TODO: ak sa podarí firebase implementacia DB do recyclerview zobrazovania vyletov v profile tak skusit vypista userov a ich vylety ak by dal follow
+    //TODO: pridat moznost rezervácie počtu osob k poznamkam ????
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {

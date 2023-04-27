@@ -35,6 +35,7 @@
             android:layout_marginRight="@dimen/spacing_middle"
             android:layout_marginTop="@dimen/spacing_medium"
             android:src="@drawable/ic_baseline_mode_of_travel_24"
+            android:backgroundTint="@color/black"
             />
 
         <ImageView
@@ -73,7 +74,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginBottom="@dimen/spacing_middle"
-            android:layout_marginLeft="@dimen/spacing_small"
+
             android:layout_marginRight="@dimen/spacing_small"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/ic_baseline_delete_24"
@@ -86,7 +87,6 @@
             android:clickable="true"
             android:layout_height="35dp"
             android:layout_marginBottom="@dimen/spacing_middle"
-            android:layout_marginLeft="@dimen/spacing_small"
             android:layout_marginRight="@dimen/spacing_small"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/info_icon"
@@ -99,7 +99,7 @@
             android:clickable="true"
             android:layout_height="35dp"
             android:layout_marginBottom="@dimen/spacing_middle"
-            android:layout_marginLeft="@dimen/spacing_small"
+
             android:layout_marginRight="@dimen/spacing_middle"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/note_add_icon"

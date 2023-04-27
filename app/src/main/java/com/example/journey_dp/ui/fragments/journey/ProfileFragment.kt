@@ -85,7 +85,7 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.journeys.observe(viewLifecycleOwner) { journey->
             if (journey.size <= 1) {
-                ref.child("users").child(userId).get().addOnSuccessListener { snapshot ->
+                ref.child("users_journeys").child(userId).get().addOnSuccessListener { snapshot ->
                     Log.i("MYTEST", "TESTUJEME ${snapshot.childrenCount}")
                     if ((snapshot.childrenCount.toInt() > journey.size).or(journey.isEmpty())) {
                         Log.i("MYTEST","SPUSTAM SE ${journey.size}")
@@ -127,15 +127,38 @@ class ProfileFragment : Fragment() {
                         }
                         else {
                             Log.i("MYTEST","ELSE:")
-
                             for (item in snapshot.children) {
-                                Log.i("MYTEST","${item.key} => ${item.value}")
+                                val testJourney = item.getValue(UserJourney::class.java)
 
+                                val journeyToDB = JourneyEntity(
+                                    user = testJourney?.user!!,
+                                    name = testJourney.name,
+                                    totalDistance = testJourney.totalDistance!!,
+                                    totalDuration = testJourney.totalDuration!!,
+                                    numberOfDestinations = testJourney.numberOfDestinations!!,
+                                    sharedUrl = ""
+                                )
+                                val routesToDB = mutableListOf<RouteEntity>()
+                                Log.i("MYTEST","${journeyToDB.id} => $journeyToDB")
+                                for(route in testJourney.routes!!)  {
+                                    val itemRoute = RouteEntity(
+                                        journeyId = journeyToDB.id,
+                                        origin = route.origin!!,
+                                        destination = route.destination!!,
+                                        travelMode = route.travelMode!!,
+                                        note = route.note!!,
+                                        originName = route.originName!!,
+                                        destinationName = route.destinationName!!
+                                    )
+                                    routesToDB.add(itemRoute)
+                                }
+                                Log.i("MYTEST","$routesToDB")
+                                profileViewModel.insertJourneyWithDestinations(journeyToDB, routesToDB)
                             }
                         }
                     }
-                }.addOnCanceledListener {
-                    Log.e("firebase", "Error getting data")
+                }.addOnFailureListener {
+                    Log.e("MYTEST", "Error getting data",it)
                 }
 
             }
@@ -313,7 +336,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        ref.child("users").child(userId).addValueEventListener(values)
+        ref.child("users_journeys").child(userId).addValueEventListener(values)
     }
 
     override fun onDestroyView() {

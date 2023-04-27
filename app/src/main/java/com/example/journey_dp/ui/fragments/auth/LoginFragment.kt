@@ -27,7 +27,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.journey_dp.data.firebase.User
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginFragment : Fragment() {
     private var _binding : FragmentLoginBinding? = null
@@ -36,11 +39,9 @@ class LoginFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
-
         if (auth.currentUser != null) {
             val action = LoginFragmentDirections.actionLoginFragmentToPlanJourneyFragment()
             findNavController().navigate(action)
@@ -60,7 +61,6 @@ class LoginFragment : Fragment() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-
 
 
         return binding.root
@@ -105,6 +105,7 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
+
                     binding.loginWrapper.visibility = View.GONE
                     binding.loginAnimationWrapper.visibility = View.VISIBLE
                     binding.loginAnimation.playAnimation()

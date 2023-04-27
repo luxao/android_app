@@ -24,6 +24,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
+import com.example.journey_dp.data.firebase.User
 import com.example.journey_dp.databinding.FragmentPlanJourneyBinding
 import com.example.journey_dp.ui.fragments.auth.LoginFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
@@ -40,6 +41,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import okio.ByteString.Companion.decodeBase64
 import okio.ByteString.Companion.encodeUtf8
@@ -53,6 +56,9 @@ class PlanJourneyFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var model: MapViewModel
+    private lateinit var database: FirebaseDatabase
+    private lateinit var ref : DatabaseReference
+    private lateinit var userId: String
 
     // Declaration of fusedLocationProvider
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -79,7 +85,9 @@ class PlanJourneyFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
-
+        database = FirebaseDatabase.getInstance()
+        ref = database.reference
+        userId = auth.currentUser!!.uid
         model = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext(),auth)
@@ -93,6 +101,7 @@ class PlanJourneyFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
 
         _binding = FragmentPlanJourneyBinding.inflate(inflater, container, false)
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -117,6 +126,28 @@ class PlanJourneyFragment : Fragment() {
 
         if (!checkPermissions(requireContext())) {
             requestPermissions()
+        }
+
+        val newUser = User(
+            userName = auth.currentUser!!.displayName!!,
+            userEmail = auth.currentUser!!.email!!
+        )
+
+        Log.i("MYTEST","$newUser")
+        ref.child("all_users").get().addOnSuccessListener { snapshot ->
+            Log.i("MYTEST","$snapshot or ${snapshot.key} ")
+            if (snapshot.value == "") {
+                Log.i("MYTEST","is empty")
+                ref.child("all_users").child(userId).setValue(newUser)
+            }
+            for (snap in snapshot.children) {
+                Log.i("MYTEST","${snap.key} => ${snap.value}")
+                if (snap.key != userId) {
+                    ref.child("all_users").child(userId).setValue(newUser)
+                }
+            }
+        }.addOnFailureListener {
+            Log.e("MYTEST", "Error getting data", it)
         }
 
         binding.startPlan.setOnClickListener {
