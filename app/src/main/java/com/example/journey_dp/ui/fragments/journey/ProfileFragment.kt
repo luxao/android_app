@@ -16,7 +16,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.bumptech.glide.Glide
 import com.example.journey_dp.R
+import com.example.journey_dp.data.firebase.Routes
+import com.example.journey_dp.data.firebase.UserJourney
 import com.example.journey_dp.data.room.model.JourneyEntity
+import com.example.journey_dp.data.room.model.JourneyWithRoutes
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
@@ -91,7 +94,11 @@ class ProfileFragment : Fragment() {
                             Log.i("MYTEST","Ignorujeeme meno $ignoreName")
                             for (item in snapshot.children) {
                                 if (item.key != ignoreName) {
-                                    Log.i("MYTEST","${item.key} => ${item.value}")
+//                                    Log.i("MYTEST","${item.key} => ${item.value}")
+                                    val testJourney = item.getValue(UserJourney::class.java)
+                                    Log.i("MYTEST","${testJourney?.name} => ${testJourney?.id} , ${testJourney?.user}, ${testJourney?.sharedUrl}, ${testJourney?.totalDistance}, ${testJourney?.totalDuration}, ${testJourney?.numberOfDestinations}")
+                                    Log.i("MYTEST", "${testJourney?.routes}")
+
                                 }
                             }
                         }
