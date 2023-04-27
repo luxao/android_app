@@ -101,7 +101,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginTop="28dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginLeft="-33dp"
                     android:background="@drawable/ic_baseline_more_vert_24" />
 
@@ -130,33 +130,36 @@
 
                 <Button
                     android:id="@+id/add_destination"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:visibility="gone"
                     android:background="@drawable/ic_baseline_add_circle_24"
                     android:contentDescription="@string/add_input" />
 
                 <Button
                     android:id="@+id/start_plan_journey"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:visibility="visible"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="2dp"
                     android:background="@drawable/ic_baseline_directions_24"
-                    android:contentDescription="@string/start" />
+                    android:contentDescription="@string/start"
+                    android:visibility="visible"
+                     />
 
                 <Button
                     android:id="@+id/find_user_location"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:visibility="visible"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="@drawable/ic_baseline_near_me_24"
-                    android:contentDescription="@string/find_user_location" />
+                    android:contentDescription="@string/find_user_location"
+                    android:visibility="visible"
+                    tools:ignore="TouchTargetSizeCheck" />
 
 
                 <Button
                     android:id="@+id/cancel_plan"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:visibility="gone"
                     android:background="@drawable/ic_baseline_cancel_24"
                     android:contentDescription="@string/find_user_location" />
@@ -894,120 +897,195 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/chips_info_markers_wrapper"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="90dp"
                 android:visibility="visible"
                 tools:context=".ui.fragments.maps.PlanMapFragment">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chip_group_markers"
-                    android:layout_width="270dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="20dp"
-                    android:orientation="horizontal"
-                    app:chipSpacingHorizontal="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:selectionRequired="true"
-                    app:singleLine="true"
-                    app:singleSelection="true">
 
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/station"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="60dp"
-                        android:layout_height="50dp"
-                        android:checkable="true"
-
-                        android:clickable="true"
-                        android:contextClickable="true"
-                        android:tag="station"
-                        app:checkedIcon="@drawable/ic_baseline_local_gas_station_24"
-                        app:checkedIconTint="@color/green"
-                        app:checkedIconVisible="true"
-                        app:chipIcon="@drawable/ic_baseline_local_gas_station_24"
-                        app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
-                        app:chipIconVisible="true"
-                        app:iconEndPadding="10dp"
-                        app:iconStartPadding="10dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/hotels"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="60dp"
-                        android:layout_height="50dp"
-                        android:checkable="true"
-
-                        android:clickable="true"
-                        android:contextClickable="true"
-                        android:tag="hotels"
-                        app:checkedIcon="@drawable/ic_baseline_hotel_24"
-                        app:checkedIconTint="@color/green"
-                        app:checkedIconVisible="true"
-                        app:chipIcon="@drawable/ic_baseline_hotel_24"
-                        app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
-                        app:chipIconVisible="true"
-                        app:iconEndPadding="10dp"
-                        app:iconStartPadding="10dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/restaurants"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="60dp"
-                        android:layout_height="50dp"
-                        android:checkable="true"
-
-                        android:clickable="true"
-                        android:contextClickable="true"
-                        android:tag="restaurants"
-                        app:checkedIcon="@drawable/ic_baseline_restaurant_24"
-                        app:checkedIconTint="@color/green"
-                        app:checkedIconVisible="true"
-                        app:chipIcon="@drawable/ic_baseline_restaurant_24"
-                        app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
-                        app:chipIconVisible="true"
-                        app:iconEndPadding="10dp"
-                        app:iconStartPadding="10dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/bar"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="60dp"
-                        android:layout_height="50dp"
-                        android:checkable="true"
-                        android:clickable="true"
-                        android:contextClickable="true"
-                        android:tag="bar"
-                        app:checkedIcon="@drawable/ic_baseline_local_bar_24"
-                        app:checkedIconTint="@color/green"
-                        app:checkedIconVisible="true"
-                        app:chipIcon="@drawable/ic_baseline_local_bar_24"
-                        app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
-                        app:chipIconVisible="true"
-                        app:iconEndPadding="10dp"
-                        app:iconStartPadding="10dp" />
-
-
-                </com.google.android.material.chip.ChipGroup>
 
                 <com.google.android.material.divider.MaterialDivider
-                    android:id="@+id/material_divider_for_chips"
+                    android:id="@+id/chips_divider"
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
                     app:dividerColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/chip_group_markers"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_markers"
+                        android:layout_width="270dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="20dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:selectionRequired="true"
+                        app:singleSelection="true"
+                       >
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/station"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="station"
+                            app:checkedIcon="@drawable/ic_baseline_local_gas_station_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_local_gas_station_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/hotels"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="hotels"
+                            app:checkedIcon="@drawable/ic_baseline_hotel_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_hotel_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/restaurants"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="restaurants"
+                            app:checkedIcon="@drawable/ic_baseline_restaurant_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_restaurant_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/bar"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="bar"
+                            app:checkedIcon="@drawable/ic_baseline_local_bar_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_local_bar_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/hospital"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="hospital"
+                            app:checkedIcon="@drawable/ic_baseline_local_hospital_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_local_hospital_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/store"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="store"
+                            app:checkedIcon="@drawable/ic_baseline_store_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_store_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/cafe"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="cafe"
+                            app:checkedIcon="@drawable/ic_baseline_local_cafe_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_local_cafe_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/tourist_attraction"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:checkable="true"
+                            android:clickable="true"
+                            android:contextClickable="true"
+                            android:tag="tourist_attraction"
+                            app:checkedIcon="@drawable/ic_baseline_tour_24"
+                            app:checkedIconTint="@color/green"
+                            app:checkedIconVisible="true"
+                            app:chipIcon="@drawable/ic_baseline_tour_24"
+                            app:chipIconSize="30dp"
+                            app:chipIconTint="@color/black"
+                            app:chipIconVisible="true"
+                            app:iconEndPadding="10dp"
+                            app:iconStartPadding="10dp" />
+
+
+                    </com.google.android.material.chip.ChipGroup>
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

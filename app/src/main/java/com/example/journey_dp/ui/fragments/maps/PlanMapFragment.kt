@@ -115,7 +115,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     //TODO: pridat aspon slovenčinu
     //TODO: pridat moznost rezervácie počtu osob k poznamkam ????
     //TODO: upravit ikonku appky
-    //TODO: pridat ešte nejake pointmarkers pre zobrazovanie najblizsich veci
     //TODO: skusit pridat settings ale este premysliet ake
     //TODO: spravit pouzivatelsku prirucku
     //TODO: zlepsit lokaciu
@@ -1044,7 +1043,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             checkedIds.map {
                 val chip: Chip? = group.findViewById(it)
                 var type = ""
-
+                var radius = 10000
                 val locationUser = if (mapViewModel.location.value != null) {
                     mapViewModel.location.value!!
                 } else {
@@ -1055,24 +1054,56 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 when (chip?.tag) {
                     "station" -> {
                         type = "gas_station"
+                        radius = 20000
                         mapViewModel.poiMarkers.map { marker ->
                             marker.remove()
                         }
                     }
                     "hotels" -> {
                         type = "lodging"
+                        radius = 10000
                         mapViewModel.poiMarkers.map { marker ->
                             marker.remove()
                         }
                     }
                     "restaurants" -> {
                         type = "restaurant"
+                        radius = 10000
                         mapViewModel.poiMarkers.map { marker ->
                             marker.remove()
                         }
                     }
                     "bar" -> {
                         type = "bar"
+                        radius = 10000
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                    "hospital" -> {
+                        type = "hospital"
+                        radius = 30000
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                    "store" -> {
+                        type = "store"
+                        radius = 10000
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                    "cafe" -> {
+                        type = "cafe"
+                        radius = 10000
+                        mapViewModel.poiMarkers.map { marker ->
+                            marker.remove()
+                        }
+                    }
+                    "tourist_attraction" -> {
+                        type = "tourist_attraction"
+                        radius = 50000
                         mapViewModel.poiMarkers.map { marker ->
                             marker.remove()
                         }
@@ -1083,12 +1114,16 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     "lodging" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_hotel_24)
                     "restaurant" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_restaurant_24)
                     "bar" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_local_bar_24)
+                    "hospital" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_local_hospital_24)
+                    "store" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_store_24)
+                    "cafe" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_local_cafe_24)
+                    "tourist_attraction" -> bitmapDescriptorFromVector(R.drawable.ic_baseline_tour_24)
                     else -> {BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)}
                 }
 
                 if (type.isNotBlank()){
                     mapViewModel.getPlacesTypes(locationUser,
-                        10000,
+                        radius,
                         type,
                         BuildConfig.GOOGLE_MAPS_API_KEY,
                         successCallback = { data ->
