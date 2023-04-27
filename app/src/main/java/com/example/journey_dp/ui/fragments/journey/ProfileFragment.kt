@@ -57,7 +57,9 @@ class ProfileFragment : Fragment() {
         auth = Firebase.auth
         database = FirebaseDatabase.getInstance()
         ref = database.reference
-        userId = auth.currentUser!!.uid
+        if (auth.currentUser != null) {
+            userId = auth.currentUser!!.uid
+        }
         profileViewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext(),auth)

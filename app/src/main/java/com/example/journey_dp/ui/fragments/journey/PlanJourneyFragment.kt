@@ -87,7 +87,9 @@ class PlanJourneyFragment : Fragment() {
         auth = Firebase.auth
         database = FirebaseDatabase.getInstance()
         ref = database.reference
-        userId = auth.currentUser!!.uid
+        if (auth.currentUser != null) {
+            userId = auth.currentUser!!.uid
+        }
         model = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext(),auth)
@@ -128,12 +130,14 @@ class PlanJourneyFragment : Fragment() {
             requestPermissions()
         }
 
+
         val newUser = User(
             userName = auth.currentUser!!.displayName!!,
-            userEmail = auth.currentUser!!.email!!
+            userEmail = auth.currentUser!!.email!!,
+            userImage = auth.currentUser!!.photoUrl.toString()
         )
 
-        Log.i("MYTEST","$newUser")
+        //TODO: Ulozit do telefonu ze uz tento pouzivatel sa nachadza v db a netreba to viac krat kontrolovat
         ref.child("all_users").get().addOnSuccessListener { snapshot ->
             Log.i("MYTEST","$snapshot or ${snapshot.key} ")
             if (snapshot.value == "") {
@@ -141,7 +145,6 @@ class PlanJourneyFragment : Fragment() {
                 ref.child("all_users").child(userId).setValue(newUser)
             }
             for (snap in snapshot.children) {
-                Log.i("MYTEST","${snap.key} => ${snap.value}")
                 if (snap.key != userId) {
                     ref.child("all_users").child(userId).setValue(newUser)
                 }
