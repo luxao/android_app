@@ -20,6 +20,7 @@ import com.example.journey_dp.data.firebase.Routes
 import com.example.journey_dp.data.firebase.UserJourney
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
+import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
@@ -96,9 +97,32 @@ class ProfileFragment : Fragment() {
                                 if (item.key != ignoreName) {
 //                                    Log.i("MYTEST","${item.key} => ${item.value}")
                                     val testJourney = item.getValue(UserJourney::class.java)
-                                    Log.i("MYTEST","${testJourney?.name} => ${testJourney?.id} , ${testJourney?.user}, ${testJourney?.sharedUrl}, ${testJourney?.totalDistance}, ${testJourney?.totalDuration}, ${testJourney?.numberOfDestinations}")
-                                    Log.i("MYTEST", "${testJourney?.routes}")
-
+//                                    Log.i("MYTEST","${testJourney?.name} => ${testJourney?.id} , ${testJourney?.user}, ${testJourney?.sharedUrl}, ${testJourney?.totalDistance}, ${testJourney?.totalDuration}, ${testJourney?.numberOfDestinations}")
+//                                    Log.i("MYTEST", "${testJourney?.routes}")
+                                    val journeyToDB = JourneyEntity(
+                                        user = testJourney?.user!!,
+                                        name = testJourney.name,
+                                        totalDistance = testJourney.totalDistance!!,
+                                        totalDuration = testJourney.totalDuration!!,
+                                        numberOfDestinations = testJourney.numberOfDestinations!!,
+                                        sharedUrl = ""
+                                    )
+                                    val routesToDB = mutableListOf<RouteEntity>()
+                                    Log.i("MYTEST","${journeyToDB.id} => $journeyToDB")
+                                    for(route in testJourney.routes!!)  {
+                                        val itemRoute = RouteEntity(
+                                            journeyId = journeyToDB.id,
+                                            origin = route.origin!!,
+                                            destination = route.destination!!,
+                                            travelMode = route.travelMode!!,
+                                            note = route.note!!,
+                                            originName = route.originName!!,
+                                            destinationName = route.destinationName!!
+                                        )
+                                        routesToDB.add(itemRoute)
+                                    }
+                                    Log.i("MYTEST","$routesToDB")
+                                    profileViewModel.insertJourneyWithDestinations(journeyToDB, routesToDB)
                                 }
                             }
                         }

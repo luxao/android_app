@@ -108,8 +108,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var status: Status
 
-    //TODO: Ukladanie do FIREBASE , a skontrolovat ak je lokalna DB prazdna tak ziskat data z Firebase a ulozit ich aj do lokalnej a potom zobrazovat uz len z lokalnej
-    //TODO: alebo to urobit len na ziskavanie z firebase real time database
     //TODO: otestovat vypocet vzdialenosti lebo bol zly z Hulu do podhajskej
     //TODO: upravit farbu ikoniek na mape
     //TODO: upravit mapu
