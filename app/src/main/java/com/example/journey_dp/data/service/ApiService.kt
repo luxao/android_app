@@ -32,7 +32,7 @@ interface ApiService {
         @Query("titles") titles: String,
         @Query("exintro") exintro: Boolean = true,
         @Query("explaintext") explaintext: Boolean = true,
-        @Query("exsentences") exsentences: Int = 3
+        @Query("exsentences") exsentences: Int = 5
     ): Call<ApiResponse>
 
     @GET("https://maps.googleapis.com/maps/api/place/nearbysearch/json")

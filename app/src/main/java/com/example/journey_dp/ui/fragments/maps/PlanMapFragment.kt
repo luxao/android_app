@@ -108,8 +108,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var status: Status
 
-    //TODO: otestovat vypocet vzdialenosti lebo bol zly z Hulu do podhajskej
-    //TODO: upravit farbu ikoniek na mape
     //TODO: upravit mapu
     //TODO: spravit asi jeden styl dizajnu , nocny netreba
     //TODO: pridat aspon slovenčinu
@@ -120,7 +118,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     //TODO: Nadizajnovat
     //TODO: hodit na google play
     //TODO: PO NADIZAJNOVANI
-    //TODO: pridat viac info k miestu ?
     //TODO: ak sa podarí firebase implementacia DB do recyclerview zobrazovania vyletov v profile tak skusit vypista userov a ich vylety ak by dal follow
     //TODO: pridat moznost rezervácie počtu osob k poznamkam ????
 
@@ -341,6 +338,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
 
                                     Log.i("MYTEST", "ORIG, DEST IN CHIPS : $origin and $destination")
+                                    Log.i("MYTEST", "TRANSIT MODE : $mode and $transit")
                                     mapViewModel.getDirections(origin, destination, mode, transit, key)
                                     if (mapViewModel.polylines.isNotEmpty()) {
                                         Log.i("MYTEST", "POlYLINES IN CHIPS BEFORE DELETE: ${mapViewModel.polylines}")
@@ -911,9 +909,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         googleMap.setMinZoomPreference(10f)
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
+                Log.i("MYTEST","SOM TU CHECKOL SOM PERMISSIONS")
                 getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
                 if (mapViewModel.location.value != null) {
-
+                    Log.i("MYTEST","SOM TU ${mapViewModel.location.value}")
                     val name = mapViewModel.locationName
                     val latLng = mapViewModel.location.value
 

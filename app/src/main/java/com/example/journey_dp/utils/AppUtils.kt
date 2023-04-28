@@ -149,7 +149,7 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
         val distanceItem = it.title!!.split("km")[0].trim().toDouble()
         var durationItemHour = 0
         var durationItemMinutes = ""
-
+        Log.i("MYTEST","SNIPPET DISTANCE : ${it.snippet}")
 
         if (it.snippet!!.contains("day").or(it.snippet!!.contains("days"))) {
             val tmp = it.snippet!!.split(" ")

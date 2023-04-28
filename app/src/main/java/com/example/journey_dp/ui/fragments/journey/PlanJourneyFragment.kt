@@ -30,6 +30,7 @@ import com.example.journey_dp.ui.fragments.auth.LoginFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.*
+import com.example.journey_dp.utils.shared.SharedPreferencesUtil
 
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -137,21 +138,27 @@ class PlanJourneyFragment : Fragment() {
             userImage = auth.currentUser!!.photoUrl.toString()
         )
 
-        //TODO: Ulozit do telefonu ze uz tento pouzivatel sa nachadza v db a netreba to viac krat kontrolovat
-        ref.child("all_users").get().addOnSuccessListener { snapshot ->
-            Log.i("MYTEST","$snapshot or ${snapshot.key} ")
-            if (snapshot.value == "") {
-                Log.i("MYTEST","is empty")
-                ref.child("all_users").child(userId).setValue(newUser)
-            }
-            for (snap in snapshot.children) {
-                if (snap.key != userId) {
+        val checkUser = SharedPreferencesUtil.getInstance().getUserUid(requireContext(), userId)
+        Log.i("MYTEST", "TEST SHARED : $checkUser")
+        if (checkUser!!.isBlank().or(checkUser.isEmpty())) {
+            Log.i("MYTEST","IDEME UKLADAT NOVEHO USERA DO FIREBASU")
+            ref.child("all_users").get().addOnSuccessListener { snapshot ->
+                Log.i("MYTEST","$snapshot or ${snapshot.key} ")
+                if (snapshot.value == "") {
+                    Log.i("MYTEST","is empty")
                     ref.child("all_users").child(userId).setValue(newUser)
                 }
+                for (snap in snapshot.children) {
+                    if (snap.key != userId) {
+                        ref.child("all_users").child(userId).setValue(newUser)
+                        SharedPreferencesUtil.getInstance().putUserItem(requireContext(), userId)
+                    }
+                }
+            }.addOnFailureListener {
+                Log.e("MYTEST", "Error getting data", it)
             }
-        }.addOnFailureListener {
-            Log.e("MYTEST", "Error getting data", it)
         }
+
 
         binding.startPlan.setOnClickListener {
             binding.introductionAnimationWrapper.visibility = View.GONE
