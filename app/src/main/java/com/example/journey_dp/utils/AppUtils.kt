@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
+import com.example.journey_dp.ui.fragments.journey.FindUsersFragmentDirections
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
@@ -206,6 +207,45 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
 
 }
 
+fun setFindUsersMenu(
+    context: Context,
+    activity: FragmentActivity,
+    lifecycleOwner: LifecycleOwner,
+    view: View,
+    auth: FirebaseAuth
+) {
+    val menuHost: MenuHost = activity
+    menuHost.addMenuProvider(object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.top_map_menu, menu)
+            val profileItem = menu.findItem(R.id.profile)
+            val imageItem = profileItem?.actionView as ImageView
+            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+            imageItem.setOnClickListener {
+                val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
+            }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return when (menuItem.itemId) {
+                R.id.home -> {
+                    val action = FindUsersFragmentDirections.actionFindUsersFragmentToPlanJourneyFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                R.id.profile -> {
+                    val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                else -> false
+            }
+
+
+        }
+    }, lifecycleOwner, Lifecycle.State.RESUMED)
+}
 
 fun setMapMenu(
     context: Context,

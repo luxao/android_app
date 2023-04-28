@@ -202,6 +202,12 @@ class ProfileFragment : Fragment() {
                     })
                     true
                 }
+                R.id.find_users -> {
+                    val action =
+                        ProfileFragmentDirections.actionProfileFragment2ToFindUsersFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
                 R.id.about -> {
 
                     val action =

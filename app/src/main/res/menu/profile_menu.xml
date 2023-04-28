@@ -8,6 +8,12 @@
         android:id="@+id/planJourney"
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/plan" />
+
+    <item
+        android:id="@+id/find_users"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:title="@string/find_friends" />
+
     <item
         android:id="@+id/about"
         android:icon="@drawable/ic_baseline_info_24"

@@ -78,6 +78,9 @@
         <action
             android:id="@+id/action_profileFragment2_to_infoFragment"
             app:destination="@id/infoFragment" />
+        <action
+            android:id="@+id/action_profileFragment2_to_findUsersFragment"
+            app:destination="@id/findUsersFragment" />
     </fragment>
     <fragment
         android:id="@+id/infoFragment"
@@ -87,5 +90,17 @@
         <action
             android:id="@+id/action_infoFragment_to_profileFragment2"
             app:destination="@id/profileFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/findUsersFragment"
+        android:name="com.example.journey_dp.ui.fragments.journey.FindUsersFragment"
+        android:label="fragment_find_users"
+        tools:layout="@layout/fragment_find_users" >
+        <action
+            android:id="@+id/action_findUsersFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
+        <action
+            android:id="@+id/action_findUsersFragment_to_planJourneyFragment"
+            app:destination="@id/planJourneyFragment" />
     </fragment>
 </navigation>
