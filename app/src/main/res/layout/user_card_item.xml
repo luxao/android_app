@@ -7,10 +7,6 @@
 
     <data>
         <variable
-            name="model"
-            type="com.example.journey_dp.ui.viewmodel.UsersViewModel" />
-
-        <variable
             name="user"
             type="com.example.journey_dp.data.firebase.UserWithUID" />
 
@@ -91,6 +87,7 @@
 
                 <Button
                     android:id="@+id/follow_button"
+                    android:tag="@{user.userId}"
                     android:layout_width="160dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -99,10 +96,36 @@
                     android:visibility="visible"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:onClick="@{() -> userListener.onClick(user.userId)}"
                     tools:ignore="TouchTargetSizeCheck" />
 
+                <Button
+                    android:id="@+id/request_send"
+                    android:tag="@{user.userId}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/request"
+                    android:text="@string/send_a_request"
+                    android:visibility="gone"
+                    android:textSize="11sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:clickable="false"
+                    tools:ignore="TouchTargetSizeCheck" />
 
+                <Button
+                    android:id="@+id/unfollow_button"
+                    android:layout_width="160dp"
+                    android:tag="@{user.userId}"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/unfollow"
+                    android:text="@string/unfollow"
+                    android:visibility="gone"
+                    android:textSize="11sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    tools:ignore="TouchTargetSizeCheck" />
 
             </LinearLayout>
 

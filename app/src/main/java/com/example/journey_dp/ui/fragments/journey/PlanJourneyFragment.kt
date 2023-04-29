@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.User
+import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.FragmentPlanJourneyBinding
 import com.example.journey_dp.ui.fragments.auth.LoginFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
@@ -146,11 +147,17 @@ class PlanJourneyFragment : Fragment() {
                 Log.i("MYTEST","$snapshot or ${snapshot.key} ")
                 if (snapshot.value == "") {
                     Log.i("MYTEST","is empty")
-                    ref.child("all_users").child(userId).setValue(newUser)
+                    ref.child("all_users").child(userId).child("user_data").setValue(newUser)
+                    ref.child("all_users").child(userId).child("requests").setValue("")
+                    ref.child("all_users").child(userId).child("followed").setValue("")
+                    ref.child("all_users").child(userId).child("followers").setValue("")
                 }
                 for (snap in snapshot.children) {
                     if (snap.key != userId) {
-                        ref.child("all_users").child(userId).setValue(newUser)
+                        ref.child("all_users").child(userId).child("user_data").setValue(newUser)
+                        ref.child("all_users").child(userId).child("requests").setValue("")
+                        ref.child("all_users").child(userId).child("followed").setValue("")
+                        ref.child("all_users").child(userId).child("followers").setValue("")
                         SharedPreferencesUtil.getInstance().putUserItem(requireContext(), userId)
                     }
                 }

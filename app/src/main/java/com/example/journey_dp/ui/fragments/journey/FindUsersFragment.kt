@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -34,7 +35,7 @@ import com.google.firebase.ktx.Firebase
 
 
 class FindUsersFragment : Fragment() {
-    private lateinit var model: UsersViewModel
+    private lateinit var usersViewModel: UsersViewModel
     private lateinit var usersAdapter: UsersAdapter
     private var _binding : FragmentFindUsersBinding? = null
     private val binding get() = _binding!!
@@ -53,7 +54,7 @@ class FindUsersFragment : Fragment() {
             userId = auth.currentUser!!.uid
         }
 
-        model = ViewModelProvider(
+        usersViewModel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext(),auth)
         )[UsersViewModel::class.java]
@@ -71,6 +72,12 @@ class FindUsersFragment : Fragment() {
             view = binding.root,
             auth = auth
         )
+        val loggedEmail = auth.currentUser!!.email
+        val loggedImage = auth.currentUser!!.photoUrl.toString()
+        val loggedName = auth.currentUser!!.displayName
+
+        usersViewModel.loggedUser = UserWithUID(userId,loggedEmail!!, loggedImage, loggedName!!)
+
         return binding.root
     }
 
@@ -79,7 +86,7 @@ class FindUsersFragment : Fragment() {
 
         getUsers()
         binding.lifecycleOwner = this@FindUsersFragment.viewLifecycleOwner
-        binding.model = this@FindUsersFragment.model
+        binding.model = this@FindUsersFragment.usersViewModel
 
 
         binding.apply {
@@ -100,6 +107,9 @@ class FindUsersFragment : Fragment() {
 
             usersAdapter = UsersAdapter(
                 context = requireContext(),
+                userId = userId,
+                usersViewModel = usersViewModel,
+                ref = ref,
                 userEventListener = UserEventListener { uid: String ->
                     Log.i("MYTEST", "CLICKED: $uid")
                 }
@@ -115,13 +125,13 @@ class FindUsersFragment : Fragment() {
     private fun getName() {
         if (binding.searchFriendsInput.text.toString().isNotBlank()) {
             binding.clearWrapper.visibility = View.VISIBLE
-            model.userName = binding.searchFriendsInput.text.toString()
-            model.allUsers.map { user ->
-                if (user.userName.contains(model.userName)) {
+            usersViewModel.userName = binding.searchFriendsInput.text.toString()
+            usersViewModel.allUsers.map { user ->
+                if (user.userName.contains(usersViewModel.userName)) {
                     Log.i("MYTEST", "FINDED USERS : ${user.userName}")
-                    if (!model.searchedUsers.contains(user)) {
-                        model.searchedUsers.add(user)
-                        usersAdapter.notifyItemInserted(model.searchedUsers.size)
+                    if (!usersViewModel.searchedUsers.contains(user)) {
+                        usersViewModel.searchedUsers.add(user)
+                        usersAdapter.notifyItemInserted(usersViewModel.searchedUsers.size)
                     }
                 }
             }
@@ -130,11 +140,11 @@ class FindUsersFragment : Fragment() {
 
     private fun clearUsersList() {
         binding.searchFriendsInput.text.clear()
-        model.userName = ""
+        usersViewModel.userName = ""
         binding.clearWrapper.visibility = View.GONE
-        if (model.searchedUsers.isNotEmpty()) {
-            model.searchedUsers.clear()
-            Log.i("MYTEST", "FINDED USERS IF EMPTY INPUT : ${model.searchedUsers}")
+        if (usersViewModel.searchedUsers.isNotEmpty()) {
+            usersViewModel.searchedUsers.clear()
+            Log.i("MYTEST", "FINDED USERS IF EMPTY INPUT : ${usersViewModel.searchedUsers}")
             usersAdapter.notifyDataSetChanged()
         }
     }
@@ -142,18 +152,20 @@ class FindUsersFragment : Fragment() {
     private fun getUsers() {
         ref.child("all_users").get().addOnSuccessListener { snapshot ->
             for (snap in snapshot.children) {
-                val userUID = snap.key.toString()
-                val userEmail = snap.child("userEmail").value.toString()
-                val userImage = snap.child("userImage").value.toString()
-                val userName = snap.child("userName").value.toString()
-                val user = UserWithUID(userUID, userEmail, userImage, userName)
-                Log.i("MYTEST","$user")
-                model.allUsers.add(user)
+                if (snap.key != userId) {
+                    val userUID = snap.key.toString()
+                    val userEmail = snap.child("user_data").child("userEmail").value.toString()
+                    val userImage = snap.child("user_data").child("userImage").value.toString()
+                    val userName = snap.child("user_data").child("userName").value.toString()
+                    val user = UserWithUID(userUID, userEmail, userImage, userName)
+                    Log.i("MYTEST","$user")
+                    usersViewModel.allUsers.add(user)
+                }
             }
         }.addOnFailureListener { error ->
             Log.e("MYTEST", "ERROR ${error.message}")
         }.addOnCompleteListener {
-            Log.i("MYTEST", "ALL : ${model.allUsers}")
+            Log.i("MYTEST", "ALL : ${usersViewModel.allUsers}")
         }
 
     }

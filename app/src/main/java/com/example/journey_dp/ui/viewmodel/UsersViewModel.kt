@@ -10,4 +10,5 @@ class UsersViewModel(private val repository: Repository, private val auth: Fireb
     var userName : String = ""
     var allUsers = mutableListOf<UserWithUID>()
     var searchedUsers = mutableListOf<UserWithUID>()
+    var loggedUser = UserWithUID()
 }

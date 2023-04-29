@@ -15,6 +15,9 @@
     <color name="red">#D40000</color>
     <color name="green">#036C05</color>
     <color name="clear">#7DE6CE</color>
+    <color name="unfollow">#F36056</color>
+    <color name="request">#2E3231</color>
+
 
 </resources>
 
