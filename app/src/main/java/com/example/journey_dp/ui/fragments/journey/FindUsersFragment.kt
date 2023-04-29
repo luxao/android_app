@@ -1,5 +1,6 @@
 package com.example.journey_dp.ui.fragments.journey
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,17 +12,19 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.User
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.FragmentFindUsersBinding
 import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
+import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
+import com.example.journey_dp.ui.adapter.events.JourneyEventListener
+import com.example.journey_dp.ui.adapter.events.UserEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
-import com.example.journey_dp.utils.Injection
-import com.example.journey_dp.utils.setFindUsersMenu
-import com.example.journey_dp.utils.setMapMenu
+import com.example.journey_dp.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -32,6 +35,7 @@ import com.google.firebase.ktx.Firebase
 
 class FindUsersFragment : Fragment() {
     private lateinit var model: UsersViewModel
+    private lateinit var usersAdapter: UsersAdapter
     private var _binding : FragmentFindUsersBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
@@ -74,6 +78,9 @@ class FindUsersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         getUsers()
+        binding.lifecycleOwner = this@FindUsersFragment.viewLifecycleOwner
+        binding.model = this@FindUsersFragment.model
+
 
         binding.apply {
             searchFriendsInput.addTextChangedListener(object: TextWatcher {
@@ -83,19 +90,52 @@ class FindUsersFragment : Fragment() {
                     count: Int,
                     after: Int
                 ) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
 
                 override fun afterTextChanged(s: Editable?) {
                     getName()
                 }
             })
+
+            usersAdapter = UsersAdapter(
+                context = requireContext(),
+                userEventListener = UserEventListener { uid: String ->
+                    Log.i("MYTEST", "CLICKED: $uid")
+                }
+            )
+            usersRecyclerview.adapter = usersAdapter
+
+            clearUsers.setOnClickListener {
+                clearUsersList()
+            }
         }
     }
 
     private fun getName() {
         if (binding.searchFriendsInput.text.toString().isNotBlank()) {
+            binding.clearWrapper.visibility = View.VISIBLE
             model.userName = binding.searchFriendsInput.text.toString()
-            Log.i("MYTEST", model.userName)
+            model.allUsers.map { user ->
+                if (user.userName.contains(model.userName)) {
+                    Log.i("MYTEST", "FINDED USERS : ${user.userName}")
+                    if (!model.searchedUsers.contains(user)) {
+                        model.searchedUsers.add(user)
+                        usersAdapter.notifyItemInserted(model.searchedUsers.size)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun clearUsersList() {
+        binding.searchFriendsInput.text.clear()
+        model.userName = ""
+        binding.clearWrapper.visibility = View.GONE
+        if (model.searchedUsers.isNotEmpty()) {
+            model.searchedUsers.clear()
+            Log.i("MYTEST", "FINDED USERS IF EMPTY INPUT : ${model.searchedUsers}")
+            usersAdapter.notifyDataSetChanged()
         }
     }
 
@@ -118,6 +158,10 @@ class FindUsersFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 
 }
