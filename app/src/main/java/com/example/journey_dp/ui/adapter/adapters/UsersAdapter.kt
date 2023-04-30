@@ -35,21 +35,30 @@ class UsersAdapter(
 
     class UserItemViewHolder(var binding: UserCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: UserWithUID, userEventListener: UserEventListener, context: Context, ref: DatabaseReference, userId: String,loggedUser: UserWithUID) {
+        fun bind(user: UserWithUID, userEventListener: UserEventListener, context: Context, ref: DatabaseReference, userId: String,loggedUser: UserWithUID, requested: MutableList<String>) {
             binding.user = user
             binding.userName.text = user.userName
             binding.userEmail.text = user.userEmail
             binding.userProfilePicture.tag = user.userId
             Glide.with(context).load(user.userImage.toUri()).circleCrop().into(binding.userProfilePicture)
             binding.userListener = userEventListener
-            binding.followButton.setOnClickListener {
+            if (requested.isNotEmpty()) {
+                requested.map {
+                    if (it == user.userId) {
+                        binding.followButton.visibility = View.GONE
+                        binding.unfollowButton.visibility = View.VISIBLE
+                        binding.requestSend.visibility = View.VISIBLE
+                    }
+                }
+            }
+             binding.followButton.setOnClickListener {
                 Log.i("MYTEST", "FOLLOW CLICKED TAG ID : ${binding.followButton.tag}")
                 binding.followButton.visibility = View.GONE
                 binding.unfollowButton.visibility = View.VISIBLE
                 binding.requestSend.visibility = View.VISIBLE
 
                 ref.child("all_users").child(binding.followButton.tag.toString()).child("requests").child(userId).setValue(loggedUser)
-
+                ref.child("all_users").child(userId).child("requested").child(binding.followButton.tag.toString()).setValue(binding.followButton.tag.toString())
             }
             binding.unfollowButton.setOnClickListener {
                 Log.i("MYTEST", "UNFOLLOW CLICKED TAG ID : ${binding.unfollowButton.tag}")
@@ -58,6 +67,7 @@ class UsersAdapter(
                 binding.requestSend.visibility = View.GONE
 
                 ref.child("all_users").child(binding.followButton.tag.toString()).child("requests").child(userId).removeValue()
+                ref.child("all_users").child(userId).child("requested").child(binding.followButton.tag.toString()).removeValue()
 
             }
         }
@@ -88,7 +98,8 @@ class UsersAdapter(
     override fun onBindViewHolder(holder: UserItemViewHolder, position: Int) {
         val user: UserWithUID = getItem(position)
         val loggedUser = UserWithUID(userId, usersViewModel.loggedUser.userEmail, usersViewModel.loggedUser.userImage, usersViewModel.loggedUser.userName)
-        holder.bind(user,userEventListener, context, ref, userId, loggedUser)
+        val requested = usersViewModel.requestedUsers
+        holder.bind(user,userEventListener, context, ref, userId, loggedUser, requested)
     }
 
 }

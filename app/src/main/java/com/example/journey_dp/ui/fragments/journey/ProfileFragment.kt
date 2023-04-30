@@ -208,6 +208,12 @@ class ProfileFragment : Fragment() {
                     view.findNavController().navigate(action)
                     true
                 }
+                R.id.notifications -> {
+                    val action =
+                        ProfileFragmentDirections.actionProfileFragment2ToNotificationsFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
                 R.id.about -> {
 
                     val action =

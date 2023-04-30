@@ -35,6 +35,7 @@ import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
 import com.example.journey_dp.ui.fragments.journey.FindUsersFragmentDirections
+import com.example.journey_dp.ui.fragments.journey.NotificationsFragmentDirections
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
@@ -236,6 +237,46 @@ fun setFindUsersMenu(
                 }
                 R.id.profile -> {
                     val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                else -> false
+            }
+
+
+        }
+    }, lifecycleOwner, Lifecycle.State.RESUMED)
+}
+
+fun setNotificationsMenu(
+    context: Context,
+    activity: FragmentActivity,
+    lifecycleOwner: LifecycleOwner,
+    view: View,
+    auth: FirebaseAuth
+) {
+    val menuHost: MenuHost = activity
+    menuHost.addMenuProvider(object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.top_map_menu, menu)
+            val profileItem = menu.findItem(R.id.profile)
+            val imageItem = profileItem?.actionView as ImageView
+            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+            imageItem.setOnClickListener {
+                val action = NotificationsFragmentDirections.actionNotificationsFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
+            }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return when (menuItem.itemId) {
+                R.id.home -> {
+                    val action = NotificationsFragmentDirections.actionNotificationsFragmentToPlanJourneyFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                R.id.profile -> {
+                    val action = NotificationsFragmentDirections.actionNotificationsFragmentToProfileFragment2()
                     view.findNavController().navigate(action)
                     true
                 }
@@ -464,22 +505,36 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
                 it?.let {
                     val geocoder = Geocoder(context, Locale.getDefault())
 
-                    // DEPRECATED FOR TIRAMISU VERSION
-                    val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
+                    try {
+                        if (android.os.Build.VERSION.SDK_INT < 33) {
+                            val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
 
-                    val cityName: String = addresses!![0].getAddressLine(0)
+                            val cityName: String = addresses!![0].getAddressLine(0)
 
-                    if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
-                        Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
-                        model.setCountry(addresses[0].countryCode)
+                            if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
+                                Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
+                                model.setCountry(addresses[0].countryCode)
+                            }
+                            model.locationName = cityName
+                            model.setLocation(LatLng(it.latitude, it.longitude))
+                        }
+                        else {
+
+                            geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
+                                val cityName =  addresses[0].getAddressLine(0)
+                                if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
+                                    Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
+                                    model.setCountry(addresses[0].countryCode)
+                                    model.locationName = cityName
+                                    model.setLocation(LatLng(it.latitude, it.longitude))
+                                }
+                            }
+                        }
+
                     }
-
-                    model.locationName = cityName
-                    model.setLocation(LatLng(it.latitude, it.longitude))
-
-//                    geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
-//                        cityName = addresses[0].getAddressLine(0)
-//                    }
+                    catch (e: Exception) {
+                        Log.e("MYTEST","ERROR : ${e.message}")
+                    }
 
                 }
             }

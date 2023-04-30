@@ -161,6 +161,14 @@ class FindUsersFragment : Fragment() {
                     Log.i("MYTEST","$user")
                     usersViewModel.allUsers.add(user)
                 }
+                else {
+                    if (snap.child("requested").value != null) {
+                        for (data in snap.child("requested").children){
+                            Log.i("MYTEST", "REQUESTED USERS: $data")
+                            usersViewModel.requestedUsers.add(data.key.toString())
+                        }
+                    }
+                }
             }
         }.addOnFailureListener { error ->
             Log.e("MYTEST", "ERROR ${error.message}")

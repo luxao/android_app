@@ -113,6 +113,7 @@
     <string name="followed">followed</string>
     <string name="show_user_profile">show user profile</string>
     <string name="clear">Clear</string>
+    <string name="notifications">Notifications</string>
 
 
 </resources>
