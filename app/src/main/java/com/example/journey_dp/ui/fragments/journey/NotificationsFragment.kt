@@ -49,6 +49,12 @@ class NotificationsFragment : Fragment() {
             this,
             Injection.provideViewModelFactory(requireContext(),auth)
         )[UsersViewModel::class.java]
+
+        val loggedEmail = auth.currentUser!!.email
+        val loggedImage = auth.currentUser!!.photoUrl.toString()
+        val loggedName = auth.currentUser!!.displayName
+
+        usersViewModel.loggedUser = UserWithUID(userId,loggedEmail!!, loggedImage, loggedName!!)
     }
 
     override fun onCreateView(

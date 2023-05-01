@@ -80,6 +80,7 @@
                 android:layout_marginTop="40dp"
                 android:orientation="horizontal"
                 android:gravity="center"
+                android:visibility="visible"
                 >
 
                 <Button
@@ -117,7 +118,6 @@
 
 
             </LinearLayout>
-
 
         </androidx.cardview.widget.CardView>
 

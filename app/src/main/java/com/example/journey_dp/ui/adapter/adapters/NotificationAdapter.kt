@@ -26,11 +26,33 @@ class NotificationAdapter(
 
     class NotificationItemViewHolder(var binding: NotificationCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: UserWithUID,  context: Context, ref: DatabaseReference, userId: String) {
+        fun bind(user: UserWithUID,  context: Context, ref: DatabaseReference, userId: String, loggedUser: UserWithUID) {
             binding.user = user
             binding.notificationUserPicture.tag = user.userId
             Glide.with(context).load(user.userImage.toUri()).circleCrop().into(binding.notificationUserPicture)
             binding.notificationUserName.text = user.userName.plus(" wants to follow you")
+
+            binding.acceptBtn.setOnClickListener {
+                binding.layoutForAccept.visibility = View.GONE
+
+                ref.child("all_users").child(userId).child("followers").child(user.userId).setValue(user)
+                ref.child("all_users").child(userId).child("requests").child(user.userId).removeValue()
+                ref.child("all_users").child(user.userId).child("followed").child(userId).setValue(loggedUser)
+                ref.child("all_users").child(user.userId).child("requested").child(userId).removeValue()
+                binding.notificationUserName.text = user.userName.plus(" started following you")
+            }
+
+            binding.cancelRequest.setOnClickListener {
+                binding.layoutForAccept.visibility = View.GONE
+
+                ref.child("all_users").child(userId).child("requests").child(user.userId).removeValue()
+                ref.child("all_users").child(user.userId).child("requested").child(userId).removeValue()
+                val info = "Request of ".plus(user.userName).plus(" was cancelled")
+                binding.notificationUserName.text = info
+
+            }
+
+
         }
 
     }
@@ -58,7 +80,8 @@ class NotificationAdapter(
 
     override fun onBindViewHolder(holder: NotificationItemViewHolder, position: Int) {
         val user: UserWithUID = getItem(position)
-        holder.bind(user, context, ref, userId)
+        val loggedUser = UserWithUID(userId, usersViewModel.loggedUser.userEmail, usersViewModel.loggedUser.userImage, usersViewModel.loggedUser.userName)
+        holder.bind(user, context, ref, userId, loggedUser)
     }
 
 }
