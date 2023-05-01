@@ -99,6 +99,21 @@
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <Button
+                    android:id="@+id/following"
+                    android:tag="@{user.userId}"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/green"
+                    android:text="@string/following"
+                    android:clickable="false"
+                    android:textSize="11sp"
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <Button
                     android:id="@+id/request_send"
                     android:tag="@{user.userId}"
                     android:layout_width="wrap_content"

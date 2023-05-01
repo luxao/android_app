@@ -13,4 +13,6 @@ class UsersViewModel(private val repository: Repository, private val auth: Fireb
     var loggedUser = UserWithUID()
     var requestedUsers = mutableListOf<String>()
     var requestsList = mutableListOf<UserWithUID>()
+    var followingUsers = mutableListOf<UserWithUID>()
+
 }

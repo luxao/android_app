@@ -168,6 +168,18 @@ class FindUsersFragment : Fragment() {
                             usersViewModel.requestedUsers.add(data.key.toString())
                         }
                     }
+
+                    if (snap.child("followed").value != null) {
+                        for (data in snap.child("followed").children) {
+                            val userUID = data.key.toString()
+                            val userEmail = data.child("userEmail").value.toString()
+                            val userImage = data.child("userImage").value.toString()
+                            val userName = data.child("userName").value.toString()
+                            val user = UserWithUID(userUID, userEmail, userImage, userName)
+                            Log.i("MYTEST","$user")
+                            usersViewModel.followingUsers.add(user)
+                        }
+                    }
                 }
             }
         }.addOnFailureListener { error ->

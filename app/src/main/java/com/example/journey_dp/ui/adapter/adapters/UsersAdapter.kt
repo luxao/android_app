@@ -35,7 +35,8 @@ class UsersAdapter(
 
     class UserItemViewHolder(var binding: UserCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: UserWithUID, userEventListener: UserEventListener, context: Context, ref: DatabaseReference, userId: String,loggedUser: UserWithUID, requested: MutableList<String>) {
+        fun bind(user: UserWithUID, userEventListener: UserEventListener, context: Context, ref: DatabaseReference, userId: String,loggedUser: UserWithUID,
+                 requested: MutableList<String>, following: MutableList<UserWithUID>) {
             binding.user = user
             binding.userName.text = user.userName
             binding.userEmail.text = user.userEmail
@@ -51,6 +52,18 @@ class UsersAdapter(
                     }
                 }
             }
+
+            if (following.isNotEmpty()) {
+                following.map {
+                    if (it.userId == user.userId) {
+                        binding.followButton.visibility = View.GONE
+                        binding.following.visibility = View.VISIBLE
+                        binding.unfollowButton.visibility = View.VISIBLE
+                        binding.requestSend.visibility = View.GONE
+                    }
+                }
+            }
+
              binding.followButton.setOnClickListener {
                 Log.i("MYTEST", "FOLLOW CLICKED TAG ID : ${binding.followButton.tag}")
                 binding.followButton.visibility = View.GONE
@@ -99,7 +112,8 @@ class UsersAdapter(
         val user: UserWithUID = getItem(position)
         val loggedUser = UserWithUID(userId, usersViewModel.loggedUser.userEmail, usersViewModel.loggedUser.userImage, usersViewModel.loggedUser.userName)
         val requested = usersViewModel.requestedUsers
-        holder.bind(user,userEventListener, context, ref, userId, loggedUser, requested)
+        val following = usersViewModel.followingUsers
+        holder.bind(user,userEventListener, context, ref, userId, loggedUser, requested, following)
     }
 
 }

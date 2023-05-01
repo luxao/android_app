@@ -108,6 +108,7 @@
     <string name="find_friends">Find Friends</string>
     <string name="search_friends">Search friends</string>
     <string name="follow">follow</string>
+    <string name="following">following</string>
     <string name="unfollow">unfollow</string>
     <string name="send_a_request">request was send</string>
     <string name="accept_request">Accept</string>
