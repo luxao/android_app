@@ -11,7 +11,9 @@ import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.FragmentFindUsersBinding
 import com.example.journey_dp.databinding.FragmentNotificationsBinding
+import com.example.journey_dp.ui.adapter.adapters.NotificationAdapter
 import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
+import com.example.journey_dp.ui.adapter.events.UserEventListener
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.setFindUsersMenu
@@ -25,6 +27,7 @@ import com.google.firebase.ktx.Firebase
 class NotificationsFragment : Fragment() {
 
     private lateinit var usersViewModel: UsersViewModel
+    private lateinit var notificationAdapter: NotificationAdapter
     private var _binding : FragmentNotificationsBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
@@ -65,6 +68,19 @@ class NotificationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.lifecycleOwner = this@NotificationsFragment.viewLifecycleOwner
+        binding.model = this@NotificationsFragment.usersViewModel
+
+        notificationAdapter = NotificationAdapter(
+            context = requireContext(),
+            userId = userId,
+            usersViewModel = usersViewModel,
+            ref = ref,
+        )
+
+        binding.notificationsRecyclerview.adapter = notificationAdapter
+
         getNotifications()
     }
 
@@ -72,13 +88,30 @@ class NotificationsFragment : Fragment() {
         ref.child("all_users").child(userId).get().addOnSuccessListener { snapshot ->
             for (snap in snapshot.children) {
                 if (snap.key == "requests") {
-                    Log.i("MYTEST", "${snap.value}")
+                    for (data in snap.children) {
+                        Log.i("MYTEST", "${data.key} => ${data.value}")
+                        val userUID = data.key.toString()
+                        val userEmail = data.child("userEmail").value.toString()
+                        val userImage = data.child("userImage").value.toString()
+                        val userName = data.child("userName").value.toString()
+                        val user = UserWithUID(userUID, userEmail, userImage, userName)
+                        Log.i("MYTEST","$user")
+                        usersViewModel.requestsList.add(user)
+                        notificationAdapter.notifyItemInserted(usersViewModel.requestsList.size)
+                    }
+
                 }
             }
         }.addOnFailureListener { error ->
             Log.e("MYTEST", "ERROR : ${error.message}")
         }
 
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

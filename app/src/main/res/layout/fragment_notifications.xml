@@ -31,6 +31,22 @@ tools:context=".ui.fragments.journey.NotificationsFragment">
             app:layout_constraintTop_toTopOf="parent"
             />
 
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notifications_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            app:notifications_list="@{model.requestsList}"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/notification_card_item"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_notifications"
+            app:layout_constraintVertical_bias="0.0"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

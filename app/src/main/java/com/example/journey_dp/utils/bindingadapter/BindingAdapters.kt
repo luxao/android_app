@@ -8,6 +8,7 @@ import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
 import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
+import com.example.journey_dp.ui.adapter.adapters.NotificationAdapter
 import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
 
 
@@ -21,6 +22,14 @@ fun bindJourneysRecyclerView(recyclerView: RecyclerView, listData: MutableList<J
 @BindingAdapter("users_list")
 fun bindUsersToFindRecyclerView(recyclerView: RecyclerView, listData: MutableList<UserWithUID>?) {
     val adapter = recyclerView.adapter as UsersAdapter
+    adapter.submitList(null)
+    adapter.submitList(listData)
+}
+
+
+@BindingAdapter("notifications_list")
+fun bindNotificationsRecyclerView(recyclerView: RecyclerView, listData: MutableList<UserWithUID>?) {
+    val adapter = recyclerView.adapter as NotificationAdapter
     adapter.submitList(null)
     adapter.submitList(listData)
 }

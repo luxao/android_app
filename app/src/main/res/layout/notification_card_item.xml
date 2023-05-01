@@ -10,15 +10,11 @@
             name="user"
             type="com.example.journey_dp.data.firebase.UserWithUID" />
 
-        <variable
-            name="userListener"
-            type="com.example.journey_dp.ui.adapter.events.UserEventListener" />
-
         <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/user_item_layout"
+        android:id="@+id/notification_item_layout"
         android:visibility="visible"
         android:tag="@{user.userId}"
         app:contentPadding="4dp"
@@ -26,11 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="true"
-        tools:context=".ui.fragments.journey.FindUsersFragment"
+        tools:context=".ui.fragments.journey.NotificationsFragment"
         >
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/user_profile_information"
+            android:id="@+id/notification_user_information"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,9 +37,9 @@
             >
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/user_profile_picture"
-                android:layout_width="86dp"
-                android:layout_height="86dp"
+                android:id="@+id/notification_user_picture"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:padding="4dp"
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
                 app:strokeColor="@color/blue"
@@ -54,78 +50,71 @@
                 />
 
             <LinearLayout
-                android:id="@+id/user_layout_for_name"
+                android:id="@+id/notification_layout_for_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="96dp"
-                android:layout_marginEnd="86dp"
+                android:layout_marginStart="58dp"
+                android:layout_marginEnd="54dp"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_gravity="top|center"
                 >
 
                 <TextView
-                    android:id="@+id/user_name"
+                    android:id="@+id/notification_user_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="14sp"
                     android:text="@string/test_name_of_user"
                     android:textStyle="bold"
                     />
 
-                <TextView
-                    android:id="@+id/user_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="2dp"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:text="@string/test_name_of_user"
-                    android:drawablePadding="4dp"
-                    app:drawableLeftCompat="@drawable/ic_baseline_email_24"
-                    app:drawableTint="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_for_accept"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="58dp"
+                android:layout_marginEnd="54dp"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
 
                 <Button
-                    android:id="@+id/follow_button"
-                    android:tag="@{user.userId}"
-                    android:layout_width="160dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/card_journey"
-                    android:text="@string/follow"
-                    android:visibility="visible"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    tools:ignore="TouchTargetSizeCheck" />
-
-                <Button
-                    android:id="@+id/request_send"
+                    android:id="@+id/accept_btn"
                     android:tag="@{user.userId}"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
+                    android:layout_margin="4dp"
                     android:layout_gravity="center"
-                    android:backgroundTint="@color/request"
-                    android:text="@string/send_a_request"
-                    android:visibility="gone"
+                    android:backgroundTint="@color/green"
+                    android:text="@string/accept_request"
+                    android:visibility="visible"
                     android:textSize="11sp"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:clickable="false"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck"
+                    style="?android:attr/buttonBarButtonStyle" />
 
                 <Button
-                    android:id="@+id/unfollow_button"
-                    android:layout_width="160dp"
+                    android:id="@+id/cancel_request"
+                    android:layout_width="wrap_content"
                     android:tag="@{user.userId}"
                     android:layout_height="40dp"
+                    android:layout_margin="4dp"
                     android:layout_gravity="center"
                     android:backgroundTint="@color/unfollow"
-                    android:text="@string/unfollow"
-                    android:visibility="gone"
+                    android:text="@string/cancel_request"
+                    android:visibility="visible"
                     android:textSize="11sp"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck"
+                    style="?android:attr/buttonBarButtonStyle" />
+
 
             </LinearLayout>
 
