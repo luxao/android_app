@@ -92,6 +92,35 @@
                         android:textStyle="bold"
                         />
 
+                   <LinearLayout
+                       android:id="@+id/layout_for_follow_info"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="horizontal"
+                       android:gravity="left"
+                       >
+
+                       <TextView
+                           android:id="@+id/followers"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="followers: 157"
+                           android:textStyle="bold"
+                           android:textSize="16sp"
+                           />
+
+                       <TextView
+                           android:id="@+id/followed"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="16dp"
+                           android:text="followed : 45"
+                           android:textSize="16sp"
+                           android:textStyle="bold"
+                           />
+
+                   </LinearLayout>
+
                     <TextView
                         android:id="@+id/number_of_journeys"
                         android:layout_width="match_parent"

@@ -64,6 +64,8 @@ class ProfileFragment : Fragment() {
             this,
             Injection.provideViewModelFactory(requireContext(),auth)
         )[ProfileViewModel::class.java]
+
+        retrieveData()
     }
 
     override fun onCreateView(
@@ -278,6 +280,9 @@ class ProfileFragment : Fragment() {
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
 
+        binding.followers.text = profileViewModel.getFollowers()
+        binding.followed.text = profileViewModel.getFollowed()
+
         profileViewModel.journeys.observe(viewLifecycleOwner) {
                 if (it != null) {
                     Log.i("MYTEST","HALO : $it")
@@ -318,39 +323,24 @@ class ProfileFragment : Fragment() {
                     binding.calculatedDuration.text = durationDetails
                 }
             }
-
-
     }
 
+
     private fun retrieveData() {
-        val values = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.i("MYTEST","GOT VALUE : ${dataSnapshot.childrenCount}")
-                if (dataSnapshot.childrenCount == 0L) {
-                    TODO("not yet implemented")
+        ref.child("all_users").child(userId).get().addOnSuccessListener { snapshot ->
+            for (snap in snapshot.children) {
+                if (snap.key == "followers") {
+                    profileViewModel.followers = snap.childrenCount
+                    Log.i("MYTEST","FOLLOWERS: ${profileViewModel.followers}")
                 }
-                else {
-                    var ignoreName = ""
-                    if (profileViewModel.helperJourney.size != 0) {
-                        profileViewModel.helperJourney.map {
-                            Log.i("MYTEST", "VYPIS MENA : ${it.name}")
-                            ignoreName = it.name
-                        }
-                    }
-                    for (test in dataSnapshot.children) {
-                        if (test.key != ignoreName) {
-                            Log.i("MYTEST","GOT VALUE : ${test.key} and ${test.value}")
-                        }
-                    }
+                if (snap.key == "followed") {
+                    profileViewModel.followed = snap.childrenCount
+                    Log.i("MYTEST","FOLLOWED: ${profileViewModel.followed}")
                 }
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("MYTEST", "loadPost:onCancelled", databaseError.toException())
-            }
+        }.addOnFailureListener { error ->
+            Log.e("MYTEST","ERROR : ${error.message}")
         }
-
-        ref.child("users_journeys").child(userId).addValueEventListener(values)
     }
 
     override fun onDestroyView() {
