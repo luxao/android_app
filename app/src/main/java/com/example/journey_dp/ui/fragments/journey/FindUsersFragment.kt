@@ -97,7 +97,10 @@ class FindUsersFragment : Fragment() {
             usersViewModel = usersViewModel,
             ref = ref,
             userEventListener = UserEventListener { uid: String ->
-                Log.i("MYTEST", "CLICKED: $uid")
+                val action = FindUsersFragmentDirections.actionFindUsersFragmentToUserProfile(
+                    userId = uid
+                )
+                view.findNavController().navigate(action)
             }
         )
         binding.followersRecyclerview.adapter = followersAdapter

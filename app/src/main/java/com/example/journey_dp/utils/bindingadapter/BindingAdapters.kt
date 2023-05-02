@@ -2,6 +2,7 @@ package com.example.journey_dp.utils.bindingadapter
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.journey_dp.data.firebase.UserJourney
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
@@ -35,6 +36,14 @@ fun bindFollowersRecyclerView(recyclerView: RecyclerView, listData: MutableList<
 @BindingAdapter("notifications_list")
 fun bindNotificationsRecyclerView(recyclerView: RecyclerView, listData: MutableList<UserWithUID>?) {
     val adapter = recyclerView.adapter as NotificationAdapter
+    adapter.submitList(null)
+    adapter.submitList(listData)
+}
+
+
+@BindingAdapter("user_journeys")
+fun bindUserJourneysRecyclerView(recyclerView: RecyclerView, listData: MutableList<UserJourney>?) {
+    val adapter = recyclerView.adapter as UserJourneysAdapter
     adapter.submitList(null)
     adapter.submitList(listData)
 }

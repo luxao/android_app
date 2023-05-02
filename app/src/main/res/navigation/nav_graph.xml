@@ -105,6 +105,9 @@
         <action
             android:id="@+id/action_findUsersFragment_to_planJourneyFragment"
             app:destination="@id/planJourneyFragment" />
+        <action
+            android:id="@+id/action_findUsersFragment_to_userProfile"
+            app:destination="@id/userProfile" />
     </fragment>
     <fragment
         android:id="@+id/notificationsFragment"
@@ -117,5 +120,20 @@
         <action
             android:id="@+id/action_notificationsFragment_to_planJourneyFragment"
             app:destination="@id/planJourneyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userProfile"
+        android:name="com.example.journey_dp.ui.fragments.journey.UserProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_userProfile_to_findUsersFragment"
+            app:destination="@id/findUsersFragment" />
+        <action
+            android:id="@+id/action_userProfile_to_planMapFragment"
+            app:destination="@id/planMapFragment" />
+        <argument
+            android:name="user_id"
+            app:argType="string" />
     </fragment>
 </navigation>

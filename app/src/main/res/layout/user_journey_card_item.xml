@@ -4,18 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <data>
+
         <variable
-            name="journey"
-            type="com.example.journey_dp.data.room.model.JourneyEntity" />
+            name="userJourney"
+            type="com.example.journey_dp.data.firebase.UserJourney" />
+
 
         <variable
             name="flagJourney"
             type="com.example.journey_dp.utils.JourneyEnum" />
 
         <variable
-            name="journeyEventListener"
+            name="journeyListener"
             type="com.example.journey_dp.ui.adapter.events.JourneyEventListener" />
-
         <import type="android.view.View" />
 
     </data>
@@ -23,7 +24,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/journey_card"
-        android:tag="@{journey.id}"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentPadding="4dp"
@@ -52,8 +53,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-
-
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/journey_info_divider"
                 android:layout_width="200dp"
@@ -64,8 +63,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/journey_name_item"
                 app:layout_constraintVertical_bias="0.0" />
-
-
 
 
             <LinearLayout
@@ -84,7 +81,7 @@
                 >
 
                 <TextView
-                    android:id="@+id/totalDistance_item"
+                    android:id="@+id/user_totalDistance_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -95,7 +92,7 @@
                     app:drawableTint="@color/black" />
 
                 <TextView
-                    android:id="@+id/totalDuration_item"
+                    android:id="@+id/user_totalDuration_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -125,7 +122,7 @@
                 >
 
                 <TextView
-                    android:id="@+id/totalDestinations_item"
+                    android:id="@+id/user_totalDestinations_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -162,23 +159,9 @@
                     android:backgroundTint="@color/cardview_dark_background"
                     style="?attr/materialButtonStyle"
                     android:layout_marginRight="8dp"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.id, journey.sharedUrl, flagJourney.SHOW)}"
+                    android:onClick="@{() -> journeyListener.onClick(userJourney.id, userJourney.sharedUrl,flagJourney.SHARE)}"
                     />
 
-
-                <Button
-                    android:id="@+id/share_to_people"
-                    style="?attr/materialButtonStyle"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:visibility="visible"
-                    android:backgroundTint="@color/cardview_dark_background"
-                    android:drawableLeft="@drawable/ic_baseline_share_24"
-                    android:drawableTint="@color/white"
-                    android:text="@string/share"
-                    android:onClick="@{() -> journeyEventListener.onClick(journey.id, journey.sharedUrl, flagJourney.SHARE)}"
-                    tools:ignore="TextContrastCheck" />
 
             </LinearLayout>
 
@@ -190,13 +173,3 @@
     </com.google.android.material.card.MaterialCardView>
 </layout>
 
-<!--<ImageView-->
-<!--android:id="@+id/delete_item"-->
-<!--android:layout_width="30dp"-->
-<!--android:layout_height="30dp"-->
-<!--android:src="@drawable/ic_baseline_close_24"-->
-<!--android:contentDescription="@string/delete_item"-->
-<!--app:layout_constraintEnd_toEndOf="parent"-->
-<!--app:layout_constraintTop_toTopOf="parent"-->
-<!--android:onClick="@{() -> journeyEventListener.onClick(journey.journey.id, journey.journey.sharedUrl, flagJourney.DELETE)}"-->
-<!--    />-->

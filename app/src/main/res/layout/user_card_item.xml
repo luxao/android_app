@@ -81,6 +81,7 @@
                     android:layout_height="wrap_content"
                     android:padding="2dp"
                     android:textSize="11sp"
+                    android:gravity="left|center"
                     android:textStyle="bold"
                     android:text="@string/test_name_of_user"
                     android:drawablePadding="4dp"
