@@ -280,8 +280,6 @@ class ProfileFragment : Fragment() {
         )
         binding.journeysListRecyclerview.adapter = journeysAdapter
 
-        binding.followers.text = profileViewModel.getFollowers()
-        binding.followed.text = profileViewModel.getFollowed()
 
         profileViewModel.journeys.observe(viewLifecycleOwner) {
                 if (it != null) {
@@ -330,11 +328,13 @@ class ProfileFragment : Fragment() {
         ref.child("all_users").child(userId).get().addOnSuccessListener { snapshot ->
             for (snap in snapshot.children) {
                 if (snap.key == "followers") {
-                    profileViewModel.followers = snap.childrenCount
+                    profileViewModel.setNewFollowers(snap.childrenCount.toInt())
+                    binding.followers.text = " ".plus(getString(R.string.followers)).plus(" ").plus(snap.childrenCount)
                     Log.i("MYTEST","FOLLOWERS: ${profileViewModel.followers}")
                 }
                 if (snap.key == "followed") {
-                    profileViewModel.followed = snap.childrenCount
+                    profileViewModel.setNewFollowed(snap.childrenCount.toInt())
+                    binding.followed.text = " ".plus(getString(R.string.followed)).plus(" ").plus(snap.childrenCount)
                     Log.i("MYTEST","FOLLOWED: ${profileViewModel.followed}")
                 }
             }

@@ -113,7 +113,8 @@
     <string name="send_a_request">request was send</string>
     <string name="accept_request">Accept</string>
     <string name="cancel_request">Cancel</string>
-    <string name="followed">followed</string>
+    <string name="followed"> followed : </string>
+    <string name="followers"> followers : </string>
     <string name="show_user_profile">show user profile</string>
     <string name="clear">Clear</string>
     <string name="notifications">Notifications</string>

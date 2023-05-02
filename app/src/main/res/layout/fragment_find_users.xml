@@ -76,7 +76,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
+            android:visibility="gone"
             app:users_list="@{model.searchedUsers}"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/user_card_item"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clear_wrapper"
+            app:layout_constraintVertical_bias="0.0"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/followers_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:visibility="visible"
+            app:followers_list="@{model.followingUsers}"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/user_card_item"
             app:layout_constraintHorizontal_bias="0.5"

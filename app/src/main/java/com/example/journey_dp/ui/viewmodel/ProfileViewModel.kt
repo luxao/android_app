@@ -18,8 +18,8 @@ class ProfileViewModel(private val repository: Repository, private val auth: Fir
     var helperJourney = mutableListOf<JourneyEntity>()
 
 
-    var followers = 0L
-    var followed = 0L
+    var followers = 0
+    var followed = 0
 
     val journeyWithRoutes: LiveData<JourneyWithRoutes> = journeyId.switchMap {
         liveData {
@@ -62,13 +62,12 @@ class ProfileViewModel(private val repository: Repository, private val auth: Fir
         repository.getAllJourneysWithRoutes(userEmail.toString())
     }
 
-
-    fun getFollowers(): String {
-        return "followers: ".plus(followers)
+    fun setNewFollowers(count: Int) {
+        this.followers = count
     }
 
-    fun getFollowed(): String {
-        return "followed: ".plus(followed)
+    fun setNewFollowed(count: Int) {
+        this.followed = count
     }
 
 

@@ -1,46 +1,39 @@
 package com.example.journey_dp.ui.adapter.adapters
 
-
 import android.content.Context
 import android.util.Log
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
-
 import androidx.recyclerview.widget.DiffUtil
-
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.journey_dp.data.firebase.User
-
 import com.example.journey_dp.data.firebase.UserWithUID
-
 import com.example.journey_dp.databinding.UserCardItemBinding
-
 import com.example.journey_dp.ui.adapter.events.UserEventListener
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.google.firebase.database.DatabaseReference
 
-
-class UsersAdapter(
+class FollowersAdapter(
     private val context: Context,
     private val userId: String,
     private val usersViewModel: UsersViewModel,
-    private val ref: DatabaseReference
-) : ListAdapter<UserWithUID, UsersAdapter.UserItemViewHolder>(DiffCallback) {
+    private val ref: DatabaseReference,
+    private val userEventListener: UserEventListener
+) : ListAdapter<UserWithUID, FollowersAdapter.FollowersItemViewHolder>(DiffCallback) {
 
-    class UserItemViewHolder(var binding: UserCardItemBinding) :
+    class FollowersItemViewHolder(var binding: UserCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: UserWithUID, context: Context, ref: DatabaseReference, userId: String,loggedUser: UserWithUID,
+        fun bind(user: UserWithUID, userEventListener: UserEventListener, context: Context, ref: DatabaseReference, userId: String, loggedUser: UserWithUID,
                  requested: MutableList<String>, following: MutableList<UserWithUID>) {
             binding.user = user
             binding.userName.text = user.userName
             binding.userEmail.text = user.userEmail
             binding.userProfilePicture.tag = user.userId
             Glide.with(context).load(user.userImage.toUri()).circleCrop().into(binding.userProfilePicture)
+            binding.userListener = userEventListener
             if (requested.isNotEmpty()) {
                 requested.map {
                     if (it == user.userId) {
@@ -62,7 +55,7 @@ class UsersAdapter(
                 }
             }
 
-             binding.followButton.setOnClickListener {
+            binding.followButton.setOnClickListener {
                 Log.i("MYTEST", "FOLLOW CLICKED TAG ID : ${binding.followButton.tag}")
                 binding.followButton.visibility = View.GONE
                 binding.unfollowButton.visibility = View.VISIBLE
@@ -96,8 +89,8 @@ class UsersAdapter(
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserItemViewHolder {
-        return UserItemViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowersItemViewHolder {
+        return FollowersItemViewHolder(
             UserCardItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -106,14 +99,12 @@ class UsersAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: UserItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FollowersItemViewHolder, position: Int) {
         val user: UserWithUID = getItem(position)
         val loggedUser = UserWithUID(userId, usersViewModel.loggedUser.userEmail, usersViewModel.loggedUser.userImage, usersViewModel.loggedUser.userName)
         val requested = usersViewModel.requestedUsers
         val following = usersViewModel.followingUsers
-        holder.bind(user, context, ref, userId, loggedUser, requested, following)
+        holder.bind(user,userEventListener, context, ref, userId, loggedUser, requested, following)
     }
 
 }
-
-

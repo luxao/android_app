@@ -14,11 +14,13 @@ import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.User
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.FragmentFindUsersBinding
 import com.example.journey_dp.databinding.FragmentProfileBinding
+import com.example.journey_dp.ui.adapter.adapters.FollowersAdapter
 import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
 import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
 import com.example.journey_dp.ui.adapter.events.JourneyEventListener
@@ -37,12 +39,15 @@ import com.google.firebase.ktx.Firebase
 class FindUsersFragment : Fragment() {
     private lateinit var usersViewModel: UsersViewModel
     private lateinit var usersAdapter: UsersAdapter
+    private lateinit var followersAdapter: FollowersAdapter
+
     private var _binding : FragmentFindUsersBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var ref : DatabaseReference
     private lateinit var userId: String
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,10 +88,20 @@ class FindUsersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        getUsers()
         binding.lifecycleOwner = this@FindUsersFragment.viewLifecycleOwner
         binding.model = this@FindUsersFragment.usersViewModel
+
+        followersAdapter = FollowersAdapter(
+            context = requireContext(),
+            userId = userId,
+            usersViewModel = usersViewModel,
+            ref = ref,
+            userEventListener = UserEventListener { uid: String ->
+                Log.i("MYTEST", "CLICKED: $uid")
+            }
+        )
+        binding.followersRecyclerview.adapter = followersAdapter
+        getUsers()
 
 
         binding.apply {
@@ -109,12 +124,10 @@ class FindUsersFragment : Fragment() {
                 context = requireContext(),
                 userId = userId,
                 usersViewModel = usersViewModel,
-                ref = ref,
-                userEventListener = UserEventListener { uid: String ->
-                    Log.i("MYTEST", "CLICKED: $uid")
-                }
+                ref = ref
             )
             usersRecyclerview.adapter = usersAdapter
+
 
             clearUsers.setOnClickListener {
                 clearUsersList()
@@ -123,6 +136,9 @@ class FindUsersFragment : Fragment() {
     }
 
     private fun getName() {
+        binding.followersRecyclerview.visibility = View.GONE
+        binding.usersRecyclerview.visibility = View.VISIBLE
+
         if (binding.searchFriendsInput.text.toString().isNotBlank()) {
             binding.clearWrapper.visibility = View.VISIBLE
             usersViewModel.userName = binding.searchFriendsInput.text.toString()
@@ -138,9 +154,14 @@ class FindUsersFragment : Fragment() {
         }
     }
 
+
+
+
     private fun clearUsersList() {
         binding.searchFriendsInput.text.clear()
         usersViewModel.userName = ""
+        binding.followersRecyclerview.visibility = View.VISIBLE
+        binding.usersRecyclerview.visibility = View.GONE
         binding.clearWrapper.visibility = View.GONE
         if (usersViewModel.searchedUsers.isNotEmpty()) {
             usersViewModel.searchedUsers.clear()
@@ -178,6 +199,7 @@ class FindUsersFragment : Fragment() {
                             val user = UserWithUID(userUID, userEmail, userImage, userName)
                             Log.i("MYTEST","$user")
                             usersViewModel.followingUsers.add(user)
+                            followersAdapter.notifyItemInserted(usersViewModel.followingUsers.size)
                         }
                     }
                 }
@@ -189,6 +211,7 @@ class FindUsersFragment : Fragment() {
         }
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -51,6 +51,8 @@
                 android:src="@drawable/me"
                 android:layout_margin="8dp"
                 android:contentDescription="@string/profile_picture"
+                android:onClick="@{() -> userListener.onClick(user.userId)}"
+
                 />
 
             <LinearLayout
@@ -111,6 +113,7 @@
                     android:visibility="gone"
                     android:textColor="@color/white"
                     android:textStyle="bold"
+                    android:onClick="@{() -> userListener.onClick(user.userId)}"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <Button

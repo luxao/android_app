@@ -6,10 +6,7 @@ import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
-import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
-import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
-import com.example.journey_dp.ui.adapter.adapters.NotificationAdapter
-import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
+import com.example.journey_dp.ui.adapter.adapters.*
 
 
 @BindingAdapter("journeys_list")
@@ -25,6 +22,14 @@ fun bindUsersToFindRecyclerView(recyclerView: RecyclerView, listData: MutableLis
     adapter.submitList(null)
     adapter.submitList(listData)
 }
+
+@BindingAdapter("followers_list")
+fun bindFollowersRecyclerView(recyclerView: RecyclerView, listData: MutableList<UserWithUID>?) {
+    val adapter = recyclerView.adapter as FollowersAdapter
+    adapter.submitList(null)
+    adapter.submitList(listData)
+}
+
 
 
 @BindingAdapter("notifications_list")
