@@ -40,6 +40,7 @@ import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
+import com.example.journey_dp.utils.shared.LocationSharedPreferencesUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -495,7 +496,7 @@ fun checkPermissions(context: Context): Boolean {
 
 
 @SuppressLint("MissingPermission")
-fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProviderClient, model: MapViewModel){
+fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProviderClient, model: MapViewModel, userID: String){
     if (checkPermissions(context)) {
         if (isLocationEnabled(context)) {
             fusedLocationProviderClient.getCurrentLocation(
@@ -510,20 +511,40 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
                             val addresses: List<Address>? = geocoder.getFromLocation(it.latitude, it.longitude,1)
 
                             val cityName: String = addresses!![0].getAddressLine(0)
-
+                            val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(context, userID)
+                            Log.i("MYTEST","USERLOC START : $userLoc")
                             if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
                                 Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
                                 model.setCountry(addresses[0].countryCode)
                             }
                             model.locationName = cityName
+                            if ((userLoc!!.isBlank()).or(userLoc.isEmpty())) {
+                                LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                            }
+                            else {
+                                val compare = userLoc.split("=")[0]
+                                if (compare != cityName) {
+                                    LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                }
+                            }
                             model.setLocation(LatLng(it.latitude, it.longitude))
                         }
                         else {
-
+                            val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(context, userID)
+                            Log.i("MYTEST","USERLOC START : $userLoc")
                             geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
                                 val cityName =  addresses[0].getAddressLine(0)
                                 if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
                                     Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
+                                    if ((userLoc!!.isBlank()).or(userLoc.isEmpty())) {
+                                        LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                    }
+                                    else {
+                                        val compare = userLoc.split("=")[0]
+                                        if (compare != cityName) {
+                                            LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                        }
+                                    }
                                     model.setCountry(addresses[0].countryCode)
                                     model.locationName = cityName
                                     model.setLocation(LatLng(it.latitude, it.longitude))

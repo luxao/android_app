@@ -108,7 +108,7 @@ class ProfileFragment : Fragment() {
                                         totalDistance = testJourney.totalDistance!!,
                                         totalDuration = testJourney.totalDuration!!,
                                         numberOfDestinations = testJourney.numberOfDestinations!!,
-                                        sharedUrl = ""
+                                        sharedUrl = testJourney.sharedUrl.toString()
                                     )
                                     val routesToDB = mutableListOf<RouteEntity>()
                                     Log.i("MYTEST","${journeyToDB.id} => $journeyToDB")
@@ -140,7 +140,7 @@ class ProfileFragment : Fragment() {
                                     totalDistance = testJourney.totalDistance!!,
                                     totalDuration = testJourney.totalDuration!!,
                                     numberOfDestinations = testJourney.numberOfDestinations!!,
-                                    sharedUrl = ""
+                                    sharedUrl = testJourney.sharedUrl.toString()
                                 )
                                 val routesToDB = mutableListOf<RouteEntity>()
                                 Log.i("MYTEST","${journeyToDB.id} => $journeyToDB")

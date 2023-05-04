@@ -33,6 +33,7 @@ import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.*
+import com.example.journey_dp.utils.shared.LocationSharedPreferencesUtil
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -458,7 +459,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         )[ProfileViewModel::class.java]
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
+        getLocation(requireContext(),fusedLocationProviderClient, mapViewModel, auth.currentUser!!.uid)
     }
 
 
@@ -486,7 +487,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         super.onViewCreated(view, savedInstanceState)
 
         try {
-            getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
+            val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(),auth.currentUser!!.uid)
+            if (userLoc!!.isEmpty().or(userLoc.isBlank())) {
+                getLocation(requireContext(),fusedLocationProviderClient, mapViewModel, auth.currentUser!!.uid)
+            }
+
 
             val mapFragment =
                 childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
@@ -688,7 +693,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
             if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
                 standardBottomSheetBehavior.apply {
-                    peekHeight = 80
+                    peekHeight = 120
                     this.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
 
@@ -876,7 +881,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             mapViewModel.markers.add(position,marker!!)
         }
 
-        standardBottomSheetBehavior.peekHeight = 80
+        standardBottomSheetBehavior.peekHeight = 120
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         googleMap.animateCamera(
@@ -906,20 +911,43 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         } catch (e: Resources.NotFoundException) {
             Log.e("MYTEST", "Can't find style. Error: ", e)
         }
-        googleMap.setMinZoomPreference(10f)
+
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
             if (checkPermissions(requireContext())) {
                 Log.i("MYTEST","SOM TU CHECKOL SOM PERMISSIONS")
-                getLocation(requireContext(),fusedLocationProviderClient, mapViewModel)
-                if (mapViewModel.location.value != null) {
-                    Log.i("MYTEST","SOM TU ${mapViewModel.location.value}")
-                    val name = mapViewModel.locationName
-                    val latLng = mapViewModel.location.value
+                val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(),auth.currentUser!!.uid)
+                Log.i("MYTEST", "GETOL SOM SHARED LOC : $userLoc")
+                if (userLoc!!.isEmpty().or(userLoc.isBlank())) {
+                    getLocation(requireContext(),fusedLocationProviderClient, mapViewModel, auth.currentUser!!.uid)
 
+                    if (mapViewModel.location.value != null) {
+                        Log.i("MYTEST","SOM TU ${mapViewModel.location.value}")
+                        val name = mapViewModel.locationName
+                        val latLng = mapViewModel.location.value
+
+                        mapViewModel.destinationsName.add(0,name)
+                        val marker = googleMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng!!)
+                                .title(name)
+                        )
+                        mapViewModel.markers.add(0,marker!!)
+                        googleMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                latLng,
+                                15F
+                            ))
+                        binding.myLocationInput.setText(name)
+                    }
+                }
+                else {
+                    val name = userLoc.split("=")[0]
+                    val tmpLoc = userLoc.split("=")[1]
+                    val latLng = LatLng(tmpLoc.split(",")[0].toDouble(), tmpLoc.split(",")[1].toDouble())
                     mapViewModel.destinationsName.add(0,name)
                     val marker = googleMap.addMarker(
                         MarkerOptions()
-                            .position(latLng!!)
+                            .position(latLng)
                             .title(name)
                     )
                     mapViewModel.markers.add(0,marker!!)
@@ -930,6 +958,25 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         ))
                     binding.myLocationInput.setText(name)
                 }
+
+
+//                else {
+//                    mapViewModel.setLocation(mapViewModel.defaultLocation)
+//                    mapViewModel.destinationsName.add(0,mapViewModel.defaultLocationName)
+//                    val marker = googleMap.addMarker(
+//                        MarkerOptions()
+//                            .position(mapViewModel.defaultLocation)
+//                            .title(mapViewModel.defaultLocationName)
+//                    )
+//                    mapViewModel.markers.add(0,marker!!)
+//                    googleMap.animateCamera(
+//                        CameraUpdateFactory.newLatLngZoom(
+//                            mapViewModel.defaultLocation,
+//                            15F
+//                        ))
+//                    binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+//                }
+
 
 
             }
@@ -977,11 +1024,47 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 binding.myLocationInput.setText(mapViewModel.locationName)
             }
         }
-        googleMap.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                mapViewModel.location.value!!,
-                15F
-            ))
+        val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(), auth.currentUser!!.uid)
+        if (mapViewModel.location.value != null) {
+            googleMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    mapViewModel.location.value!!,
+                    15F
+                ))
+        }
+        else {
+            if (userLoc!!.isNotEmpty()) {
+                val tmpLoc = userLoc.split("=")[1]
+                val latLng = LatLng(tmpLoc.split(",")[0].toDouble(), tmpLoc.split(",")[1].toDouble())
+                val marker = googleMap.addMarker(
+                    MarkerOptions()
+                        .position(latLng)
+                        .title(userLoc.split("=")[0])
+                )
+                if (binding.myLocationInput.text!!.isBlank().or(binding.myLocationInput.text!!.isEmpty())) {
+                    if (mapViewModel.markers.isEmpty()) {
+                        mapViewModel.markers.add(0,marker!!)
+                    }
+
+                    binding.myLocationInput.setText(userLoc.split("=")[0])
+                }
+
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        latLng,
+                        15F
+                    ))
+            }
+            else {
+                getLocation(requireContext(), fusedLocationProviderClient, mapViewModel, auth.currentUser!!.uid)
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        mapViewModel.defaultLocation,
+                        15F
+                    ))
+            }
+        }
+
     }
 
     private fun showRouteOnMap(line: String, distanceText: String, durationText: String, choosedIcon: String, position: Int) {

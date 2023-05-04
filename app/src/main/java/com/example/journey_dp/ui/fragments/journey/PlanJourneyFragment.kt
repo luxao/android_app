@@ -31,6 +31,7 @@ import com.example.journey_dp.ui.fragments.auth.LoginFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.*
+import com.example.journey_dp.utils.shared.LocationSharedPreferencesUtil
 import com.example.journey_dp.utils.shared.SharedPreferencesUtil
 
 
@@ -98,7 +99,7 @@ class PlanJourneyFragment : Fragment() {
         )[MapViewModel::class.java]
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        getLocation(requireContext(),fusedLocationProviderClient, model)
+        getLocation(requireContext(),fusedLocationProviderClient, model, userId)
     }
 
     override fun onCreateView(
@@ -127,6 +128,7 @@ class PlanJourneyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(context, userId)
 
         if (!checkPermissions(requireContext())) {
             requestPermissions()
@@ -174,6 +176,9 @@ class PlanJourneyFragment : Fragment() {
             binding.loadingMapAnimation.addAnimatorListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator) {
                     Log.i("MYTEST", "animation start")
+                    if (userLoc!!.isBlank()) {
+                        getLocation(requireContext(), fusedLocationProviderClient, model, userId)
+                    }
                 }
                 override fun onAnimationEnd(animation: Animator) {
                     val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToPlanMapFragment(
