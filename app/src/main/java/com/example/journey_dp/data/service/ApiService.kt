@@ -43,7 +43,7 @@ interface ApiService {
         @Query("key") apiKey: String
     ): Call<PlaceResponse>
 
-//    https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=48.14838109999999,%2017.1080601&radius=5000&type=restaurant&key=AIzaSyCO6xmxS7BzhcUdNJE0zx5usSuL25of2ic
+
     companion object {
         private const val BASE_URL = "https://maps.googleapis.com/maps/api/"
         fun create(): ApiService {
