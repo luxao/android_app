@@ -5,50 +5,35 @@ import android.Manifest
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.User
-import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.FragmentPlanJourneyBinding
-import com.example.journey_dp.ui.fragments.auth.LoginFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
-import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.*
 import com.example.journey_dp.utils.shared.LocationSharedPreferencesUtil
 import com.example.journey_dp.utils.shared.SharedPreferencesUtil
-
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
-import okio.ByteString.Companion.decodeBase64
-import okio.ByteString.Companion.encodeUtf8
 import java.util.*
 
 
@@ -114,14 +99,6 @@ class PlanJourneyFragment : Fragment() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-        setLogOut(
-            context = requireContext(),
-            activity = requireActivity() ,
-            lifecycleOwner = viewLifecycleOwner,
-            view = binding.root,
-            googleSignInClient = googleSignInClient,
-            auth = auth
-        )
 
         return binding.root
     }
@@ -134,6 +111,33 @@ class PlanJourneyFragment : Fragment() {
             requestPermissions()
         }
 
+        val menu = binding.topAppBar.menu
+        val profileItem = menu.findItem(R.id.user_profile)
+        val imageItem = profileItem?.actionView as ImageView
+        Glide.with(requireContext()).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+        imageItem.setOnClickListener {
+            val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
+            view.findNavController().navigate(action)
+        }
+
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.user_profile -> {
+                    val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                R.id.action_logout -> {
+                    auth.signOut()
+                    googleSignInClient.signOut()
+                    logOurDialog(requireActivity(), view, requireContext())
+                    true
+                }
+                else -> false
+            }
+        }
+
 
         val newUser = User(
             userName = auth.currentUser!!.displayName!!,
@@ -142,13 +146,9 @@ class PlanJourneyFragment : Fragment() {
         )
 
         val checkUser = SharedPreferencesUtil.getInstance().getUserUid(requireContext(), userId)
-        Log.i("MYTEST", "TEST SHARED : $checkUser")
         if (checkUser!!.isBlank().or(checkUser.isEmpty())) {
-            Log.i("MYTEST","IDEME UKLADAT NOVEHO USERA DO FIREBASU")
             ref.child("all_users").get().addOnSuccessListener { snapshot ->
-                Log.i("MYTEST","$snapshot or ${snapshot.key} ")
                 if (snapshot.value == "") {
-                    Log.i("MYTEST","is empty")
                     ref.child("all_users").child(userId).child("user_data").setValue(newUser)
                     ref.child("all_users").child(userId).child("requests").setValue("")
                     ref.child("all_users").child(userId).child("followed").setValue("")
@@ -175,7 +175,6 @@ class PlanJourneyFragment : Fragment() {
             binding.loadingMapAnimation.playAnimation()
             binding.loadingMapAnimation.addAnimatorListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator) {
-                    Log.i("MYTEST", "animation start")
                     if (userLoc!!.isBlank()) {
                         getLocation(requireContext(), fusedLocationProviderClient, model, userId)
                     }

@@ -56,7 +56,6 @@ class FollowersAdapter(
             }
 
             binding.followButton.setOnClickListener {
-                Log.i("MYTEST", "FOLLOW CLICKED TAG ID : ${binding.followButton.tag}")
                 binding.followButton.visibility = View.GONE
                 binding.unfollowButton.visibility = View.VISIBLE
                 binding.requestSend.visibility = View.VISIBLE

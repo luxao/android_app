@@ -2,7 +2,6 @@ package com.example.journey_dp.utils.shared
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 
 class LocationSharedPreferencesUtil private constructor() {
@@ -23,7 +22,6 @@ class LocationSharedPreferencesUtil private constructor() {
         val sharedPref = getSharedPreferences(context) ?: return
         val editor = sharedPref.edit()
         val loc = cityName.plus("=").plus(userLoc.latitude.toString()).plus(",").plus(userLoc.longitude.toString())
-        Log.i("MYTEST", "SHARED LOCATION : $loc")
         editor.putString(uid, loc)
         editor.apply()
     }

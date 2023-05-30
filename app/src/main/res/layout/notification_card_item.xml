@@ -32,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:cardCornerRadius="10dp"
-            app:cardBackgroundColor="@color/card_light"
+            app:cardBackgroundColor="@color/btn"
             app:cardElevation="8dp"
             >
 
@@ -42,7 +42,7 @@
                 android:layout_height="48dp"
                 android:padding="4dp"
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                app:strokeColor="@color/blue"
+                app:strokeColor="@color/color3"
                 app:strokeWidth="2dp"
                 android:src="@drawable/me"
                 android:layout_margin="8dp"
@@ -65,6 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
+                    android:textColor="@color/background"
                     android:text="@string/test_name_of_user"
                     android:textStyle="bold"
                     />
@@ -90,7 +91,7 @@
                     android:layout_height="40dp"
                     android:layout_margin="4dp"
                     android:layout_gravity="center"
-                    android:backgroundTint="@color/green"
+                    android:backgroundTint="@color/color3"
                     android:text="@string/accept_request"
                     android:visibility="visible"
                     android:textSize="11sp"
@@ -111,7 +112,7 @@
                     android:text="@string/cancel_request"
                     android:visibility="visible"
                     android:textSize="11sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textStyle="bold"
                     tools:ignore="TouchTargetSizeCheck"
                     style="?android:attr/buttonBarButtonStyle" />

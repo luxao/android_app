@@ -37,13 +37,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
+        android:background="@color/background"
         >
 
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="450dp"
-            android:background="@android:color/holo_orange_light"
+            android:background="@color/primary"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
@@ -51,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="500dp"
             android:layout_margin="30dp"
-            android:background="#d3d3d3"
+            android:backgroundTint="@color/card_background"
             app:cardCornerRadius="30dp"
             app:cardElevation="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,13 +70,17 @@
                     android:layout_height="100dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ic_baseline_person_pin_24" />
+                    android:background="@drawable/ic_baseline_person_pin_24"
+                    android:backgroundTint="@color/color2"
+                    android:contentDescription="@string/login" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/google_login"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
                     android:gravity="center"
                     android:textAlignment="center"
                     android:textSize="32sp" />
@@ -95,24 +100,26 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@android:color/black"
+                        android:background="@color/btn"
                         android:padding="10dp">
 
                         <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:layout_gravity="start"
                             android:src="@drawable/common_google_signin_btn_icon_light"
-                            android:layout_marginEnd="5dp"/>
+                            android:layout_marginEnd="5dp"
+                            android:contentDescription="@string/sign_in_with_google" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="@string/sign_in_with_google"
+                            android:textStyle="bold"
                             android:textAlignment="center"
-                            android:textSize="16sp"
-                            android:textColor="@android:color/white"/>
+                            android:textSize="20sp"
+                            android:textColor="@color/background"/>
 
                     </LinearLayout>
 

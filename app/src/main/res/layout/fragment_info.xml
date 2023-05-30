@@ -23,7 +23,8 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:paddingStart="4dp"
-                android:src="@drawable/back_icon"
+                android:background="@drawable/back_icon"
+                android:backgroundTint="@color/btn"
                 android:contentDescription="@string/back_to_profile" />
             <TextView
                 android:id="@+id/about_app"
@@ -33,7 +34,7 @@
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="22sp"
-                android:textColor="@color/black"
+                android:textColor="@color/btn"
                 android:text="@string/about_journey" />
 
         </LinearLayout>
@@ -48,7 +49,7 @@
             android:layout_marginEnd="16dp"
             android:textSize="18sp"
             android:textStyle="italic"
-            android:textColor="@color/black"
+            android:textColor="@color/btn"
             android:text="@string/about_app"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -67,7 +68,7 @@
             android:layout_marginEnd="16dp"
             android:textSize="18sp"
             android:textStyle="italic"
-            android:textColor="@color/black"
+            android:textColor="@color/btn"
             android:text="@string/version"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -86,7 +87,7 @@
             android:layout_marginEnd="16dp"
             android:textSize="18sp"
             android:textStyle="italic"
-            android:textColor="@color/black"
+            android:textColor="@color/btn"
             android:text="@string/created"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -105,7 +106,7 @@
             android:layout_marginEnd="16dp"
             android:textSize="18sp"
             android:textStyle="italic"
-            android:textColor="@color/black"
+            android:textColor="@color/btn"
             android:text="@string/copyright"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

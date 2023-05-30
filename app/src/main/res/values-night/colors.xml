@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#6A7CFF</color>
-    <color name="background">#F7F7FA</color>
-    <color name="card_background">#FFFFFF</color>
-    <color name="primary_text">#565B65</color>
-    <color name="secondary_text">#9B9A9D</color>
+    <color name="primary">#667AFF</color>
+    <color name="background">#252C4B</color>
+    <color name="card_background">#27325F</color>
+    <color name="primary_text">#FFFFFF</color>
+    <color name="secondary_text">#797F95</color>
     <color name="hint">#7683A2</color>
     <color name="unfollow">#F36056</color>
     <color name="white">#FFFFFFFF</color>
@@ -13,9 +13,9 @@
     <color name="color2">#4DE9C9</color>
     <color name="color3">#72A4FF</color>
     <color name="color4">#8872FF</color>
-    <color name="btn">#252C4B</color>
+    <color name="btn">#D2D6F6</color>
     <color name="checked">#EFB80D</color>
-    <color name="profile">#727FFF</color>
+    <color name="profile">#7683A2</color>
 
 </resources>
 

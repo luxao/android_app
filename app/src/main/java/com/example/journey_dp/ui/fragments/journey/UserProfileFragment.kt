@@ -14,15 +14,10 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.UserJourney
-import com.example.journey_dp.data.room.model.JourneyEntity
-import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.databinding.FragmentUserProfileBinding
-import com.example.journey_dp.ui.adapter.adapters.FollowersAdapter
 import com.example.journey_dp.ui.adapter.adapters.UserJourneysAdapter
-import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
 import com.example.journey_dp.ui.adapter.events.JourneyEventListener
-import com.example.journey_dp.ui.adapter.events.UserEventListener
 
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.example.journey_dp.utils.Injection

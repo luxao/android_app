@@ -2,7 +2,6 @@ package com.example.journey_dp.ui.fragments.auth
 
 import android.animation.Animator
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,12 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.navigation.findNavController
 import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentLoginBinding
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,12 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.journey_dp.data.firebase.User
-import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
 class LoginFragment : Fragment() {
     private var _binding : FragmentLoginBinding? = null
@@ -126,7 +116,6 @@ class LoginFragment : Fragment() {
                     })
                 } else {
                     // Sign-In failure, display a message to the user
-                    Log.w("MYTEST", "signInWithCredential:failure", task.exception)
                     Toast.makeText(requireContext(), "Authentication Failed.", Toast.LENGTH_SHORT).show()
                 }
             }

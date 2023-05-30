@@ -1,23 +1,16 @@
 package com.example.journey_dp
 
-import android.Manifest.permission.ACCESS_NETWORK_STATE
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
 import androidx.navigation.NavController
 
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 
 import com.example.journey_dp.databinding.ActivityMainBinding
-import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragment
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
-import com.example.journey_dp.ui.fragments.journey.ProfileFragmentDirections
-import android.app.AlertDialog
-import android.net.NetworkCapabilities
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

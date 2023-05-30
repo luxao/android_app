@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import com.example.journey_dp.R
 import com.example.journey_dp.databinding.FragmentInfoBinding
-import com.example.journey_dp.databinding.FragmentPlanJourneyBinding
 
 
 class InfoFragment : Fragment() {

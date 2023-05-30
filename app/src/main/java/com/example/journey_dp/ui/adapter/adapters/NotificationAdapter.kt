@@ -1,7 +1,6 @@
 package com.example.journey_dp.ui.adapter.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.NotificationCardItemBinding
-import com.example.journey_dp.databinding.UserCardItemBinding
-import com.example.journey_dp.ui.adapter.events.UserEventListener
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.google.firebase.database.DatabaseReference
 

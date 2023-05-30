@@ -5,8 +5,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -17,7 +15,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.JourneyEntity
-import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.databinding.JourneyCardItemBinding
 import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
@@ -91,9 +88,6 @@ class JourneysAdapter(
                 .setMessage("Are you sure you want to delete this item?")
                 .setPositiveButton("Yes") { _, _ ->
                     if (journey != null) {
-                        Log.i("MYTEST", "SWIPED ID: ${journey.id}")
-                        Log.i("MYTEST", "SWIPED NAME: ${journey.name}")
-                        Log.i("MYTEST", "SWIPED : $journey")
                         model.deleteJourneyWithDestinations(journey = journey)
 
                         ref.child("users_journeys").child(userId).child(journey.name).removeValue()

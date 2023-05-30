@@ -20,16 +20,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/top_map_menu"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/search_wrapper"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/card_background"
             android:layout_marginBottom="@dimen/spacing_middle"
             android:layout_marginLeft="@dimen/spacing_large"
             android:layout_marginRight="@dimen/spacing_large"
-            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginTop="65dp"
             app:cardCornerRadius="3dp"
             app:cardElevation="3dp"
             android:clipToPadding="false"
@@ -41,7 +58,7 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/autocomplete_fragment"
                 android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                android:src="@color/places_autocomplete_search_text"
+                android:src="@color/btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:elevation="5dp"
@@ -66,12 +83,14 @@
             android:layout_height="wrap_content"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             android:background="@drawable/rounded"
+            android:backgroundTint="@color/card_background"
             >
 
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_remove_24"
+                android:background="@drawable/ic_baseline_remove_24"
+                android:backgroundTint="@color/btn"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center|top"
                 android:contentDescription="@string/holder_bottom_sheet" />
@@ -94,7 +113,8 @@
                     android:layout_marginLeft="@dimen/spacing_small"
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:layout_marginTop="@dimen/spacing_medium"
-                    android:src="@drawable/ic_baseline_my_location_24"
+                    android:background="@drawable/ic_baseline_my_location_24"
+                    android:backgroundTint="@color/btn"
                     android:contentDescription="@string/my_location_icon" />
 
                 <View
@@ -103,7 +123,9 @@
                     android:layout_marginTop="28dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginLeft="-33dp"
-                    android:background="@drawable/ic_baseline_more_vert_24" />
+                    android:background="@drawable/ic_baseline_more_vert_24"
+                    android:backgroundTint="@color/btn"
+                    />
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -122,45 +144,53 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/destination"
-                        android:textColorHint="#757575"
+                        android:textColorHint="@color/primary_text"
 
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <Button
+                <ImageView
                     android:id="@+id/add_destination"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:visibility="gone"
                     android:background="@drawable/ic_baseline_add_circle_24"
+                    android:backgroundTint="@color/btn"
+                    android:layout_gravity="center"
                     android:contentDescription="@string/add_input" />
 
-                <Button
+                <ImageView
                     android:id="@+id/start_plan_journey"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/ic_baseline_directions_24"
+                    android:backgroundTint="@color/btn"
+                    android:layout_gravity="center"
                     android:contentDescription="@string/start"
                     android:visibility="visible"
                     tools:ignore="TouchTargetSizeCheck" />
 
-                <Button
+                <ImageView
                     android:id="@+id/find_user_location"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/ic_baseline_near_me_24"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/btn"
                     android:contentDescription="@string/find_user_location"
                     android:visibility="visible"
                     tools:ignore="TouchTargetSizeCheck" />
 
 
-                <Button
+                <ImageView
                     android:id="@+id/cancel_plan"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:visibility="gone"
+                    android:layout_gravity="center"
                     android:background="@drawable/ic_baseline_cancel_24"
+                    android:backgroundTint="@color/btn"
                     android:contentDescription="@string/find_user_location" />
 
             </LinearLayout>
@@ -199,7 +229,8 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/finish_plan"
-                    android:textColor="@color/white"
+                    android:textColor="@color/background"
+                    android:backgroundTint="@color/btn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -223,7 +254,7 @@
                         android:id="@+id/totalDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/btn"
                         android:textAlignment="center"
                         android:text="@string/test_total_distance_500_km"
                         android:textStyle="bold"
@@ -233,7 +264,7 @@
                         android:id="@+id/totalDuration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/btn"
                         android:textAlignment="center"
                         android:text="@string/test_total_duration_25_h"
                         android:textStyle="bold"
@@ -245,7 +276,7 @@
                     android:id="@+id/material_divider"
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
-                    app:dividerColor="@color/black"
+                    app:dividerColor="@color/btn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -280,11 +311,11 @@
                         android:contextClickable="true"
                         android:tag="@string/car"
                         app:checkedIcon="@drawable/ic_baseline_directions_car_24"
-                        app:checkedIconTint="@color/green"
+                        app:checkedIconTint="@color/color2"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_car_24"
                         app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
+                        app:chipIconTint="@color/btn"
                         app:chipIconVisible="true"
                         app:iconEndPadding="10dp"
                         app:iconStartPadding="10dp" />
@@ -301,11 +332,11 @@
                         android:contextClickable="true"
                         android:tag="@string/bus"
                         app:checkedIcon="@drawable/ic_baseline_directions_bus_24"
-                        app:checkedIconTint="@color/purple_700"
+                        app:checkedIconTint="@color/checked"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_bus_24"
                         app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
+                        app:chipIconTint="@color/btn"
                         app:chipIconVisible="true"
                         app:iconEndPadding="10dp"
                         app:iconStartPadding="10dp" />
@@ -321,11 +352,11 @@
                         android:contextClickable="true"
                         android:tag="@string/train"
                         app:checkedIcon="@drawable/ic_baseline_directions_transit_filled_24"
-                        app:checkedIconTint="@color/green"
+                        app:checkedIconTint="@color/checked"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_transit_filled_24"
                         app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
+                        app:chipIconTint="@color/btn"
                         app:chipIconVisible="true"
                         app:iconEndPadding="10dp"
                         app:iconStartPadding="10dp" />
@@ -342,11 +373,11 @@
                         android:contextClickable="true"
                         android:tag="@string/walk"
                         app:checkedIcon="@drawable/ic_baseline_directions_walk_24"
-                        app:checkedIconTint="@color/green"
+                        app:checkedIconTint="@color/checked"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_walk_24"
                         app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
+                        app:chipIconTint="@color/btn"
                         app:chipIconVisible="true"
                         app:iconEndPadding="10dp"
                         app:iconStartPadding="10dp" />
@@ -363,11 +394,11 @@
                         android:contextClickable="true"
                         android:tag="@string/bike"
                         app:checkedIcon="@drawable/ic_baseline_directions_bike_24"
-                        app:checkedIconTint="@color/green"
+                        app:checkedIconTint="@color/checked"
                         app:checkedIconVisible="true"
                         app:chipIcon="@drawable/ic_baseline_directions_bike_24"
                         app:chipIconSize="30dp"
-                        app:chipIconTint="@color/black"
+                        app:chipIconTint="@color/btn"
                         app:chipIconVisible="true"
                         app:iconEndPadding="10dp"
                         app:iconStartPadding="10dp" />
@@ -441,7 +472,8 @@
                     android:layout_height="40dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/back_icon"
+                    android:background="@drawable/back_icon"
+                    android:backgroundTint="@color/btn"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:contentDescription="@string/back_to_plan" />
@@ -453,7 +485,7 @@
                     android:layout_marginTop="40dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textAlignment="center"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -465,7 +497,7 @@
                     android:id="@+id/place_divider"
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
-                    app:dividerColor="@color/black"
+                    app:dividerColor="@color/primary_text"
                     android:layout_marginStart="60dp"
                     android:layout_marginEnd="60dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -523,7 +555,7 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
                     android:textSize="18sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -541,7 +573,7 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
                     android:textSize="18sp"
-                    android:textColor="@color/purple_700"
+                    android:textColor="@color/color3"
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -559,7 +591,7 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
                     android:textSize="18sp"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/color3"
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -587,7 +619,8 @@
                     android:layout_height="40dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/back_icon"
+                    android:background="@drawable/back_icon"
+                    android:backgroundTint="@color/btn"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:contentDescription="@string/back_to_plan" />
@@ -608,7 +641,8 @@
                         android:layout_height="40dp"
                         android:layout_marginTop="56dp"
                         android:layout_marginStart="32dp"
-                        android:src="@drawable/note_alt"
+                        android:background="@drawable/note_alt"
+                        android:backgroundTint="@color/btn"
                         android:contentDescription="@string/note"
                         />
 
@@ -619,7 +653,7 @@
                         android:layout_marginTop="60dp"
                         android:layout_marginStart="12dp"
                         android:layout_marginEnd="32dp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/primary_text"
                         android:text="@string/add_note"
                         android:textSize="22sp"
                         android:textStyle="bold"
@@ -632,7 +666,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
                     android:layout_marginTop="6dp"
-                    app:dividerColor="@color/black"
+                    app:dividerColor="@color/primary_text"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -648,7 +682,7 @@
                     android:layout_marginTop="6dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/primary_text"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textAlignment="center"
@@ -692,6 +726,7 @@
                     android:scrollbars="vertical"
                     android:lines="10"
                     android:visibility="visible"
+                    android:textColorHint="@color/btn"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -704,7 +739,7 @@
                         android:id="@+id/textarea"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColorHint="#757575"
+                        android:textColorHint="@color/primary_text"
                         android:hint="@string/add_note_hint"
                         />
 
@@ -721,6 +756,7 @@
                     android:layout_marginEnd="32dp"
                     android:visibility="gone"
                     app:startIconDrawable="@drawable/ic_person_24"
+                    app:startIconTint="@color/btn"
                     app:startIconContentDescription="@string/user_name"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -734,7 +770,7 @@
                         android:id="@+id/user_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColorHint="#757575" />
+                        android:textColorHint="@color/primary_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -747,6 +783,7 @@
                         android:layout_marginRight="4dp"
                         android:visibility="gone"
                         app:startIconDrawable="@drawable/ic_baseline_calendar_month_24"
+                        app:startIconTint="@color/btn"
                         app:startIconContentDescription="@string/from"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -759,7 +796,7 @@
                         android:id="@+id/date_from"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColorHint="#757575" />
+                        android:textColorHint="@color/primary_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -772,6 +809,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginLeft="4dp"
                         app:startIconDrawable="@drawable/ic_baseline_calendar_month_24"
+                        app:startIconTint="@color/btn"
                         app:startIconContentDescription="@string/to"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:layout_constraintEnd_toEndOf="@+id/user_name_note"
@@ -784,7 +822,7 @@
                             android:id="@+id/date_to"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColorHint="#757575" />
+                            android:textColorHint="@color/primary_text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -797,6 +835,7 @@
                     android:visibility="gone"
                     android:layout_marginTop="8dp"
                     app:startIconDrawable="@drawable/ic_baseline_euro_24"
+                    app:startIconTint="@color/btn"
                     app:startIconContentDescription="@string/payment_value"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -811,7 +850,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
-                        android:textColorHint="#757575" />
+                        android:textColorHint="@color/primary_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -822,6 +861,7 @@
                     android:layout_height="48dp"
                     android:layout_marginTop="300dp"
                     android:background="@drawable/note_add_icon"
+                    android:backgroundTint="@color/btn"
                     android:contentDescription="@string/add_input"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -848,7 +888,8 @@
                     android:layout_height="40dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/back_icon"
+                    android:background="@drawable/back_icon"
+                    android:backgroundTint="@color/btn"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:contentDescription="@string/back_to_plan" />
@@ -860,7 +901,7 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:textSize="22sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/btn"
                     android:layout_marginTop="42dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -907,7 +948,7 @@
                     android:id="@+id/chips_divider"
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
-                    app:dividerColor="@color/black"
+                    app:dividerColor="@color/btn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -938,11 +979,11 @@
                             android:contextClickable="true"
                             android:tag="station"
                             app:checkedIcon="@drawable/ic_baseline_local_gas_station_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_local_gas_station_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -958,11 +999,11 @@
                             android:contextClickable="true"
                             android:tag="hotels"
                             app:checkedIcon="@drawable/ic_baseline_hotel_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_hotel_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -978,11 +1019,11 @@
                             android:contextClickable="true"
                             android:tag="restaurants"
                             app:checkedIcon="@drawable/ic_baseline_restaurant_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_restaurant_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -997,11 +1038,11 @@
                             android:contextClickable="true"
                             android:tag="bar"
                             app:checkedIcon="@drawable/ic_baseline_local_bar_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_local_bar_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -1016,11 +1057,11 @@
                             android:contextClickable="true"
                             android:tag="hospital"
                             app:checkedIcon="@drawable/ic_baseline_local_hospital_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_local_hospital_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -1035,11 +1076,11 @@
                             android:contextClickable="true"
                             android:tag="store"
                             app:checkedIcon="@drawable/ic_baseline_store_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_store_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -1054,11 +1095,11 @@
                             android:contextClickable="true"
                             android:tag="cafe"
                             app:checkedIcon="@drawable/ic_baseline_local_cafe_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_local_cafe_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />
@@ -1073,11 +1114,11 @@
                             android:contextClickable="true"
                             android:tag="tourist_attraction"
                             app:checkedIcon="@drawable/ic_baseline_tour_24"
-                            app:checkedIconTint="@color/green"
+                            app:checkedIconTint="@color/checked"
                             app:checkedIconVisible="true"
                             app:chipIcon="@drawable/ic_baseline_tour_24"
                             app:chipIconSize="30dp"
-                            app:chipIconTint="@color/black"
+                            app:chipIconTint="@color/btn"
                             app:chipIconVisible="true"
                             app:iconEndPadding="10dp"
                             app:iconStartPadding="10dp" />

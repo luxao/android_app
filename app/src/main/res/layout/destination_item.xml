@@ -34,8 +34,9 @@
             android:layout_marginLeft="@dimen/spacing_middle"
             android:layout_marginRight="@dimen/spacing_middle"
             android:layout_marginTop="@dimen/spacing_medium"
-            android:src="@drawable/ic_baseline_mode_of_travel_24"
-            android:backgroundTint="@color/black"
+            android:background="@drawable/ic_baseline_mode_of_travel_24"
+            android:backgroundTint="@color/btn"
+            android:contentDescription="@string/location_icon"
             />
 
         <ImageView
@@ -45,8 +46,9 @@
             android:layout_marginRight="20dp"
             android:layout_marginLeft="-33dp"
             android:background="@drawable/ic_baseline_more_vert_24"
+            android:backgroundTint="@color/btn"
             android:visibility="visible"
-            />
+            android:contentDescription="@string/location_icon" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/label_stop"
@@ -55,6 +57,7 @@
             app:hintAnimationEnabled="false"
             app:hintEnabled="false"
             android:textAlignment="center"
+            app:boxStrokeWidth="3dp"
             app:startIconContentDescription="@string/destination"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             >
@@ -63,7 +66,9 @@
                 android:id="@+id/input_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="#757575"
+                app:boxStrokeColor="@color/btn"
+                app:boxBackgroundColor="@color/btn"
+                android:textColorHint="@color/primary_text"
                 android:hint="@string/destination"
                 />
 
@@ -78,8 +83,9 @@
             android:layout_marginRight="@dimen/spacing_small"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/ic_baseline_delete_24"
+            android:backgroundTint="@color/btn"
             android:visibility="visible"
-            />
+            android:contentDescription="@string/delete_item" />
 
         <ImageView
             android:id="@+id/info_button"
@@ -90,8 +96,9 @@
             android:layout_marginRight="@dimen/spacing_small"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/info_icon"
+            android:backgroundTint="@color/btn"
             android:visibility="visible"
-            />
+            android:contentDescription="@string/information_from_wikipedia" />
 
         <ImageView
             android:id="@+id/note_button"
@@ -99,12 +106,12 @@
             android:clickable="true"
             android:layout_height="35dp"
             android:layout_marginBottom="@dimen/spacing_middle"
-
             android:layout_marginRight="@dimen/spacing_middle"
             android:layout_marginTop="@dimen/spacing_medium"
             android:background="@drawable/note_add_icon"
+            android:backgroundTint="@color/btn"
             android:visibility="visible"
-            />
+            android:contentDescription="@string/add_note" />
 
     </LinearLayout>
 

@@ -6,92 +6,115 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.journey.PlanJourneyFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/loading_map_animation_wrapper"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         >
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/loading_map_animation"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/log_out"
+                android:backgroundTint="@color/primary"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/loading_map_animation_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:tooltipText="Loading map"
-            app:lottie_autoPlay="false"
-            app:lottie_loop="false"
-            app:lottie_rawRes="@raw/loading_map"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:lottie_speed="1.5"
-            tools:ignore="SpeakableTextPresentCheck" />
+            android:visibility="gone"
+            >
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loading_map_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:tooltipText="Loading map"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/loading_map"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:lottie_speed="1.5"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-   <androidx.constraintlayout.widget.ConstraintLayout
-       android:id="@+id/introduction_animation_wrapper"
-       android:visibility="visible"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       >
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-       <com.airbnb.lottie.LottieAnimationView
-           android:id="@+id/load_anim"
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:id="@+id/introduction_animation_wrapper"
+           android:visibility="visible"
            android:layout_width="match_parent"
-           android:layout_height="350dp"
-           android:adjustViewBounds="true"
-           android:tooltipText="Plane Journey!"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent"
-           app:lottie_autoPlay="true"
-           app:lottie_loop="true"
-           app:lottie_rawRes="@raw/journey"
-           app:lottie_speed="1"
-           tools:ignore="SpeakableTextPresentCheck" />
+           android:layout_height="match_parent"
+           android:background="@color/card_background"
+           >
 
-       <Button
-           android:id="@+id/start_plan"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginStart="45dp"
-           android:layout_marginEnd="45dp"
-           android:layout_marginTop="8dp"
-           android:fontFamily="monospace"
-           android:text="@string/plane_your"
-           android:textColor="@color/white"
-           android:textStyle="bold"
-           android:textSize="38sp"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintHorizontal_bias="0.5"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/load_anim"
-           app:layout_constraintVertical_bias="0.0"
-            />
+           <com.airbnb.lottie.LottieAnimationView
+               android:id="@+id/load_anim"
+               android:layout_width="match_parent"
+               android:layout_height="350dp"
+               android:adjustViewBounds="true"
+               android:tooltipText="Plane Journey!"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent"
+               app:lottie_autoPlay="true"
+               app:lottie_loop="true"
+               app:lottie_rawRes="@raw/journey"
+               app:lottie_speed="1"
+               tools:ignore="SpeakableTextPresentCheck" />
 
-
-
-       <com.airbnb.lottie.LottieAnimationView
-           android:id="@+id/load_anim_journey"
-           android:layout_width="match_parent"
-           android:layout_height="80dp"
-           android:layout_marginTop="8dp"
-           android:adjustViewBounds="true"
-           android:tooltipText="journey!"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintHorizontal_bias="0.5"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/start_plan"
-           app:layout_constraintVertical_bias="0.0"
-           app:lottie_autoPlay="true"
-
-           app:lottie_loop="true"
-           app:lottie_rawRes="@raw/journey_logo"
-           app:lottie_speed="1"
-           tools:ignore="SpeakableTextPresentCheck" />
+           <Button
+               android:id="@+id/start_plan"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginStart="45dp"
+               android:layout_marginEnd="45dp"
+               android:layout_marginTop="8dp"
+               android:fontFamily="monospace"
+               android:text="@string/plane_your"
+               android:textColor="@color/primary_text"
+               android:textStyle="bold"
+               android:textSize="38sp"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintHorizontal_bias="0.5"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/load_anim"
+               app:layout_constraintVertical_bias="0.0"
+                />
 
 
-   </androidx.constraintlayout.widget.ConstraintLayout>
 
+           <com.airbnb.lottie.LottieAnimationView
+               android:id="@+id/load_anim_journey"
+               android:layout_width="match_parent"
+               android:layout_height="80dp"
+               android:layout_marginTop="8dp"
+               android:adjustViewBounds="true"
+               android:tooltipText="journey!"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintHorizontal_bias="0.5"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/start_plan"
+               app:layout_constraintVertical_bias="0.0"
+               app:lottie_colorFilter="@color/btn"
+               app:lottie_autoPlay="true"
+               app:lottie_loop="true"
+               app:lottie_rawRes="@raw/journey_logo"
+               app:lottie_speed="1"
+               tools:ignore="SpeakableTextPresentCheck" />
+
+
+       </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>

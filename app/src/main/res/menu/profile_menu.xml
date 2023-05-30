@@ -4,28 +4,33 @@
         android:id="@+id/homeJourney"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_home_24"
+        android:iconTint="@color/btn"
         android:title="@string/home" />
     <item
         android:id="@+id/planJourney"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_map_24"
+        android:iconTint="@color/btn"
         android:title="@string/plan" />
 
     <item
         android:id="@+id/find_users"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_people_24"
+        android:iconTint="@color/btn"
         android:title="@string/find_friends" />
 
     <item
         android:id="@+id/notifications"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_circle_notifications_24"
+        android:iconTint="@color/btn"
         android:title="@string/notifications" />
 
     <item
         android:id="@+id/about"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_info_24"
+        android:iconTint="@color/btn"
         android:title="@string/about" />
 </menu>

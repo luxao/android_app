@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:nestedScrollingEnabled="true"
+        android:background="@color/background"
         >
 
         <androidx.cardview.widget.CardView
@@ -27,7 +28,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:cardBackgroundColor="@color/card_light"
+            app:cardBackgroundColor="@color/card_background"
             app:cardElevation="8dp"
             >
 
@@ -37,7 +38,7 @@
                 android:layout_height="86dp"
                 android:padding="4dp"
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                app:strokeColor="@color/blue"
+                app:strokeColor="@color/btn"
                 app:strokeWidth="2dp"
                 android:src="@drawable/me"
                 android:layout_margin="8dp"
@@ -75,7 +76,7 @@
                     android:text="@string/test_name_of_user"
                     android:drawablePadding="4dp"
                     app:drawableLeftCompat="@drawable/ic_baseline_email_24"
-                    app:drawableTint="@color/black" />
+                    app:drawableTint="@color/btn" />
 
                 <LinearLayout
                     android:id="@+id/layout_for_follow_info_of_user"
@@ -90,15 +91,15 @@
                         android:id="@+id/user_followers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/card_light"
+                        android:backgroundTint="@color/btn"
                         android:clickable="true"
                         android:contextClickable="true"
                         android:drawablePadding="2dp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/btn"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_baseline_people_24"
-                        app:drawableTint="@color/black"
+                        app:drawableTint="@color/btn"
                         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
 
@@ -106,14 +107,15 @@
                         android:id="@+id/user_followed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/card_light"
+                        android:backgroundTint="@color/btn"
                         android:clickable="true"
                         android:contextClickable="true"
                         android:drawablePadding="2dp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/btn"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_baseline_remove_red_eye_24"
+                        android:drawableTint="@color/btn"
                         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                 </LinearLayout>
@@ -129,7 +131,7 @@
             android:id="@+id/user_profile_dialog_divider"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            app:dividerColor="@color/black"
+            app:dividerColor="@color/btn"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_profile_information"

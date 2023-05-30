@@ -35,7 +35,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import java.util.*
 
 
 class InputAdapter(private var viewMap: View, private var cont: Context, private var stepsAdapter: StepsAdapter, private var recyclerView: RecyclerView,
@@ -84,7 +83,6 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
 
 
             idPosition = holder.adapterPosition
-            Log.i("MYTEST", "HOLDER ADAPTER POSITION ON START ${holder.adapterPosition} and IDPOS : $idPosition")
 
             model.bitmapList.add(holder.adapterPosition, mutableListOf())
             model.addressList.add(holder.adapterPosition, "")
@@ -114,16 +112,12 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
 
             holder.deleteButton.setOnClickListener{
                 idPosition = holder.adapterPosition.minus(1)
-                Log.i("MYTEST", "HOLDER ADAPTER POSITION AFTER DELETE ${holder.adapterPosition} and IDPOS : $idPosition")
 
-                Log.i("MYTEST","POSITION AND ADAPTER POSITION : $idPosition and ${holder.adapterPosition}")
                 if (model.stepsList.isNotEmpty().and(holder.inputText.text.toString().isNotBlank())) {
                     model.stepsList.removeAt(holder.adapterPosition)
                 }
 
                 if (holder.inputText.text.toString().isNotBlank()) {
-                    Log.i("MYTEST", "IDPOSITION IS BEFORE DELETE: $idPosition and ${model.newOrigin}")
-                    Log.i("MYTEST", "MARKERS BEFORE DELETE ${model.markers}")
                     val marker = model.markers.getOrNull(holder.adapterPosition.plus(1))
                     marker?.remove()
                     model.markers.removeAt(holder.adapterPosition.plus(1))
@@ -161,10 +155,6 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
                     model.websiteList.removeAt(holder.adapterPosition)
                     model.wikiInfoList.removeAt(holder.adapterPosition)
 
-                    Log.i("MYTEST", "MARKERS: ${model.markers}")
-                    Log.i("MYTEST", "INFOMARKERS: ${model.infoMarkers}")
-                    Log.i("MYTEST", "POLYLINES: ${model.polylines}")
-                    Log.i("MYTEST", "IDPOSITION IS AFTER DELETE: $idPosition and ${model.newOrigin}")
                 }
 
                 if (idPosition == -1) {
@@ -204,7 +194,6 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
                     placeName.text = holder.inputText.text.toString()
 
                     placeId = model.placeIds[holder.adapterPosition]
-                    Log.i("MYTEST", "Bitmap list ${model.bitmapList} ")
 
                     if (model.bitmapList[holder.adapterPosition].isNotEmpty()) {
                         placeWrapper.visibility = View.VISIBLE
@@ -300,7 +289,6 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
                                 // Get the photo metadata.
                                 val metadata = place.photoMetadatas
                                 if (metadata == null || metadata.isEmpty()) {
-                                    Log.w("MYTEST", "No photo metadata.")
                                     return@addOnSuccessListener
                                 }
 
@@ -324,7 +312,7 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
                                             if (exception is ApiException) {
                                                 Log.e("MYTEST", "Place not found: " + exception.message)
                                                 val statusCode = exception.statusCode
-                                                TODO("Handle error with given status code.")
+
                                             }
                                         }
                                 }
@@ -340,13 +328,9 @@ class InputAdapter(private var viewMap: View, private var cont: Context, private
                                             if (holder.adapterPosition != -1) {
                                                 model.bitmapList.add(holder.adapterPosition, bitmaps)
                                             }
-                                            else {
-                                                Log.i("MYTEST", "NOT ADD TO BITMAPLIST : ${holder.adapterPosition}")
-                                            }
 
                                             recyclerViewImage.adapter = imageAdapter
                                             imageAdapter.submitList(bitmaps)
-                                            Log.i("MYTEST", "Bitmap list $bitmaps ")
                                         }
                                         else {
                                             loadingAnimation.playAnimation()

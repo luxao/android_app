@@ -9,11 +9,11 @@
         android:contentDescription="@string/profile"
         app:showAsAction="ifRoom"
         app:actionViewClass="android.widget.ImageView"
-
         />
     <item android:id="@+id/action_logout"
         android:title="@string/log_out"
         android:icon="@drawable/ic_baseline_logout_24"
+        android:iconTint="@color/btn"
         app:showAsAction="always"
         />
 </menu>

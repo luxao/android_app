@@ -5,7 +5,7 @@
     <item
         android:id="@+id/home"
         android:icon="@drawable/ic_baseline_home_24"
-        android:iconTint="@color/white"
+        android:iconTint="@color/btn"
         android:title="@string/home"
         android:contentDescription="@string/home"
         app:showAsAction="ifRoom"
@@ -13,7 +13,7 @@
     <item
         android:id="@+id/profile"
         android:icon="@drawable/ic_person_24"
-        android:iconTint="@color/white"
+        android:iconTint="@color/btn"
         android:title="@string/profile"
         android:contentDescription="@string/profile"
         app:actionViewClass="android.widget.ImageView"

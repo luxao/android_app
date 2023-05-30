@@ -30,7 +30,7 @@
         app:contentPadding="4dp"
         android:layout_margin="8dp"
         app:cardCornerRadius="10dp"
-        app:cardBackgroundColor="@color/card_journey"
+        app:cardBackgroundColor="@color/btn"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,6 +46,7 @@
                 android:text="@string/test_journey_name"
                 android:textStyle="bold"
                 android:textSize="22sp"
+                android:textColor="@color/background"
                 android:textAlignment="center"
                 android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +58,7 @@
                 android:id="@+id/journey_info_divider"
                 android:layout_width="200dp"
                 android:layout_height="2dp"
-                app:dividerColor="@color/black"
+                app:dividerColor="@color/background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,10 +87,11 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:padding="4dp"
+                    android:textColor="@color/background"
                     android:layout_margin="4dp"
                     android:gravity="center"
                     app:drawableLeftCompat="@drawable/ic_baseline_mode_of_travel_24"
-                    app:drawableTint="@color/black" />
+                    app:drawableTint="@color/background" />
 
                 <TextView
                     android:id="@+id/user_totalDuration_item"
@@ -97,9 +99,11 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:padding="4dp"
+                    android:textColor="@color/background"
                     android:layout_margin="4dp"
                     android:gravity="center"
                     app:drawableLeftCompat="@drawable/ic_baseline_access_time_filled_24"
+                    app:drawableTint="@color/background"
                     />
 
 
@@ -128,8 +132,10 @@
                     android:textStyle="bold"
                     android:padding="4dp"
                     android:layout_margin="4dp"
+                    android:textColor="@color/background"
                     android:gravity="center"
                     app:drawableLeftCompat="@drawable/ic_baseline_route_24"
+                    app:drawableTint="@color/background"
                     android:drawablePadding="4dp"
                     />
 
@@ -153,10 +159,10 @@
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_baseline_map_24"
-                    android:drawableTint="@color/white"
+                    android:drawableTint="@color/background"
                     android:text="@string/show"
                     android:visibility="visible"
-                    android:backgroundTint="@color/cardview_dark_background"
+                    android:backgroundTint="@color/primary"
                     style="?attr/materialButtonStyle"
                     android:layout_marginRight="8dp"
                     android:onClick="@{() -> journeyListener.onClick(userJourney.id, userJourney.sharedUrl,flagJourney.SHARE)}"

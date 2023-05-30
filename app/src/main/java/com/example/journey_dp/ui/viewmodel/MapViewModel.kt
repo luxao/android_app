@@ -4,18 +4,15 @@ package com.example.journey_dp.ui.viewmodel
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.journey_dp.data.domain.DirectionsResponse
 import com.example.journey_dp.data.domain.Place
 import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.data.repository.Repository
-import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.utils.Errors
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.Polyline
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
 
@@ -66,15 +63,14 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
     private var _iconType = MutableLiveData("driving")
     val iconType: LiveData<String> get() = _iconType
 
-    private var _location: MutableLiveData<LatLng> = MutableLiveData()
-    val location: LiveData<LatLng> get() = _location
-
     private var _countryCode: MutableLiveData<String> = MutableLiveData()
     val countryCode: LiveData<String> get() = _countryCode
 
+    var location = LatLng(0.0, 0.0)
     var locationName = ""
     var cityInfo = ""
     var placesTypes = listOf<Place>()
+
 
     fun getDirections(
         origin: String, destination: String,
@@ -135,7 +131,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
             key = key,
             callback = { data ->
                 placesTypes = data
-                Log.i("MYTEST", "FROM VIEWMODEL : $placesTypes")
                 successCallback(placesTypes)
             },
             errorCallback = { error ->
@@ -162,10 +157,6 @@ class MapViewModel(private val repository: Repository) : ViewModel() {
         _countryCode.value = country
     }
 
-
-    fun setLocation(coordinates: LatLng) {
-        _location.value = coordinates
-    }
 
     fun show(msg: String) {
         _message.postValue(Errors(msg))

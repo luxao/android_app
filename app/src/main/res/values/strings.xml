@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">journey_dp</string>
+    <string name="app_name">Journeys</string>
     <string name="welcome">Welcome there will be login</string>
     <string name="info_text">Plan your journey</string>
     <string name="plane_your">Plan your</string>
@@ -118,9 +118,8 @@
     <string name="show_user_profile">show user profile</string>
     <string name="clear">Clear</string>
     <string name="notifications">Notifications</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="back_to_followers">back to followers</string>
+    <string name="location_icon">location icon</string>
 
 
 </resources>

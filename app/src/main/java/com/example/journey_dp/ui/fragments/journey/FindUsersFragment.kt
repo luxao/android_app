@@ -1,6 +1,6 @@
 package com.example.journey_dp.ui.fragments.journey
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,30 +9,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Button
+import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.journey_dp.R
-import com.example.journey_dp.data.firebase.User
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.databinding.FragmentFindUsersBinding
-import com.example.journey_dp.databinding.FragmentProfileBinding
 import com.example.journey_dp.ui.adapter.adapters.FollowersAdapter
-import com.example.journey_dp.ui.adapter.adapters.JourneysAdapter
 import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
-import com.example.journey_dp.ui.adapter.events.JourneyEventListener
 import com.example.journey_dp.ui.adapter.events.UserEventListener
-import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.example.journey_dp.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 
@@ -70,13 +62,7 @@ class FindUsersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFindUsersBinding.inflate(inflater, container, false)
-        setFindUsersMenu(
-            context = requireContext(),
-            activity = requireActivity() ,
-            lifecycleOwner = viewLifecycleOwner,
-            view = binding.root,
-            auth = auth
-        )
+
         val loggedEmail = auth.currentUser!!.email
         val loggedImage = auth.currentUser!!.photoUrl.toString()
         val loggedName = auth.currentUser!!.displayName
@@ -90,6 +76,33 @@ class FindUsersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this@FindUsersFragment.viewLifecycleOwner
         binding.model = this@FindUsersFragment.usersViewModel
+
+
+        val menu = binding.topAppBar.menu
+        val profileItem = menu.findItem(R.id.profile)
+        val imageItem = profileItem?.actionView as ImageView
+        Glide.with(requireContext()).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+        imageItem.setOnClickListener {
+            val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
+            view.findNavController().navigate(action)
+        }
+
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.home -> {
+                    val action = FindUsersFragmentDirections.actionFindUsersFragmentToPlanJourneyFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                R.id.profile -> {
+                    val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                else -> false
+            }
+        }
 
         followersAdapter = FollowersAdapter(
             context = requireContext(),
@@ -147,7 +160,6 @@ class FindUsersFragment : Fragment() {
             usersViewModel.userName = binding.searchFriendsInput.text.toString()
             usersViewModel.allUsers.map { user ->
                 if (user.userName.contains(usersViewModel.userName)) {
-                    Log.i("MYTEST", "FINDED USERS : ${user.userName}")
                     if (!usersViewModel.searchedUsers.contains(user)) {
                         usersViewModel.searchedUsers.add(user)
                         usersAdapter.notifyItemInserted(usersViewModel.searchedUsers.size)
@@ -168,7 +180,6 @@ class FindUsersFragment : Fragment() {
         binding.clearWrapper.visibility = View.GONE
         if (usersViewModel.searchedUsers.isNotEmpty()) {
             usersViewModel.searchedUsers.clear()
-            Log.i("MYTEST", "FINDED USERS IF EMPTY INPUT : ${usersViewModel.searchedUsers}")
             usersAdapter.notifyDataSetChanged()
         }
     }
@@ -182,13 +193,11 @@ class FindUsersFragment : Fragment() {
                     val userImage = snap.child("user_data").child("userImage").value.toString()
                     val userName = snap.child("user_data").child("userName").value.toString()
                     val user = UserWithUID(userUID, userEmail, userImage, userName)
-                    Log.i("MYTEST","$user")
                     usersViewModel.allUsers.add(user)
                 }
                 else {
                     if (snap.child("requested").value != null) {
                         for (data in snap.child("requested").children){
-                            Log.i("MYTEST", "REQUESTED USERS: $data")
                             usersViewModel.requestedUsers.add(data.key.toString())
                         }
                     }
@@ -200,7 +209,6 @@ class FindUsersFragment : Fragment() {
                             val userImage = data.child("userImage").value.toString()
                             val userName = data.child("userName").value.toString()
                             val user = UserWithUID(userUID, userEmail, userImage, userName)
-                            Log.i("MYTEST","$user")
                             usersViewModel.followingUsers.add(user)
                             followersAdapter.notifyItemInserted(usersViewModel.followingUsers.size)
                         }

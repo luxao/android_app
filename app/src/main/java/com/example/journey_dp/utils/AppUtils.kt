@@ -7,41 +7,27 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
-import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
-import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.JourneyEntity
 import com.example.journey_dp.data.room.model.RouteEntity
-import com.example.journey_dp.ui.fragments.journey.FindUsersFragmentDirections
-import com.example.journey_dp.ui.fragments.journey.NotificationsFragmentDirections
 import com.example.journey_dp.ui.fragments.journey.PlanJourneyFragmentDirections
 import com.example.journey_dp.ui.fragments.maps.PlanMapFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.shared.LocationSharedPreferencesUtil
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
@@ -55,84 +41,14 @@ import java.net.URLDecoder
 import java.util.*
 
 
-/**
- * This method converts dp unit to equivalent pixels, depending on device density.
- *
- * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
- * @param context Context to get resources and device specific display metrics
- * @return A float value to represent px equivalent to dp depending on device density
- */
-fun convertDpToPixel(dp: Float, context: Context): Float {
-    return dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-}
 
-/**
- * This method converts device specific pixels to density independent pixels.
- *
- * @param px A value in px (pixels) unit. Which we need to convert into db
- * @param context Context to get resources and device specific display metrics
- * @return A float value to represent dp equivalent to px value
- */
-fun convertPixelsToDp(px: Float, context: Context): Float {
-    return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-}
-
-fun isLightColor(color: Int): Boolean {
-    val r = Color.red(color)
-    val g = Color.green(color)
-    val b = Color.blue(color)
-    // Calculate the luminance of the color
-    val luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-    // Check if the luminance is greater than 0.5 (i.e., light color)
-    return luminance > 0.5
-}
 
 fun clearFromHtml(htmlString: String): String {
     val decoded = URLDecoder.decode(htmlString, "UTF-8")
     return Jsoup.parse(decoded).text()
 }
 
-fun setLogOut(
-    activity: FragmentActivity,
-    lifecycleOwner: LifecycleOwner,
-    context: Context,
-    view: View,
-    googleSignInClient: GoogleSignInClient,
-    auth: FirebaseAuth
-) {
-    val menuHost: MenuHost = activity
 
-    menuHost.addMenuProvider(object : MenuProvider {
-        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            // Add menu items here
-            menuInflater.inflate(R.menu.log_out, menu)
-            val profileItem = menu.findItem(R.id.user_profile)
-            val imageItem = profileItem?.actionView as ImageView
-            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
-            imageItem.setOnClickListener {
-                val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
-                view.findNavController().navigate(action)
-            }
-        }
-
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            return when (menuItem.itemId) {
-                R.id.user_profile -> {
-                    val action = PlanJourneyFragmentDirections.actionPlanJourneyFragmentToProfileFragment2()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                R.id.action_logout -> {
-                    auth.signOut()
-                    googleSignInClient.signOut()
-                    logOurDialog(activity, view, context)
-                    true
-                }
-                else -> false
-            }
-        }
-    }, lifecycleOwner, Lifecycle.State.RESUMED)
-}
 
 fun hideElements(view: View) {
     val chips = view.findViewById<ChipGroup>(R.id.chip_group_directions)
@@ -152,7 +68,6 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
         val distanceItem = it.title!!.split("km")[0].trim().toDouble()
         var durationItemHour = 0
         var durationItemMinutes = ""
-        Log.i("MYTEST","SNIPPET DISTANCE : ${it.snippet}")
 
         if (it.snippet!!.contains("day").or(it.snippet!!.contains("days"))) {
             val tmp = it.snippet!!.split(" ")
@@ -209,125 +124,8 @@ fun calculateDistanceAndDuration(infoMarkers: MutableList<Marker>, view: View) {
 
 }
 
-fun setFindUsersMenu(
-    context: Context,
-    activity: FragmentActivity,
-    lifecycleOwner: LifecycleOwner,
-    view: View,
-    auth: FirebaseAuth
-) {
-    val menuHost: MenuHost = activity
-    menuHost.addMenuProvider(object : MenuProvider {
-        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            menuInflater.inflate(R.menu.top_map_menu, menu)
-            val profileItem = menu.findItem(R.id.profile)
-            val imageItem = profileItem?.actionView as ImageView
-            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
-            imageItem.setOnClickListener {
-                val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
-                view.findNavController().navigate(action)
-            }
-        }
-
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            return when (menuItem.itemId) {
-                R.id.home -> {
-                    val action = FindUsersFragmentDirections.actionFindUsersFragmentToPlanJourneyFragment()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                R.id.profile -> {
-                    val action = FindUsersFragmentDirections.actionFindUsersFragmentToProfileFragment2()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                else -> false
-            }
 
 
-        }
-    }, lifecycleOwner, Lifecycle.State.RESUMED)
-}
-
-fun setNotificationsMenu(
-    context: Context,
-    activity: FragmentActivity,
-    lifecycleOwner: LifecycleOwner,
-    view: View,
-    auth: FirebaseAuth
-) {
-    val menuHost: MenuHost = activity
-    menuHost.addMenuProvider(object : MenuProvider {
-        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            menuInflater.inflate(R.menu.top_map_menu, menu)
-            val profileItem = menu.findItem(R.id.profile)
-            val imageItem = profileItem?.actionView as ImageView
-            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
-            imageItem.setOnClickListener {
-                val action = NotificationsFragmentDirections.actionNotificationsFragmentToProfileFragment2()
-                view.findNavController().navigate(action)
-            }
-        }
-
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            return when (menuItem.itemId) {
-                R.id.home -> {
-                    val action = NotificationsFragmentDirections.actionNotificationsFragmentToPlanJourneyFragment()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                R.id.profile -> {
-                    val action = NotificationsFragmentDirections.actionNotificationsFragmentToProfileFragment2()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                else -> false
-            }
-
-
-        }
-    }, lifecycleOwner, Lifecycle.State.RESUMED)
-}
-
-fun setMapMenu(
-    context: Context,
-    activity: FragmentActivity,
-    lifecycleOwner: LifecycleOwner,
-    view: View,
-    auth: FirebaseAuth
-) {
-    val menuHost: MenuHost = activity
-    menuHost.addMenuProvider(object : MenuProvider {
-        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            menuInflater.inflate(R.menu.top_map_menu, menu)
-            val profileItem = menu.findItem(R.id.profile)
-            val imageItem = profileItem?.actionView as ImageView
-            Glide.with(context).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
-            imageItem.setOnClickListener {
-                val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
-                view.findNavController().navigate(action)
-            }
-        }
-
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            return when (menuItem.itemId) {
-                R.id.home -> {
-                    val action = PlanMapFragmentDirections.actionPlanMapFragmentToPlanJourneyFragment()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                R.id.profile -> {
-                    val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
-                    view.findNavController().navigate(action)
-                    true
-                }
-                else -> false
-            }
-
-
-        }
-    }, lifecycleOwner, Lifecycle.State.RESUMED)
-}
 
 var currentChar = 'A'
 
@@ -337,7 +135,6 @@ fun setAgainCharacter() {
 fun nextABC(): Char {
     val result = currentChar
     currentChar = currentChar.plus(1)
-    Log.i("MYTEST", "CHARACTER AFTER CHANGE: $currentChar")
     return result
 }
 
@@ -364,7 +161,7 @@ fun showWebPageIntent(uriWeb: String, context: Context) {
 
 fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                       profileViewModel: ProfileViewModel,
-                      allDestinations: MutableList<String>, mapView: View, auth: FirebaseAuth,firebaseDatabase: DatabaseReference): Dialog {
+                      allDestinations: MutableList<String>, mapView: View, auth: FirebaseAuth,firebaseDatabase: DatabaseReference, context: Context): Dialog {
     return activity.let {
         val builder = AlertDialog.Builder(it)
         val inflater = activity.layoutInflater;
@@ -392,7 +189,15 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                     if (model.polylines.isNotEmpty()) {
                         allDestinations.removeAll {destination -> destination.isBlank() }
                         model.travelMode.removeAll { travel -> travel.isBlank() }
-                        val parsedOrigin = model.location.value?.latitude.toString().plus(",${model.location.value?.longitude.toString()}")
+
+                        val parsedOrigin = if (model.location != LatLng(0.0,0.0)) {
+                            model.location.latitude.toString().plus(",${model.location.longitude.toString()}")
+                        } else {
+                            val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(context,auth.currentUser!!.uid)
+                            val tmpLoc = userLoc!!.split("=")[1]
+                            tmpLoc.split(",")[0] + "," + tmpLoc.split(",")[1]
+                        }
+
                         allDestinations.add(0,parsedOrigin)
                         val userEmail = auth.currentUser!!.email
                         val userUid = auth.currentUser!!.uid
@@ -424,7 +229,6 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
                         journey.sharedUrl = buildUrl.dropLast(1)
                         profileViewModel.insertJourneyWithDestinations(journey, routes)
 
-                        Log.i("MYTEST","IDDID: ${journey.id}")
                         firebaseDatabase.child("users_journeys").child(userUid).child(journey.name).setValue(journey)
                         firebaseDatabase.child("users_journeys").child(userUid).child(journey.name).child("routes").setValue(routes)
 
@@ -440,7 +244,6 @@ fun journeyNameDialog(activity: FragmentActivity, model: MapViewModel,
             }
             .setNegativeButton(R.string.cancel
             ) { dialog, id ->
-                Log.i("MYTEST", "DIALOGA WAS CANCELED : ${dialog.cancel()}")
                 dialog.cancel()
             }
         builder.create()
@@ -512,42 +315,49 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
 
                             val cityName: String = addresses!![0].getAddressLine(0)
                             val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(context, userID)
-                            Log.i("MYTEST","USERLOC START : $userLoc")
                             if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
-                                Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
-                                model.setCountry(addresses[0].countryCode)
+
                             }
-                            model.locationName = cityName
+
                             if ((userLoc!!.isBlank()).or(userLoc.isEmpty())) {
                                 LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                model.locationName = cityName
+                                model.location = LatLng(it.latitude, it.longitude)
                             }
                             else {
                                 val compare = userLoc.split("=")[0]
                                 if (compare != cityName) {
                                     LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                    model.locationName = cityName
+                                    model.location = LatLng(it.latitude, it.longitude)
+
                                 }
                             }
-                            model.setLocation(LatLng(it.latitude, it.longitude))
+
                         }
                         else {
                             val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(context, userID)
-                            Log.i("MYTEST","USERLOC START : $userLoc")
                             geocoder.getFromLocation(it.latitude, it.longitude, 1) {addresses->
                                 val cityName =  addresses[0].getAddressLine(0)
                                 if ((addresses[0].countryCode != null).or(addresses[0].countryCode.isNotBlank()).or(addresses[0].countryCode.isNotEmpty())) {
-                                    Log.i("MYTEST", "LOCATION IS : ${addresses[0].countryCode}")
                                     if ((userLoc!!.isBlank()).or(userLoc.isEmpty())) {
                                         LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                        model.locationName = cityName
+                                        model.location = LatLng(it.latitude, it.longitude)
+
                                     }
+
                                     else {
                                         val compare = userLoc.split("=")[0]
                                         if (compare != cityName) {
                                             LocationSharedPreferencesUtil.getInstance().putUserLoc(context, cityName, LatLng(it.latitude, it.longitude), userID)
+                                            model.locationName = cityName
+                                            model.location = LatLng(it.latitude, it.longitude)
+
                                         }
                                     }
-                                    model.setCountry(addresses[0].countryCode)
-                                    model.locationName = cityName
-                                    model.setLocation(LatLng(it.latitude, it.longitude))
+
+
                                 }
                             }
                         }
@@ -564,7 +374,6 @@ fun getLocation(context: Context, fusedLocationProviderClient: FusedLocationProv
             Toast.makeText(context,"Please turn on location", Toast.LENGTH_SHORT).show()
         }
     }
-
 }
 
 

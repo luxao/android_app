@@ -5,8 +5,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.journey_dp.data.firebase.UserJourney
 import com.example.journey_dp.data.firebase.UserWithUID
 import com.example.journey_dp.data.room.model.JourneyEntity
-import com.example.journey_dp.data.room.model.JourneyWithRoutes
-import com.example.journey_dp.data.room.model.RouteEntity
 import com.example.journey_dp.ui.adapter.adapters.*
 
 

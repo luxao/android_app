@@ -8,18 +8,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.drawable.toIcon
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
 import com.bumptech.glide.Glide
 import com.example.journey_dp.R
-import com.example.journey_dp.data.firebase.Routes
 import com.example.journey_dp.data.firebase.UserJourney
 import com.example.journey_dp.data.room.model.JourneyEntity
-import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.databinding.FragmentProfileBinding
@@ -29,13 +24,10 @@ import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.Injection
 import com.example.journey_dp.utils.JourneyEnum
 import com.example.journey_dp.utils.setAgainCharacter
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
 import kotlin.math.round
 
 
@@ -90,13 +82,9 @@ class ProfileFragment : Fragment() {
         profileViewModel.journeys.observe(viewLifecycleOwner) { journey->
             if (journey.size <= 1) {
                 ref.child("users_journeys").child(userId).get().addOnSuccessListener { snapshot ->
-                    Log.i("MYTEST", "TESTUJEME ${snapshot.childrenCount}")
                     if ((snapshot.childrenCount.toInt() > journey.size).or(journey.isEmpty())) {
-                        Log.i("MYTEST","SPUSTAM SE ${journey.size}")
                         if (profileViewModel.helperJourney.isNotEmpty()) {
-                            Log.i("MYTEST","HELPERJOURNEY ${profileViewModel.helperJourney[0]}")
                             val ignoreName = profileViewModel.helperJourney[0].name
-                            Log.i("MYTEST","Ignorujeeme meno $ignoreName")
 
                             for (item in snapshot.children) {
                                 if (item.key != ignoreName) {
@@ -124,13 +112,11 @@ class ProfileFragment : Fragment() {
                                         )
                                         routesToDB.add(itemRoute)
                                     }
-                                    Log.i("MYTEST","$routesToDB")
                                     profileViewModel.insertJourneyWithDestinations(journeyToDB, routesToDB)
                                 }
                             }
                         }
                         else {
-                            Log.i("MYTEST","ELSE:")
                             for (item in snapshot.children) {
                                 val testJourney = item.getValue(UserJourney::class.java)
 
@@ -143,7 +129,6 @@ class ProfileFragment : Fragment() {
                                     sharedUrl = testJourney.sharedUrl.toString()
                                 )
                                 val routesToDB = mutableListOf<RouteEntity>()
-                                Log.i("MYTEST","${journeyToDB.id} => $journeyToDB")
                                 for(route in testJourney.routes!!)  {
                                     val itemRoute = RouteEntity(
                                         journeyId = journeyToDB.id,
@@ -156,7 +141,6 @@ class ProfileFragment : Fragment() {
                                     )
                                     routesToDB.add(itemRoute)
                                 }
-                                Log.i("MYTEST","$routesToDB")
                                 profileViewModel.insertJourneyWithDestinations(journeyToDB, routesToDB)
                             }
                         }
@@ -233,7 +217,6 @@ class ProfileFragment : Fragment() {
             userId = userId,
             ref = ref,
             journeyEventListener = JourneyEventListener { journeyId: Long, shared: String, flag: JourneyEnum ->
-                Log.i("MYTEST", "CLICKED: $journeyId")
                 if (flag == JourneyEnum.SHOW) {
                     setAgainCharacter()
                     findNavController()
@@ -258,7 +241,6 @@ class ProfileFragment : Fragment() {
                                 distance = journey.totalDistance
                                 duration = journey.totalDuration
                                 destinations = journey.numberOfDestinations
-                                Log.i("MYTEST", "TEST TEST ${journey.name}")
                             }
                         }
                     }
@@ -283,7 +265,6 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.journeys.observe(viewLifecycleOwner) {
                 if (it != null) {
-                    Log.i("MYTEST","HALO : $it")
                     binding.numberOfJourneys.text = getString(R.string.total_destinations).plus(" ${it.size}")
                     var distance = 0.0
                     var durationHours = 0
@@ -330,12 +311,10 @@ class ProfileFragment : Fragment() {
                 if (snap.key == "followers") {
                     profileViewModel.setNewFollowers(snap.childrenCount.toInt())
                     binding.followers.text = " ".plus(getString(R.string.followers)).plus(" ").plus(snap.childrenCount)
-                    Log.i("MYTEST","FOLLOWERS: ${profileViewModel.followers}")
                 }
                 if (snap.key == "followed") {
                     profileViewModel.setNewFollowed(snap.childrenCount.toInt())
                     binding.followed.text = " ".plus(getString(R.string.followed)).plus(" ").plus(snap.childrenCount)
-                    Log.i("MYTEST","FOLLOWED: ${profileViewModel.followed}")
                 }
             }
         }.addOnFailureListener { error ->

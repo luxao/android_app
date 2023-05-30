@@ -1,27 +1,32 @@
 package com.example.journey_dp.ui.fragments.maps
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.journey_dp.BuildConfig
 import com.example.journey_dp.R
 import com.example.journey_dp.data.room.model.RouteEntity
@@ -30,11 +35,13 @@ import com.example.journey_dp.ui.adapter.adapters.DetailsJourneyAdapter
 import com.example.journey_dp.ui.adapter.adapters.ImageAdapter
 import com.example.journey_dp.ui.adapter.adapters.InputAdapter
 import com.example.journey_dp.ui.adapter.adapters.StepsAdapter
+import com.example.journey_dp.ui.fragments.journey.NotificationsFragmentDirections
 import com.example.journey_dp.ui.viewmodel.MapViewModel
 import com.example.journey_dp.ui.viewmodel.ProfileViewModel
 import com.example.journey_dp.utils.*
 import com.example.journey_dp.utils.shared.LocationSharedPreferencesUtil
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -44,11 +51,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.RectangularBounds
-import com.google.android.libraries.places.api.model.TypeFilter
-import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
@@ -62,8 +64,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+
 import com.google.maps.android.PolyUtil
-import com.google.maps.android.SphericalUtil
 import java.util.*
 
 
@@ -100,8 +102,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     private lateinit var standardBottomSheetBehavior: BottomSheetBehavior<View>
     // Declaration of Places Client
     private lateinit var places: PlacesClient
-
-
     // Search Fragment late initialization
     private lateinit var searchView: AutocompleteSupportFragment
 
@@ -109,18 +109,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     private lateinit var status: Status
 
-    //TODO: upravit mapu
-    //TODO: spravit asi jeden styl dizajnu , nocny netreba
-    //TODO: pridat aspon slovenčinu
-    //TODO: upravit ikonku appky
-    //TODO: skusit pridat settings ale este premysliet ake
-    //TODO: spravit pouzivatelsku prirucku
-    //TODO: zlepsit lokaciu
-    //TODO: Nadizajnovat
-    //TODO: hodit na google play
-    //TODO: PO NADIZAJNOVANI
-    //TODO: ak sa podarí firebase implementacia DB do recyclerview zobrazovania vyletov v profile tak skusit vypista userov a ich vylety ak by dal follow
-    //TODO: pridat moznost rezervácie počtu osob k poznamkam ????
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
@@ -130,9 +118,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         placeFromSearch = Autocomplete.getPlaceFromIntent(result.data!!)
 
                         var position = inputAdapter.getID()
-                        Log.i("MYTEST", "PLACE FROM SEARCH ${placeFromSearch.name}")
+
 
                         if (mapViewModel.changeBetweenWaypoints) {
+
                             val marker = mapViewModel.markers.getOrNull(position.plus(1))
                             marker?.remove()
                             mapViewModel.markers.removeAt(position.plus(1))
@@ -182,7 +171,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 mapViewModel.destinationsName.removeAt(0)
                             }
 
-                            mapViewModel.setLocation(placeFromSearch.latLng!!)
+
+                            mapViewModel.location = placeFromSearch.latLng!!
                             val marker = googleMap.addMarker(MarkerOptions().position(placeFromSearch.latLng!!).title(placeFromSearch.name!!).icon(
                                 BitmapDescriptorFactory.defaultMarker(Random().nextInt(360).toFloat())
                             ))
@@ -210,7 +200,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     mapViewModel.infoMarkers.removeAt(0)
                                     mapViewModel.polylines.removeAt(0)
                                 }
-                                Log.i("MYTEST", "USER LOC: $changedOrigin and $firstDestination")
+
                                 mapViewModel.getDirections(changedOrigin, firstDestination, "driving", "", BuildConfig.GOOGLE_MAPS_API_KEY)
                                 mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                                     if (result != null) {
@@ -236,8 +226,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         }
 
                         var destination = placeFromSearch.latLng!!.latitude.toString() + "," + placeFromSearch.latLng!!.longitude.toString()
+                        var origin = ""
                         position = inputAdapter.getID()
-                        Log.i("MYTEST", "FIRST POSITION : $position")
+
                         if ((!mapViewModel.changeUserLocation).and(position >= 0)) {
                             inputAdapter.setName(placeFromSearch.name!!, destination)
                             inputAdapter.addPlaceId(placeFromSearch.id!!)
@@ -245,15 +236,22 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             showMarkerOnChoosePlace(placeFromSearch.name!!, placeFromSearch.latLng!!, position.plus(1))
 
 
-                            var origin = if (position == 0) {
-                                mapViewModel.location.value!!.latitude.toString() + "," + mapViewModel.location.value!!.longitude.toString()
+
+                            origin = if (position == 0) {
+                                if (mapViewModel.location != LatLng(0.0,0.0)) {
+                                    mapViewModel.location.latitude.toString() + "," + mapViewModel.location.longitude.toString()
+                                } else {
+                                    val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(),auth.currentUser!!.uid)
+                                    val tmpLoc = userLoc!!.split("=")[1]
+                                    tmpLoc.split(",")[0] + "," + tmpLoc.split(",")[1]
+                                }
                             } else {
                                 inputAdapter.getNewOrigin(position.minus(1))
                             }
-                            Log.i("MYTEST","ORIGIN WAS SET TO : $origin")
+
 
                             // HELPER VARIABLES
-                            var mode = "driving"
+                            var mode = mapViewModel.iconType.value
                             var transit = ""
                             val key = BuildConfig.GOOGLE_MAPS_API_KEY
                             var points: String
@@ -262,16 +260,18 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             var iconType: String
                             var comparison: Boolean
 
-                            Log.i("MYTEST", "ORIG, DEST : $origin and $destination")
-                            mapViewModel.getDirections(origin, destination, mode, transit, key)
+
+                            mapViewModel.getDirections(origin, destination, mode!!, transit, key)
 
                             mapViewModel.directions.observe(viewLifecycleOwner) { result ->
                                 try {
                                     if (result != null) {
                                         if (result.routes!!.isNotEmpty()) {
+
                                             comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
+
                                             if (!comparison) {
-                                                Log.i("MYTEST", "SPUSTAM DIRECTIONS")
+
 
 
                                                 points = result.routes[0].overviewPolyline.points
@@ -280,7 +280,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                                 iconType = mapViewModel.iconType.value!!
                                                 position = inputAdapter.getID()
 
-                                                Log.i("MYTEST", "ADD TRAVEL MODE AT $position and $iconType")
+
                                                 mapViewModel.travelMode.add(position, iconType)
 
                                                 recyclerViewSteps.adapter = stepsAdapter
@@ -302,13 +302,12 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 }
                             }
 
-
                             binding.chipGroupDirections.setOnCheckedStateChangeListener { group, checkedIds ->
                                 checkedIds.map {
                                     val chip: Chip? = group.findViewById(it)
                                     mode = chip?.tag.toString()
 
-                                    mapViewModel.setIconType(mode)
+                                    mapViewModel.setIconType(mode!!)
                                     if ((mode == "bus").or(mode == "train")) {
                                         mode = "transit"
                                         transit = chip?.tag.toString()
@@ -321,28 +320,24 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                                     if (mapViewModel.stepsList.isNotEmpty().and(position != -1)) {
                                         if (position <= mapViewModel.stepsList.size.minus(1)) {
-                                            Log.i("MYTEST", "DELETE AT POSITION STEPS LIST: $position and ${mapViewModel.stepsList.size}")
+
                                             mapViewModel.stepsList.removeAt(position)
                                         }
                                     }
                                     if (position != 0) {
                                         origin =  inputAdapter.getNewOrigin(position.minus(1))
                                         destination = inputAdapter.getNewOrigin(position)
-                                        Log.i("MYTEST", "FIRST POSITION : $position and origin and destination is $origin and $destination")
+
                                     }
                                     if ((position == 0).and(mapViewModel.polylines.size == 1).and(mapViewModel.infoMarkers.size == 1)) {
                                         origin =  binding.myLocationInput.text.toString()
                                         destination = inputAdapter.getNewOrigin(position)
-                                        Log.i("MYTEST", "SECOND POSITION : $position and origin and destination is $origin and $destination")
-
                                     }
 
 
-                                    Log.i("MYTEST", "ORIG, DEST IN CHIPS : $origin and $destination")
-                                    Log.i("MYTEST", "TRANSIT MODE : $mode and $transit")
-                                    mapViewModel.getDirections(origin, destination, mode, transit, key)
+                                    mapViewModel.setLine("")
+                                    mapViewModel.getDirections(origin, destination, mode!!, transit, key)
                                     if (mapViewModel.polylines.isNotEmpty()) {
-                                        Log.i("MYTEST", "POlYLINES IN CHIPS BEFORE DELETE: ${mapViewModel.polylines}")
                                         var counter = 0
                                         for (line in mapViewModel.polylines) {
                                             if (counter == position) {
@@ -355,7 +350,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                             infoMark?.remove()
                                             mapViewModel.infoMarkers.removeAt(position)
                                             mapViewModel.polylines.removeAt(position)
-                                            Log.i("MYTEST", "POlYLINES IN CHIPS AFTER DELETE: ${mapViewModel.polylines}")
                                         }
                                         if (position <= mapViewModel.travelMode.size.minus(1)) {
                                             mapViewModel.travelMode.removeAt(position)
@@ -423,7 +417,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             AutocompleteActivity.RESULT_ERROR -> {
                 result.data?.let {
                     status = Autocomplete.getStatusFromIntent(result.data!!)
-                    Log.i("TEST", status.statusMessage ?: "")
                     Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -431,9 +424,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 // The user canceled the operation.
                 Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                 Log.e("MYTEST", "USER CANCELNUL VYHLADAVANIE")
-//                if (mapViewModel.poiMarkers.isNotEmpty()) {
-//                    mapViewModel.poiMarkers.removeAt(0)
-//                }
             }
         }
 
@@ -469,13 +459,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPlanMapBinding.inflate(inflater, container, false)
-        setMapMenu(
-            context = requireContext(),
-            activity = requireActivity() ,
-            lifecycleOwner = viewLifecycleOwner,
-            view = binding.root,
-            auth = auth
-        )
+
         recyclerView = binding.inputsList
         recyclerViewSteps = binding.recyclerViewSteps
         recyclerViewImage = binding.imageRecyclerView
@@ -491,11 +475,37 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             if (userLoc!!.isEmpty().or(userLoc.isBlank())) {
                 getLocation(requireContext(),fusedLocationProviderClient, mapViewModel, auth.currentUser!!.uid)
             }
-
-
             val mapFragment =
                 childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
             mapFragment.getMapAsync(this)
+
+            val menu = binding.topAppBar.menu
+            val profileItem = menu.findItem(R.id.profile)
+            val imageItem = profileItem?.actionView as ImageView
+            Glide.with(requireContext()).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+            imageItem.setOnClickListener {
+                val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
+                view.findNavController().navigate(action)
+            }
+
+
+            binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.home -> {
+                        val action = PlanMapFragmentDirections.actionPlanMapFragmentToPlanJourneyFragment()
+                        view.findNavController().navigate(action)
+                        true
+                    }
+                    R.id.profile -> {
+                        val action = PlanMapFragmentDirections.actionPlanMapFragmentToProfileFragment2()
+                        view.findNavController().navigate(action)
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+
             val listFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
             places = activity?.applicationContext?.let { Places.createClient(it) }!!
 
@@ -506,7 +516,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             binding.viewmodel = this@PlanMapFragment.profileViewModel
 
             if ((navigationArgs.id == 0L).and(navigationArgs.shared.isNotBlank()).and(navigationArgs.flag == "share")) {
-                Log.i("MYTEST", "SHARED URL: ${navigationArgs.shared}")
 
                 detailsJourneyAdapter = DetailsJourneyAdapter()
 
@@ -539,6 +548,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         transit = ""
                     }
 
+                    standardBottomSheetBehavior.maxHeight = 400
+                    standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     mapViewModel.getDirections(orig, dest, mode, transit, key)
 
                     detailsRecyclerView.adapter = detailsJourneyAdapter
@@ -547,9 +558,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         try {
                             if (result != null) {
                                 if (result.routes!!.isNotEmpty()) {
+
                                     comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
                                     if (!comparison) {
-                                        Log.i("MYTEST", "SPUSTAM DIRECTIONS")
                                         val points = result.routes[0].overviewPolyline.points
                                         val distance = result.routes[0].legs[0].distance.text
                                         val duration = result.routes[0].legs[0].duration.text
@@ -557,8 +568,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
                                         val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
                                         val destinationName = result.routes[0].legs[0].endAddress
-                                        Log.i("MYTEST", "VYKRESLUJEM  , $originName, $destinationName, $mode , $transit")
-                                        Log.i("MYTEST", "COUNTER : $counter and $position")
                                         val routeDetail = RouteEntity(
                                             id = counter,
                                             journeyId = counter,
@@ -573,13 +582,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                         counter += 1L
                                         position += 1
 
-                                        Log.i("MYTEST", "CREATED ROUTE : $detailsOfRoute")
 
                                         showMarkerOnChoosePlace(originName,originLatLng, 0)
                                         showMarkerOnChoosePlace(destinationName,destinationLatLng, 0)
-                                        Log.i("MYTEST","POINTS : $points")
-                                        Log.i("MYTEST","DIST AND DUR : $distance and $duration")
-                                        Log.i("MYTEST","ICON : ${mapViewModel.iconType.value!!}")
                                         showRouteOnMap(points, distance, duration,  mapViewModel.iconType.value!!, 0)
                                     }
                                 }
@@ -623,13 +628,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                 var comparison: Boolean
                 profileViewModel.journeyWithRoutes.observe(viewLifecycleOwner) {
-                    Log.i("MYTEST", "IT  $it")
                     val key = BuildConfig.GOOGLE_MAPS_API_KEY
                     var transit = ""
                     var mode = ""
                     var origin = ""
 
-                    Log.i("MYTEST", "ROUTES SIZE : ${it.routes.size}")
                     detailsRecyclerView.adapter = detailsJourneyAdapter
                     detailsJourneyAdapter.submitList(it.routes)
                     for (route in it.routes) {
@@ -641,12 +644,10 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                             transit = ""
                         }
                         origin = if (route.origin.contains("lat/lng:")) {
-                            Log.i("MYTEST", "PARSED ORIGIN : ${route.origin.split("(")[1].split(")")[0]}")
                             route.origin.split("(")[1].split(")")[0]
                         } else {
                             route.origin
                         }
-                        Log.i("MYTEST", "GETUJEM  , $origin, ${route.destination}, $mode , $transit")
 
 
                         mapViewModel.getDirections(origin, route.destination, mode, transit, key)
@@ -657,7 +658,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                     if (result.routes!!.isNotEmpty()) {
                                         comparison = (mapViewModel.checkLine == result.routes[0].overviewPolyline.points)
                                         if (!comparison) {
-                                            Log.i("MYTEST", "SPUSTAM DIRECTIONS")
                                             val points = result.routes[0].overviewPolyline.points
                                             val distance = result.routes[0].legs[0].distance.text
                                             val duration = result.routes[0].legs[0].duration.text
@@ -666,12 +666,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                             val originLatLng = LatLng(result.routes[0].legs[0].startLocation!!.lat, result.routes[0].legs[0].startLocation!!.lng)
                                             val destinationLatLng = LatLng(result.routes[0].legs[0].endLocation!!.lat, result.routes[0].legs[0].endLocation!!.lng)
                                             val destinationName = result.routes[0].legs[0].endAddress
-                                            Log.i("MYTEST", "VYKRESLUJEM  , $originName, $destinationName, $mode , $transit")
                                             showMarkerOnChoosePlace(originName!!,originLatLng, 0)
                                             showMarkerOnChoosePlace(destinationName!!,destinationLatLng, 0)
-                                            Log.i("MYTEST","POINTS : $points")
-                                            Log.i("MYTEST","DIST AND DUR : $distance and $duration")
-                                            Log.i("MYTEST","ICON : ${mapViewModel.iconType.value!!}")
                                             showRouteOnMap(points, distance, duration,  mapViewModel.iconType.value!!, 0)
                                         }
                                     }
@@ -710,7 +706,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
                 searchView.setOnPlaceSelectedListener(object : PlaceSelectionListener {
                     override fun onPlaceSelected(place: Place) {
-                        Log.i("MYTESTE","SEARCHVIEW : ${place.id}")
                         if (binding.myLocationInput.text.toString().isNotBlank()) {
                             val marker = mapViewModel.markers.getOrNull(0)
                             marker?.remove()
@@ -726,7 +721,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                                 )
                             )
                             mapViewModel.markers.add(0, marker!!)
-                            mapViewModel.setLocation(place.latLng!!)
+                            mapViewModel.location = place.latLng!!
                             mapViewModel.destinationsName.add(0, place.name!!)
                             animateCamera(
                                 CameraUpdateFactory.newLatLngZoom(
@@ -753,6 +748,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                         Toast.makeText(context,"SEARCHING WAS CANCELED", Toast.LENGTH_SHORT).show()
                     }
                 })
+
+
 
                 recyclerViewSteps.layoutManager = LinearLayoutManager(context)
                 stepsAdapter = StepsAdapter()
@@ -810,10 +807,9 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 binding.addDestination.setOnClickListener {
                     binding.searchWrapper.visibility = View.GONE
                     inputAdapter.setName("", "")
-                    binding.chipGroupDirections.clearCheck()
                     binding.chipGroupDirections.visibility = View.GONE
                     mapViewModel.notes.add("")
-                    mapViewModel.setIconType("driving")
+                    mapViewModel.setIconType(mapViewModel.iconType.value!!)
                     mapViewModel.inputs.add(layout)
                     inputAdapter.notifyItemInserted(mapViewModel.inputs.size)
                 }
@@ -836,7 +832,8 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                     inputAdapter.getAllDestinations(),
                     binding.root,
                     auth,
-                    ref
+                    ref,
+                    requireContext()
                 )
                 binding.finishButton.setOnClickListener {
                     nameDialog.show()
@@ -893,15 +890,13 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
 
     }
 
-
+    @SuppressLint("MissingPermission")
     override fun onMapReady(mapG: GoogleMap) {
         googleMap = mapG
         try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
             val success = googleMap.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
-                    requireContext(), R.raw.night_map
+                    requireContext(), R.raw.aubergine
                 )
             )
             if (!success) {
@@ -911,97 +906,104 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         } catch (e: Resources.NotFoundException) {
             Log.e("MYTEST", "Can't find style. Error: ", e)
         }
-
+        val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(),auth.currentUser!!.uid)
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
-            if (checkPermissions(requireContext())) {
-                Log.i("MYTEST","SOM TU CHECKOL SOM PERMISSIONS")
-                val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(),auth.currentUser!!.uid)
-                Log.i("MYTEST", "GETOL SOM SHARED LOC : $userLoc")
-                if (userLoc!!.isEmpty().or(userLoc.isBlank())) {
-                    getLocation(requireContext(),fusedLocationProviderClient, mapViewModel, auth.currentUser!!.uid)
+            if (userLoc!!.isEmpty().or(userLoc.isBlank())) {
+                if (checkPermissions(requireContext())) {
+                    if (isLocationEnabled(requireContext())) {
+                        fusedLocationProviderClient.getCurrentLocation(
+                            CurrentLocationRequest.Builder().setDurationMillis(30000)
+                                .setMaxUpdateAgeMillis(60000).build(), null
+                        ).addOnSuccessListener {
+                            it?.let {
+                                googleMap.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        LatLng(it.latitude, it.longitude),
+                                        15F
+                                    )
+                                )
+                                val geocoder = Geocoder(requireContext(), Locale.getDefault())
 
-                    if (mapViewModel.location.value != null) {
-                        Log.i("MYTEST","SOM TU ${mapViewModel.location.value}")
-                        val name = mapViewModel.locationName
-                        val latLng = mapViewModel.location.value
+                                try {
+                                    val addresses: List<Address>? = geocoder.getFromLocation(
+                                        it.latitude, it.longitude, 1
+                                    )
+                                    if (addresses != null && addresses.isNotEmpty()) {
+                                        val cityName = addresses[0].getAddressLine(0)
+                                        mapViewModel.destinationsName.add(0, cityName)
+                                        val marker = googleMap.addMarker(
+                                            MarkerOptions()
+                                                .position(LatLng(it.latitude, it.longitude))
+                                                .title(cityName)
+                                        )
+                                        googleMap.animateCamera(
+                                            CameraUpdateFactory.newLatLngZoom(
+                                                LatLng(it.latitude, it.longitude),
+                                                15F
+                                            )
+                                        )
+                                        mapViewModel.markers.add(0, marker!!)
+                                        binding.myLocationInput.setText(cityName)
+                                    }
 
-                        mapViewModel.destinationsName.add(0,name)
-                        val marker = googleMap.addMarker(
-                            MarkerOptions()
-                                .position(latLng!!)
-                                .title(name)
-                        )
-                        mapViewModel.markers.add(0,marker!!)
-                        googleMap.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                latLng,
-                                15F
-                            ))
-                        binding.myLocationInput.setText(name)
+                                } catch (e: Exception) {
+                                    Log.e("MYTEST", "Error: ${e.message}")
+                                }
+
+                                googleMap.uiSettings.isMyLocationButtonEnabled = true
+                                googleMap.uiSettings.isZoomControlsEnabled = true
+                                googleMap.setOnPoiClickListener(this)
+                            }
+                        }
                     }
-                }
-                else {
-                    val name = userLoc.split("=")[0]
-                    val tmpLoc = userLoc.split("=")[1]
-                    val latLng = LatLng(tmpLoc.split(",")[0].toDouble(), tmpLoc.split(",")[1].toDouble())
-                    mapViewModel.destinationsName.add(0,name)
+                } else {
+                    mapViewModel.location = mapViewModel.defaultLocation
+                    mapViewModel.destinationsName.add(0, mapViewModel.defaultLocationName)
                     val marker = googleMap.addMarker(
                         MarkerOptions()
-                            .position(latLng)
-                            .title(name)
+                            .position(mapViewModel.defaultLocation)
+                            .title(mapViewModel.defaultLocationName)
                     )
-                    mapViewModel.markers.add(0,marker!!)
+                    mapViewModel.markers.add(0, marker!!)
                     googleMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
-                            latLng,
+                            mapViewModel.defaultLocation,
                             15F
-                        ))
-                    binding.myLocationInput.setText(name)
+                        )
+                    )
+                    binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+                    googleMap.uiSettings.isMyLocationButtonEnabled = true
+                    googleMap.uiSettings.isZoomControlsEnabled = true
+                    googleMap.setOnPoiClickListener(this)
                 }
-
-
-//                else {
-//                    mapViewModel.setLocation(mapViewModel.defaultLocation)
-//                    mapViewModel.destinationsName.add(0,mapViewModel.defaultLocationName)
-//                    val marker = googleMap.addMarker(
-//                        MarkerOptions()
-//                            .position(mapViewModel.defaultLocation)
-//                            .title(mapViewModel.defaultLocationName)
-//                    )
-//                    mapViewModel.markers.add(0,marker!!)
-//                    googleMap.animateCamera(
-//                        CameraUpdateFactory.newLatLngZoom(
-//                            mapViewModel.defaultLocation,
-//                            15F
-//                        ))
-//                    binding.myLocationInput.setText(mapViewModel.defaultLocationName)
-//                }
-
-
-
-            }
-            else {
-                mapViewModel.setLocation(mapViewModel.defaultLocation)
-                mapViewModel.destinationsName.add(0,mapViewModel.defaultLocationName)
+            } else {
+                val name = userLoc.split("=")[0]
+                val tmpLoc = userLoc.split("=")[1]
+                val latLng =
+                    LatLng(tmpLoc.split(",")[0].toDouble(), tmpLoc.split(",")[1].toDouble())
+                mapViewModel.destinationsName.add(0, name)
                 val marker = googleMap.addMarker(
-                    MarkerOptions()
-                        .position(mapViewModel.defaultLocation)
-                        .title(mapViewModel.defaultLocationName)
+                    MarkerOptions().position(latLng).title(name)
                 )
-                mapViewModel.markers.add(0,marker!!)
+                mapViewModel.markers.add(0, marker!!)
                 googleMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(
-                        mapViewModel.defaultLocation,
+                        latLng,
                         15F
-                    ))
-                binding.myLocationInput.setText(mapViewModel.defaultLocationName)
+                    )
+                )
+                binding.myLocationInput.setText(name)
+                googleMap.uiSettings.isMyLocationButtonEnabled = true
+                googleMap.uiSettings.isZoomControlsEnabled = true
+                googleMap.setOnPoiClickListener(this)
             }
-
+        }
+        else {
+            googleMap.uiSettings.isMyLocationButtonEnabled = true
+            googleMap.uiSettings.isZoomControlsEnabled = true
+            googleMap.setOnPoiClickListener(this)
         }
 
-        googleMap.uiSettings.isMyLocationButtonEnabled = true
-        googleMap.uiSettings.isZoomControlsEnabled = true
-        googleMap.setOnPoiClickListener(this)
 
     }
 
@@ -1011,24 +1013,50 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
     }
 
     private fun showUserLocation() {
-        //TODO: OTESTOVAT
+        val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(), auth.currentUser!!.uid)
         if (binding.myLocationInput.text!!.isBlank().or(binding.myLocationInput.text!!.isEmpty())) {
             if (mapViewModel.locationName.isNotBlank().or(mapViewModel.locationName.isNotEmpty())) {
-                mapViewModel.destinationsName.add(0,mapViewModel.locationName)
-                val marker = googleMap.addMarker(
-                    MarkerOptions()
-                        .position(mapViewModel.location.value!!)
-                        .title(mapViewModel.locationName)
-                )
-                mapViewModel.markers.add(0,marker!!)
-                binding.myLocationInput.setText(mapViewModel.locationName)
+                if (mapViewModel.location != LatLng(0.0,0.0)) {
+                    mapViewModel.destinationsName.add(0,mapViewModel.locationName)
+                    val marker = googleMap.addMarker(
+                        MarkerOptions()
+                            .position(mapViewModel.location)
+                            .title(mapViewModel.locationName)
+                    )
+                    mapViewModel.markers.add(0,marker!!)
+                    binding.myLocationInput.setText(mapViewModel.locationName)
+                }
+                else {
+                    if (userLoc!!.isNotEmpty()) {
+                        val tmpLoc = userLoc.split("=")[1]
+                        val latLng = LatLng(tmpLoc.split(",")[0].toDouble(), tmpLoc.split(",")[1].toDouble())
+                        val marker = googleMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .title(userLoc.split("=")[0])
+                        )
+                        if (binding.myLocationInput.text!!.isBlank().or(binding.myLocationInput.text!!.isEmpty())) {
+                            if (mapViewModel.markers.isEmpty()) {
+                                mapViewModel.markers.add(0,marker!!)
+                            }
+                            mapViewModel.destinationsName.add(0,userLoc.split("=")[0])
+                            binding.myLocationInput.setText(userLoc.split("=")[0])
+                        }
+
+                        googleMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                latLng,
+                                15F
+                            ))
+                    }
+                }
             }
         }
-        val userLoc = LocationSharedPreferencesUtil.getInstance().getUserUidLoc(requireContext(), auth.currentUser!!.uid)
-        if (mapViewModel.location.value != null) {
+
+        if (mapViewModel.location != LatLng(0.0,0.0)) {
             googleMap.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    mapViewModel.location.value!!,
+                    mapViewModel.location,
                     15F
                 ))
         }
@@ -1078,7 +1106,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         }
 
         if ((navigationArgs.id == 0L).and(navigationArgs.shared.isBlank()).and(navigationArgs.flag.isBlank())) {
-            mapViewModel.checkLine = line
+            mapViewModel.setLine(line)
             if (line.isNotBlank()) {
                 val polyline: List<LatLng> = PolyUtil.decode(line)
 
@@ -1090,9 +1118,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val addedPolyline = googleMap.addPolyline(options)
                 addedPolyline.addInfoWindow(googleMap,distanceText,durationText,choosedIcon)
 
-                Log.i("MYTEST", "POLYLINES BEFORE ADD: ${mapViewModel.polylines}")
                 mapViewModel.polylines.add(addedPolyline)
-                Log.i("MYTEST", "POLYLINES AFTER ADD: ${mapViewModel.polylines}")
 
 
                 googleMap.animateCamera(
@@ -1105,7 +1131,7 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
             }
         }
         else {
-            mapViewModel.checkLine = line
+            mapViewModel.setLine(line)
             val polyline: List<LatLng> = PolyUtil.decode(line)
 
             val options = PolylineOptions()
@@ -1126,13 +1152,11 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
                 val chip: Chip? = group.findViewById(it)
                 var type = ""
                 var radius = 10000
-                val locationUser = if (mapViewModel.location.value != null) {
-                    mapViewModel.location.value!!
+                val locationUser = if (mapViewModel.location != LatLng(0.0,0.0)) {
+                    mapViewModel.location
                 } else {
                     mapViewModel.defaultLocation
                 }
-                Log.i("MYTEST","CHECKED CHIP IS : ${chip?.tag}")
-                Log.i("MYTEST","COUNTRY IS : ${mapViewModel.countryCode.value}")
                 when (chip?.tag) {
                     "station" -> {
                         type = "gas_station"
@@ -1274,7 +1298,6 @@ class PlanMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnPoiClickList
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

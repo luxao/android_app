@@ -2,7 +2,6 @@ package com.example.journey_dp.ui.adapter.adapters
 
 
 import android.content.Context
-import android.util.Log
 
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +13,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.journey_dp.data.firebase.User
 
 import com.example.journey_dp.data.firebase.UserWithUID
 
 import com.example.journey_dp.databinding.UserCardItemBinding
 
-import com.example.journey_dp.ui.adapter.events.UserEventListener
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.google.firebase.database.DatabaseReference
 
@@ -63,7 +60,6 @@ class UsersAdapter(
             }
 
              binding.followButton.setOnClickListener {
-                Log.i("MYTEST", "FOLLOW CLICKED TAG ID : ${binding.followButton.tag}")
                 binding.followButton.visibility = View.GONE
                 binding.unfollowButton.visibility = View.VISIBLE
                 binding.requestSend.visibility = View.VISIBLE
@@ -72,7 +68,6 @@ class UsersAdapter(
                 ref.child("all_users").child(userId).child("requested").child(binding.followButton.tag.toString()).setValue(binding.followButton.tag.toString())
             }
             binding.unfollowButton.setOnClickListener {
-                Log.i("MYTEST", "UNFOLLOW CLICKED TAG ID : ${binding.unfollowButton.tag}")
                 binding.followButton.visibility = View.VISIBLE
                 binding.unfollowButton.visibility = View.GONE
                 binding.requestSend.visibility = View.GONE

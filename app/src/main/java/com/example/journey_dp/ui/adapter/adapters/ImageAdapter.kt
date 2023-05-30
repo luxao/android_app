@@ -3,15 +3,10 @@ package com.example.journey_dp.ui.adapter.adapters
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.journey_dp.R
-import com.example.journey_dp.data.domain.Step
 import com.example.journey_dp.databinding.ImageItemLayoutBinding
-import com.example.journey_dp.databinding.StepItemBinding
-import com.example.journey_dp.utils.clearFromHtml
 
 class ImageAdapter : ListAdapter<Bitmap, ImageAdapter.ImageItemViewHolder>(DiffCallback) {
 

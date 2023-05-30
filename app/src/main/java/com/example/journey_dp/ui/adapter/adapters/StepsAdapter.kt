@@ -45,7 +45,7 @@ class StepsAdapter : ListAdapter<Step, StepsAdapter.StepItemViewHolder>(DiffCall
                     )
                     binding.instructionsTextView.text = clearFromHtml(step.instructions!!)
 
-                    //TODO: TRY VEHICLE FOR TRANSIT
+
                     binding.travelModeImageView.setImageResource(
                         when(step.travelMode) {
                             "DRIVING" -> R.drawable.ic_baseline_directions_car_24

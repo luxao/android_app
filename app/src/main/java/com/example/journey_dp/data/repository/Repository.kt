@@ -12,7 +12,6 @@ import com.example.journey_dp.data.room.model.JourneyWithRoutes
 import com.example.journey_dp.data.room.model.RouteEntity
 
 import com.example.journey_dp.data.service.ApiService
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,7 +43,6 @@ class Repository private constructor(
             if (resp.isSuccessful) {
                 resp.body()?.let { data ->
                     directions = data
-                    Log.i("MYTEST", "Data: $data")
                 }?:  Log.i("MYTEST","Failed to load directions")
             }
             else {

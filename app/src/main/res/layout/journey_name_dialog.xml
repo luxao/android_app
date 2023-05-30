@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
+    android:background="@color/card_background"
     >
 
     <LinearLayout
@@ -22,7 +23,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="32dp"
-            android:src="@drawable/journe_name"
+            android:background="@drawable/journe_name"
+            android:backgroundTint="@color/btn"
             android:contentDescription="@string/name_journey"
             />
 
@@ -32,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="32dp"
-            android:textColor="@color/black"
+            android:textColor="@color/btn"
             android:text="@string/name_your_journey"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -46,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_marginTop="6dp"
-        app:dividerColor="@color/black"
+        app:dividerColor="@color/btn"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,6 +67,7 @@
         android:layout_marginEnd="32dp"
         android:visibility="visible"
         app:startIconDrawable="@drawable/ic_baseline_route_24"
+        app:startIconTint="@color/btn"
         app:startIconContentDescription="@string/name_your_journey"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,7 +81,7 @@
             android:id="@+id/journey_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="#757575" />
+            android:textColorHint="@color/btn" />
     </com.google.android.material.textfield.TextInputLayout>
 
 

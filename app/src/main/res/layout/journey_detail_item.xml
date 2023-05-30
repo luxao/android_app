@@ -21,6 +21,7 @@
         android:padding="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
+        android:background="@color/btn"
         >
 
         <LinearLayout
@@ -40,8 +41,10 @@
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textSize="18sp"
+                android:textColor="@color/background"
                 android:textStyle="bold"
                 app:drawableRightCompat="@drawable/ic_baseline_mode_of_travel_24"
+                app:drawableTint="@color/background"
                 />
 
             <TextView
@@ -49,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:textColor="@color/background"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -72,9 +76,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textAlignment="center"
+                android:textColor="@color/background"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:drawableRightCompat="@drawable/ic_baseline_more_vert_24"
+                app:drawableTint="@color/background"
                 />
 
         </LinearLayout>
@@ -98,12 +104,16 @@
                 android:textSize="18sp"
                 android:textAlignment="center"
                 android:gravity="center"
-                app:drawableRightCompat="@drawable/ic_baseline_mode_of_travel_24" />
+                android:textColor="@color/background"
+                app:drawableRightCompat="@drawable/ic_baseline_mode_of_travel_24"
+                app:drawableTint="@color/background"
+                />
 
             <TextView
                 android:id="@+id/destination_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/background"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:gravity="center"
@@ -129,13 +139,16 @@
                 android:text="@string/note_to_destination"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                android:textColor="@color/background"
                 android:drawablePadding="3dp"
-                app:drawableLeftCompat="@drawable/note_alt" />
+                app:drawableLeftCompat="@drawable/note_alt"
+                app:drawableTint="@color/background" />
 
             <TextView
                 android:id="@+id/note_to_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
 
@@ -147,7 +160,7 @@
             android:id="@+id/material_divider"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            app:dividerColor="@color/black"
+            app:dividerColor="@color/background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"

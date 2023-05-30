@@ -6,18 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import com.bumptech.glide.Glide
 import com.example.journey_dp.R
 import com.example.journey_dp.data.firebase.UserWithUID
-import com.example.journey_dp.databinding.FragmentFindUsersBinding
 import com.example.journey_dp.databinding.FragmentNotificationsBinding
 import com.example.journey_dp.ui.adapter.adapters.NotificationAdapter
-import com.example.journey_dp.ui.adapter.adapters.UsersAdapter
-import com.example.journey_dp.ui.adapter.events.UserEventListener
 import com.example.journey_dp.ui.viewmodel.UsersViewModel
 import com.example.journey_dp.utils.Injection
-import com.example.journey_dp.utils.setFindUsersMenu
-import com.example.journey_dp.utils.setNotificationsMenu
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -62,13 +60,7 @@ class NotificationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-        setNotificationsMenu(
-            context = requireContext(),
-            activity = requireActivity() ,
-            lifecycleOwner = viewLifecycleOwner,
-            view = binding.root,
-            auth = auth
-        )
+
         return binding.root
     }
 
@@ -77,6 +69,35 @@ class NotificationsFragment : Fragment() {
 
         binding.lifecycleOwner = this@NotificationsFragment.viewLifecycleOwner
         binding.model = this@NotificationsFragment.usersViewModel
+
+
+
+        val menu = binding.topAppBar.menu
+        val profileItem = menu.findItem(R.id.profile)
+        val imageItem = profileItem?.actionView as ImageView
+        Glide.with(requireContext()).load(auth.currentUser?.photoUrl).centerInside().into(imageItem)
+        imageItem.setOnClickListener {
+            val action = NotificationsFragmentDirections.actionNotificationsFragmentToProfileFragment2()
+            view.findNavController().navigate(action)
+        }
+
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.home -> {
+                    val action = NotificationsFragmentDirections.actionNotificationsFragmentToPlanJourneyFragment()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                R.id.profile -> {
+
+                    val action = NotificationsFragmentDirections.actionNotificationsFragmentToProfileFragment2()
+                    view.findNavController().navigate(action)
+                    true
+                }
+                else -> false
+            }
+        }
 
         notificationAdapter = NotificationAdapter(
             context = requireContext(),
@@ -95,13 +116,11 @@ class NotificationsFragment : Fragment() {
             for (snap in snapshot.children) {
                 if (snap.key == "requests") {
                     for (data in snap.children) {
-                        Log.i("MYTEST", "${data.key} => ${data.value}")
                         val userUID = data.key.toString()
                         val userEmail = data.child("userEmail").value.toString()
                         val userImage = data.child("userImage").value.toString()
                         val userName = data.child("userName").value.toString()
                         val user = UserWithUID(userUID, userEmail, userImage, userName)
-                        Log.i("MYTEST","$user")
                         usersViewModel.requestsList.add(user)
                         notificationAdapter.notifyItemInserted(usersViewModel.requestsList.size)
                     }
