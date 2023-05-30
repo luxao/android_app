@@ -8,3 +8,6 @@
 
 ### APK FILE
 - You can find .apk file in release under the title journey_v1.0
+
+### Documentation
+- https://luxao.github.io/journey_doc/
